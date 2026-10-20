@@ -1,0 +1,5 @@
+node_modules/
+*.task
+*.mp4
+*.webm
+*.mov
