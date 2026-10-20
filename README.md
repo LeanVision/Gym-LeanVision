@@ -83,6 +83,20 @@ piernas. Las repeticiones se cuentan con la flexión de la rodilla de adelante.
 Los umbrales están en `js/estocadas.js` (`UMBRALES`). No revisa la rodilla
 que se va hacia adentro (no se ve de costado).
 
+## Qué revisa en los abdominales
+
+Encogimientos, acostado boca arriba y filmado de costado con el celular bajo.
+Las repeticiones se cuentan con cuánto se despega el tronco del piso.
+
+| Error | Cómo se mide | Umbral |
+|---|---|---|
+| Tirás del cuello | Cabeza doblada hacia el pecho respecto del tronco | más de 35° |
+| Despegás los pies | Cuánto suben los tobillos respecto de la cadera | más de 0,3 largos de tibia |
+| Muy rápido, con impulso | Duración de la repetición entera | menos de 1 s |
+
+Los umbrales están en `js/abdominales.js` (`UMBRALES`). No revisa si la zona
+lumbar se despega del piso (el modelo no tiene puntos en la columna).
+
 ## Cómo se separan las repeticiones
 
 `js/repeticiones.js`, común a los tres ejercicios: una repetición arranca
@@ -122,6 +136,7 @@ o si falta un módulo en el import map.
 | 1.3 | Flexiones de brazos |
 | 1.4 | Diseño nuevo (petróleo y mandarina) y número de versión |
 | 1.5 | Estocadas |
+| 1.6 | Abdominales; muñequito animado mientras analiza; los títulos no cortan palabras |
 
 ## Probarla en la computadora
 

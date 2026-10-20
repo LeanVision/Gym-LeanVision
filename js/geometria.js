@@ -163,6 +163,11 @@ export function angulos(p, lado) {
     a.tibiaDelantera = delantera.tibia;
     a.rodillaTrasera = trasera.rodilla;
   }
+  // Abdominales (acostado boca arriba). Tronco respecto del piso: 0 =
+  // acostado, positivo = hombros despegados. Y altura del tobillo sobre la
+  // cadera, en largos de tibia: crece si los pies se despegan del piso.
+  a.elevacionTronco = grados(Math.atan2(cadera.y - hombro.y, Math.abs(hombro.x - cadera.x)));
+  a.tobilloSobreCadera = (cadera.y - tobillo.y) / largoPierna;
   // Cadera respecto de la línea hombro-tobillo: positivo = caída (panza abajo).
   a.lineaCadera = desvioDeLinea(sin("hombro"), sin("cadera"), sin("tobillo"));
   // Cabeza respecto de la prolongación cadera-hombro: positivo = colgando.
