@@ -15,8 +15,15 @@ export const UMBRALES = {
   musloMaximo: 15,
   // Inclinación del tronco en el punto más bajo.
   troncoMaximo: 50,
-  // Talón despegado, en largos de tibia respecto de la posición de pie.
-  talonMaximo: 0.06,
+  // Talón despegado: cuánto sube el tobillo respecto de la posición de pie,
+  // en largos de tibia. Un despegue claro (4-5 cm) lo sube ~8 %.
+  talonMaximo: 0.07,
+  // Se mira la mediana alrededor del punto más bajo (±s), no el peor cuadro:
+  // un cuadro suelto con el pie mal ubicado no tiene que bastar.
+  ventanaTalon: 0.3,
+  // Con la tibia más chica que esto en la imagen, el temblor del modelo
+  // (2-5 px) es del tamaño de un despegue real: los talones no se revisan.
+  tibiaMinimaPx: 80,
   // Bajada más rápida que esto = sin control.
   bajadaMinima: 0.7, // s
 };
@@ -93,16 +100,17 @@ export function separarRepeticiones(cuadros, u = UMBRALES) {
 }
 
 /** Revisa una repetición. Devuelve {problemas: [{tipo, detalle}], medidas}. */
-export function revisarRepeticion(cuadros, rep, talonDePie, u = UMBRALES) {
+export function revisarRepeticion(cuadros, rep, tobilloDePie, u = UMBRALES) {
   const fondo = cuadros[rep.fondo].a;
-  const tramo = cuadros.slice(rep.inicio, rep.fin + 1).filter((c) => c.a);
-  const talonMax = talonDePie == null ? null
-    : Math.max(...tramo.map((c) => (c.a.talon == null ? -Infinity : c.a.talon - talonDePie)));
+  const tFondo = cuadros[rep.fondo].t;
+  const alrededor = cuadros
+    .filter((c) => c.a?.alturaTobillo != null && Math.abs(c.t - tFondo) <= u.ventanaTalon)
+    .map((c) => c.a.alturaTobillo - tobilloDePie);
   const medidas = {
     muslo: fondo.muslo,
     tronco: fondo.tronco,
     rodilla: fondo.rodilla,
-    talon: Number.isFinite(talonMax) ? talonMax : null,
+    talon: tobilloDePie == null || !alrededor.length ? null : percentil(alrededor, 50),
     bajada: cuadros[rep.fondo].t - cuadros[rep.inicio].t,
     subida: cuadros[rep.fin].t - cuadros[rep.fondo].t,
   };
@@ -114,7 +122,7 @@ export function revisarRepeticion(cuadros, rep, talonDePie, u = UMBRALES) {
     problemas.push({ tipo: "tronco", detalle: `El tronco se inclinó ${medidas.tronco.toFixed(0)}° (conviene menos de ${u.troncoMaximo}°).` });
   }
   if (medidas.talon != null && medidas.talon > u.talonMaximo) {
-    problemas.push({ tipo: "talones", detalle: "El talón se despegó del piso durante la repetición." });
+    problemas.push({ tipo: "talones", detalle: "El talón se despegó del piso en el punto más bajo." });
   }
   if (medidas.bajada < u.bajadaMinima) {
     problemas.push({ tipo: "rapida", detalle: `Bajaste en ${medidas.bajada.toFixed(1)} s.` });
@@ -130,11 +138,19 @@ export function puntaje(problemas) {
 /** Analiza la serie completa. */
 export function analizarSentadilla(cuadros, u = UMBRALES) {
   const reps = separarRepeticiones(cuadros, u);
-  // Talón de pie: antes de la primera bajada (o en todo el video si no hay).
-  const dePie = cuadros.slice(0, reps[0]?.inicio + 1 || cuadros.length).map((c) => c.a?.talon).filter((v) => v != null);
-  const talonDePie = dePie.length ? percentil(dePie, 50) : null;
+  // Referencia de pie: antes de la primera bajada (o todo el video si no hay).
+  const dePie = cuadros.slice(0, reps[0]?.inicio + 1 || cuadros.length).filter((c) => c.a);
+  const tobillo = dePie.map((c) => c.a.alturaTobillo).filter((v) => v != null);
+  const tibiaPx = percentil(dePie.map((c) => c.a.largoTibiaPx), 50);
+  const avisos = [];
+  let tobilloDePie = tobillo.length ? percentil(tobillo, 50) : null;
+  if (tibiaPx != null && tibiaPx < u.tibiaMinimaPx) {
+    tobilloDePie = null;
+    avisos.push("No revisamos los talones: en el video te vemos muy chica o chico (o tiene poca resolución). "
+      + "Grabá en mayor calidad o acercá un poco el celular.");
+  }
   const repeticiones = reps.map((rep, i) => {
-    const r = revisarRepeticion(cuadros, rep, talonDePie, u);
+    const r = revisarRepeticion(cuadros, rep, tobilloDePie, u);
     return {
       numero: i + 1,
       tInicio: cuadros[rep.inicio].t,
@@ -150,5 +166,5 @@ export function analizarSentadilla(cuadros, u = UMBRALES) {
   const principales = Object.entries(conteo).sort((a, b) => b[1] - a[1]).map(([tipo, veces]) => ({ tipo, veces }));
   const total = repeticiones.length
     ? Math.round(repeticiones.reduce((s, r) => s + r.puntaje, 0) / repeticiones.length) : null;
-  return { repeticiones, principales, puntaje: total };
+  return { repeticiones, principales, puntaje: total, avisos };
 }

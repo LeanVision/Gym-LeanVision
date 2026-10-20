@@ -85,8 +85,8 @@ function mostrarResultado({ poses, lado, toma, analisis }) {
       : `${limpias} sin errores, ${repeticiones.length - limpias} para corregir.`;
   }
 
-  $("avisos").hidden = toma.ok;
-  $("avisos").innerHTML = toma.avisos.map((a) => `<p>${a}</p>`).join("")
+  $("avisos").hidden = toma.ok && !analisis.avisos.length;
+  $("avisos").innerHTML = [...toma.avisos, ...analisis.avisos].map((a) => `<p>${a}</p>`).join("")
     + (toma.ok ? "" : "<p><strong>Los resultados pueden no ser exactos.</strong></p>");
 
   $("consejos-principales").innerHTML = principales.slice(0, 2).map(({ tipo, veces }) => `

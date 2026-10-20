@@ -16,13 +16,19 @@ Desde una toma de costado, en el punto más bajo de cada repetición:
 |---|---|---|
 | Poca profundidad | Ángulo del muslo con el piso | más de 15° por encima del paralelo |
 | Tronco muy inclinado | Ángulo del tronco con la vertical | más de 50° |
-| Se levantan los talones | Altura del talón respecto de la punta del pie, comparada con la posición de pie | más de 6 % del largo de la tibia |
+| Se levantan los talones | Cuánto sube el tobillo respecto de la punta del pie, comparado con la posición de pie (mediana de ±0,3 s alrededor del punto más bajo) | más de 7 % del largo de la tibia |
 | Bajada muy rápida | Tiempo desde que empieza a bajar hasta el punto más bajo | menos de 0,7 s |
 
 Los umbrales están en `js/sentadilla.js` (`UMBRALES`) y conviene que los
 revise un profesional (kinesiólogo, entrenador) con videos reales. Las
 rodillas que se van hacia adentro sólo se ven **de frente**: queda para una
 segunda toma.
+
+Los talones se miden con el tobillo y no con el punto del talón: en una
+sentadilla profunda la cola tapa el talón y el modelo lo ubica más arriba de
+donde está. Si la persona sale muy chica en la imagen (tibia de menos de 80
+píxeles, por poca resolución o por estar lejos), los talones no se revisan y
+la app lo avisa: a ese tamaño el temblor del modelo es como un despegue real.
 
 Antes de corregir, revisa la toma (`js/calidad.js`): si la persona no está de
 costado o no se ve entera, avisa que los resultados pueden no ser exactos.
