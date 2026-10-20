@@ -8,23 +8,25 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,400;100,500;100,600;100,700;100,800;125,800;125,900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/estilos.css?v=1.5.0">
+  <link rel="stylesheet" href="css/estilos.css?v=1.6.0">
   <!-- Cada módulo con la versión: así el navegador no usa archivos viejos guardados. -->
   <script type="importmap">
   {
     "imports": {
-      "./js/app.js": "./js/app.js?v=1.5.0",
-      "./js/calidad.js": "./js/calidad.js?v=1.5.0",
-      "./js/dibujo.js": "./js/dibujo.js?v=1.5.0",
-      "./js/estocadas.js": "./js/estocadas.js?v=1.5.0",
-      "./js/ejercicios.js": "./js/ejercicios.js?v=1.5.0",
-      "./js/flexiones.js": "./js/flexiones.js?v=1.5.0",
-      "./js/geometria.js": "./js/geometria.js?v=1.5.0",
-      "./js/peso-muerto.js": "./js/peso-muerto.js?v=1.5.0",
-      "./js/pose.js": "./js/pose.js?v=1.5.0",
-      "./js/repeticiones.js": "./js/repeticiones.js?v=1.5.0",
-      "./js/sentadilla.js": "./js/sentadilla.js?v=1.5.0",
-      "./js/version.js": "./js/version.js?v=1.5.0"
+      "./js/abdominales.js": "./js/abdominales.js?v=1.6.0",
+      "./js/animacion.js": "./js/animacion.js?v=1.6.0",
+      "./js/app.js": "./js/app.js?v=1.6.0",
+      "./js/calidad.js": "./js/calidad.js?v=1.6.0",
+      "./js/dibujo.js": "./js/dibujo.js?v=1.6.0",
+      "./js/estocadas.js": "./js/estocadas.js?v=1.6.0",
+      "./js/ejercicios.js": "./js/ejercicios.js?v=1.6.0",
+      "./js/flexiones.js": "./js/flexiones.js?v=1.6.0",
+      "./js/geometria.js": "./js/geometria.js?v=1.6.0",
+      "./js/peso-muerto.js": "./js/peso-muerto.js?v=1.6.0",
+      "./js/pose.js": "./js/pose.js?v=1.6.0",
+      "./js/repeticiones.js": "./js/repeticiones.js?v=1.6.0",
+      "./js/sentadilla.js": "./js/sentadilla.js?v=1.6.0",
+      "./js/version.js": "./js/version.js?v=1.6.0"
     }
   }
   </script>
@@ -113,7 +115,11 @@
 
       <!-- Analizando -->
       <section id="analizando" class="pantalla" hidden>
-        <h1 class="titulo-grande">Analizando…</h1>
+        <h1 class="titulo-grande">Analizando</h1>
+        <div class="escenario">
+          <svg id="animacion" viewBox="0 0 120 100" role="img" aria-label="Un muñequito haciendo el ejercicio mientras se analiza el video"></svg>
+          <span class="sticker sticker-porcentaje" id="porcentaje" hidden></span>
+        </div>
         <div class="progreso"><div class="progreso-barra" id="progreso"></div></div>
         <p class="nota" id="estado">Cargando el modelo…</p>
       </section>
@@ -153,6 +159,6 @@
     </main>
   </div>
 
-  <script type="module" src="./js/app.js?v=1.5.0"></script>
+  <script type="module" src="./js/app.js?v=1.6.0"></script>
 </body>
 </html>

@@ -5,6 +5,7 @@ import { revisarToma } from "./calidad.js";
 import { EJERCICIOS } from "./ejercicios.js";
 import { estimarPoses } from "./pose.js";
 import { dibujar } from "./dibujo.js";
+import { animar } from "./animacion.js";
 import { VERSION } from "./version.js";
 
 const $ = (id) => document.getElementById(id);
@@ -12,6 +13,8 @@ const PANTALLAS = ["inicio", "tutorial", "analizando", "resultado"];
 const COLOR_ESQUELETO = { fuera: "#FFB5C8", bien: "#7CF2C0", conErrores: "#FF9F1C" };
 let historial = ["inicio"];
 let ejercicio = EJERCICIOS.sentadilla;
+let idEjercicio = "sentadilla";
+let pararAnimacion = () => {};
 
 document.querySelectorAll("[data-version]").forEach((e) => { e.textContent = `v${VERSION}`; });
 
@@ -20,8 +23,26 @@ function mostrar(id, { volviendo = false } = {}) {
   if (!volviendo && historial.at(-1) !== id) historial.push(id);
   document.body.dataset.pantalla = id;
   $("volver").hidden = id === "inicio" || id === "analizando";
+  if (id !== "analizando") pararAnimacion();
+  ajustarTitulos();
   window.scrollTo(0, 0);
 }
+
+// Los títulos grandes no cortan palabras: si una no entra en el ancho, se
+// achica el título hasta que entre.
+const TITULO_MINIMO = 22; // px
+function ajustarTitulos() {
+  document.querySelectorAll(".pantalla:not([hidden]) .titulo-grande").forEach((h) => {
+    h.style.fontSize = "";
+    let tamano = parseFloat(getComputedStyle(h).fontSize);
+    while (h.scrollWidth > h.clientWidth && tamano > TITULO_MINIMO) {
+      tamano -= 2;
+      h.style.fontSize = `${tamano}px`;
+    }
+  });
+}
+addEventListener("resize", ajustarTitulos);
+document.fonts?.ready.then(ajustarTitulos); // la letra ancha llega después y ocupa más
 
 $("volver").addEventListener("click", () => {
   $("video").pause();
@@ -58,6 +79,7 @@ function elegirPestana(nombre) {
 PESTANAS.forEach((p) => $(`tab-${p}`).addEventListener("click", () => elegirPestana(p)));
 
 function elegirEjercicio(id) {
+  idEjercicio = id;
   ejercicio = EJERCICIOS[id];
   document.body.style.setProperty("--ejercicio", ejercicio.color);
   $("tutorial-titulo").textContent = ejercicio.nombre;
@@ -82,7 +104,10 @@ for (const id of ["grabar", "elegir"]) {
 
 async function analizar(archivo) {
   mostrar("analizando");
+  pararAnimacion();
+  pararAnimacion = animar($("animacion"), idEjercicio);
   $("progreso").style.width = "0%";
+  $("porcentaje").hidden = true;
   $("estado").textContent = "Cargando el modelo…";
   const video = $("video");
   if (video.src) URL.revokeObjectURL(video.src);
@@ -90,7 +115,9 @@ async function analizar(archivo) {
   try {
     const poses = await estimarPoses(video, (f) => {
       $("progreso").style.width = `${Math.round(f * 100)}%`;
-      $("estado").textContent = `Revisando tu movimiento… ${Math.round(f * 100)} %`;
+      $("porcentaje").hidden = false;
+      $("porcentaje").textContent = `${Math.round(f * 100)} %`;
+      $("estado").textContent = "Revisando tu movimiento cuadro por cuadro…";
     });
     const { cuadros, lado } = prepararCuadros(poses, video.videoWidth, video.videoHeight);
     const toma = revisarToma(cuadros);
@@ -101,6 +128,7 @@ async function analizar(archivo) {
     console.error(error);
     $("estado").textContent = `No se pudo analizar el video: ${error.message}. Probá con otro archivo.`;
     $("volver").hidden = false;
+    pararAnimacion();
   }
 }
 

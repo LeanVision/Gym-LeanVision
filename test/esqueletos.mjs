@@ -192,3 +192,45 @@ export function serieEstocadas(claves, fps = 15) {
   }
   return posturas.map((postura, i) => ({ t: i / fps, p: estocada(postura) }));
 }
+
+/**
+ * Esqueleto haciendo abdominales: acostado boca arriba, de perfil (cabeza
+ * hacia +x), rodillas dobladas. elevacion: tronco despegado del piso;
+ * cuello: cabeza doblada hacia el pecho respecto del tronco; pies: cuánto se
+ * levantan los tobillos (en largos de tibia).
+ */
+export function encogimiento({ elevacion = 0, cuello = 0, pies = 0, miraDerecha = true, visibilidad = 0.9 } = {}) {
+  const cadera = { x: 500, y: 700 };
+  const hacia = (g) => ({ x: Math.cos(rad(g)), y: -Math.sin(rad(g)) }); // g grados por encima de +x
+  const hombro = mas(cadera, hacia(elevacion), 250);
+  const oreja = mas(hombro, hacia(elevacion + cuello), 60);
+  const tobillo = { x: cadera.x - 280, y: cadera.y - pies * 200 };
+  const rodilla = { x: cadera.x - 140, y: (cadera.y + tobillo.y) / 2 - 140 };
+  const puntos = {
+    hombro_der: hombro, oreja_der: oreja, cadera_der: cadera, rodilla_der: rodilla, tobillo_der: tobillo,
+    talon_der: { x: tobillo.x + 20, y: tobillo.y + 30 }, punta_der: { x: tobillo.x - 60, y: tobillo.y + 30 },
+  };
+  const p = {};
+  for (const [nombre, q] of Object.entries(puntos)) {
+    p[nombre] = { x: miraDerecha ? q.x : 1000 - q.x, y: q.y, v: visibilidad };
+    p[nombre.replace("_der", "_izq")] = { ...p[nombre], v: 0.3 };
+  }
+  return p;
+}
+
+/** Serie de abdominales: [[postura, segundos]], interpolando entre posturas. */
+export function serieAbdominales(claves, fps = 15) {
+  const campos = ["elevacion", "cuello", "pies"];
+  const posturas = [];
+  let anterior = claves[0][0];
+  for (const [postura, segundos] of claves) {
+    const n = Math.round(segundos * fps);
+    for (let i = 1; i <= n; i++) {
+      const r = { ...postura };
+      for (const k of campos) r[k] = (anterior[k] ?? 0) + ((postura[k] ?? 0) - (anterior[k] ?? 0)) * (i / n);
+      posturas.push(r);
+    }
+    anterior = postura;
+  }
+  return posturas.map((postura, i) => ({ t: i / fps, p: encogimiento(postura) }));
+}

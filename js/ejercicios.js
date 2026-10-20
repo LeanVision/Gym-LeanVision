@@ -5,6 +5,7 @@ import * as sentadilla from "./sentadilla.js";
 import * as pesoMuerto from "./peso-muerto.js";
 import * as flexiones from "./flexiones.js";
 import * as estocadas from "./estocadas.js";
+import * as abdominales from "./abdominales.js";
 
 export const EJERCICIOS = {
   sentadilla: {
@@ -83,5 +84,24 @@ export const EJERCICIOS = {
     sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con las dos piernas, y que bajes la rodilla de atrás hacia el piso.",
     problemas: estocadas.PROBLEMAS,
     analizar: estocadas.analizarEstocadas,
+  },
+  abdominales: {
+    nombre: "Abdominales",
+    resumen: "Cuello · pies · ritmo",
+    color: "#C3B1FF",
+    icono: { caja: "0 0 64 44", trazos: '<circle cx="51" cy="14" r="6"/><path d="M30 38l14-16M30 38L18 22 8 38M44 22l-14 2M4 38h56"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Acostate boca arriba, con las rodillas dobladas y los pies apoyados en el piso, al ancho de la cadera.",
+      "Cruzá los brazos sobre el pecho o apoyá apenas las manos detrás de las orejas, sin entrelazar los dedos.",
+      "Apretá el abdomen y despegá los hombros del piso, mirando al techo, con un puño de espacio entre el mentón y el pecho.",
+      "Arriba, la zona lumbar sigue apoyada y los pies también. Soltá el aire al subir.",
+      "Bajá despacio, sin dejarte caer, y volvé a empezar.",
+    ],
+    noRevisamos: "Si la zona lumbar se despega del piso: el modelo no tiene puntos en la columna y no lo puede medir. Mantenela apoyada.",
+    consejosFilmacion: ["Para los abdominales, el celular bajo: a unos 30-50 cm del piso, de costado, con la cabeza y los pies adentro del cuadro."],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, acostado, y que despegues los hombros del piso en cada repetición.",
+    problemas: abdominales.PROBLEMAS,
+    analizar: abdominales.analizarAbdominales,
   },
 };

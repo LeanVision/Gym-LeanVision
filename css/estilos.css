@@ -62,9 +62,9 @@ body[data-pantalla="tutorial"] .volver { color: var(--ejercicio); }
 }
 
 /* Títulos y texto */
-/* El tamaño acompaña el ancho para que palabras largas ("ESTOCADAS",
-   "SENTADILLA") entren enteras en un celular; solo se cortan si no entran solas. */
-.titulo-grande { margin: 8px 0 10px; font-size: clamp(30px, 10vw, 54px); line-height: 0.9; overflow-wrap: break-word; }
+/* Las palabras no se cortan: si alguna no entra, app.js achica el título
+   hasta que entre ("ABDOMINALES", "ANALIZANDO" en un celular angosto). */
+.titulo-grande { margin: 8px 0 10px; font-size: 54px; line-height: 0.9; }
 .intro { margin: 0 0 20px; max-width: 320px; font-size: 16px; }
 .subtitulo { margin: 26px 0 10px; font-size: 18px; }
 .nota { margin: 8px 0 0; font-size: 13px; opacity: .9; }
@@ -143,7 +143,19 @@ body[data-pantalla="tutorial"] .volver { color: var(--ejercicio); }
 .boton.secundario { background: none; color: var(--crema); border: 2px solid var(--crema); min-height: 50px; font-size: 15px; }
 .punto-rec { width: 14px; height: 14px; border-radius: 50%; background: var(--ejercicio); }
 
-/* Analizando */
+/* Analizando: el muñequito hace el ejercicio en un bloque del color del ejercicio */
+.escenario {
+  position: relative;
+  margin-top: 6px; padding: 18px 12px 8px;
+  background: var(--ejercicio); border-radius: 32px;
+}
+.escenario svg { display: block; width: 100%; height: auto; }
+.escenario .piso { stroke: var(--tinta); stroke-width: 2.5; stroke-linecap: round; opacity: .35; }
+.escenario polyline { fill: none; stroke: var(--tinta); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; }
+.escenario .cabeza { fill: var(--tinta); }
+.escenario .disco { fill: none; stroke: var(--tinta); stroke-width: 3; }
+.sticker-porcentaje { position: absolute; top: 14px; right: 14px; font-size: 16px; transform: rotate(6deg); }
+
 .progreso { height: 14px; background: var(--tinta); border-radius: 999px; overflow: hidden; margin-top: 12px; }
 .progreso-barra { height: 100%; width: 0; background: var(--mandarina); border-radius: 999px; transition: width .2s; }
 

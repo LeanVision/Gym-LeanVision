@@ -3,5 +3,5 @@
 // coincidan). El "?v=" hace que el navegador baje los archivos nuevos en vez
 // de usar los que tiene guardados.
 //
-// 1.0 sentadilla · 1.1 talones · 1.2 peso muerto · 1.3 flexiones · 1.4 diseño nuevo · 1.5 estocadas
-export const VERSION = "1.5.0";
+// 1.0 sentadilla · 1.1 talones · 1.2 peso muerto · 1.3 flexiones · 1.4 diseño nuevo · 1.5 estocadas · 1.6 abdominales y animación
+export const VERSION = "1.6.0";
