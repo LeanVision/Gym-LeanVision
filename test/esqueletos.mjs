@@ -146,3 +146,49 @@ export function serieFlexiones(claves, fps = 15) {
   }
   return posturas.map((postura, i) => ({ t: i / fps, p: plancha(postura) }));
 }
+
+const ABAJO_V = { x: 0, y: 1 };
+
+/**
+ * Esqueleto en estocada, de perfil (adelante = +x). Pierna de adelante (lado
+ * de la cámara): flexión `delantera` y tibia inclinada `tibia`. Pierna de
+ * atrás (lado tapado): muslo `muslo` grados hacia atrás de la vertical y
+ * flexión `trasera`. `tronco`: inclinación del torso. `adelanteIzq`: la
+ * pierna de adelante es la del lado tapado (alternando piernas).
+ */
+export function estocada({ delantera = 5, tibia = 2, muslo = 0, trasera = 5, tronco = 3, miraDerecha = true, adelanteIzq = false } = {}) {
+  const tobilloDel = { x: 420, y: 800 };
+  const rodDel = mas(tobilloDel, rot(ARRIBA, tibia), 200);
+  const cadera = mas(rodDel, rot(ARRIBA, tibia - delantera), 200);
+  const rodTra = mas(cadera, rot(ABAJO_V, muslo), 200);
+  const tobilloTra = mas(rodTra, rot(ABAJO_V, muslo + trasera), 200);
+  const hombro = mas(cadera, rot(ARRIBA, tronco), 250);
+  const pie = (t) => ({ talon: { x: t.x - 20, y: t.y + 30 }, punta: { x: t.x + 60, y: t.y + 30 } });
+  const del = { cadera, rodilla: rodDel, tobillo: tobilloDel, ...pie(tobilloDel) };
+  const tra = { cadera, rodilla: rodTra, tobillo: tobilloTra, ...pie(tobilloTra) };
+  const [ladoDel, ladoTra] = adelanteIzq ? ["izq", "der"] : ["der", "izq"];
+  const p = {};
+  const poner = (nombre, q, v) => { p[nombre] = { x: miraDerecha ? q.x : 1000 - q.x, y: q.y, v }; };
+  for (const [n, q] of Object.entries(del)) poner(`${n}_${ladoDel}`, q, ladoDel === "der" ? 0.9 : 0.6);
+  for (const [n, q] of Object.entries(tra)) poner(`${n}_${ladoTra}`, q, ladoTra === "der" ? 0.9 : 0.6);
+  poner("hombro_der", hombro, 0.9);
+  poner("hombro_izq", hombro, 0.6);
+  return p;
+}
+
+/** Serie de estocadas: [[postura, segundos]], interpolando entre posturas. */
+export function serieEstocadas(claves, fps = 15) {
+  const campos = ["delantera", "tibia", "muslo", "trasera", "tronco"];
+  const posturas = [];
+  let anterior = claves[0][0];
+  for (const [postura, segundos] of claves) {
+    const n = Math.round(segundos * fps);
+    for (let i = 1; i <= n; i++) {
+      const r = { ...postura };
+      for (const k of campos) r[k] = (anterior[k] ?? 0) + ((postura[k] ?? 0) - (anterior[k] ?? 0)) * (i / n);
+      posturas.push(r);
+    }
+    anterior = postura;
+  }
+  return posturas.map((postura, i) => ({ t: i / fps, p: estocada(postura) }));
+}
