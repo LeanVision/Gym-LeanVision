@@ -85,8 +85,13 @@ export function angulos(p, lado) {
     // Muslo respecto de la horizontal: positivo = cadera por encima de la
     // rodilla, 0 = muslo paralelo al piso, negativo = por debajo.
     muslo: grados(Math.atan2(rodilla.y - cadera.y, Math.abs(rodilla.x - cadera.x))),
-    // Talón sobre la punta del pie, en largos de tibia (sube si se despega).
-    talon: visto("talon") && visto("punta") ? (p["punta" + s].y - p["talon" + s].y) / largoPierna : null,
+    // Altura del tobillo sobre la punta del pie, en largos de tibia: con el
+    // talón apoyado no cambia; si el talón se despega, el pie pivotea sobre
+    // la punta y el tobillo sube. No se usa el punto del talón: en una
+    // sentadilla profunda la cola lo tapa y el modelo lo ubica más arriba de
+    // donde está (en un video real daba "talón levantado" con el pie apoyado).
+    alturaTobillo: visto("punta") ? (p["punta" + s].y - p["tobillo" + s].y) / largoPierna : null,
+    largoTibiaPx: largoPierna,
     // De costado los dos hombros se superponen; de frente quedan separados.
     separacionHombros: null,
     largoTronco,

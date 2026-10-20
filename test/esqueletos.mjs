@@ -14,7 +14,7 @@ const ARRIBA = { x: 0, y: -1 };
  * tronco: inclinación del tronco; talon: cuánto se despega el talón (en largos de tibia).
  */
 export function perfil({ rodilla = 0, tibia = 0, tronco = 0, talon = 0, miraDerecha = true,
-  separacionHombros = 0, visibilidad = 0.9 } = {}) {
+  separacionHombros = 0, visibilidad = 0.9, escala = 1, talonTapado = 0 } = {}) {
   const tobillo = { x: 300, y: 800 };
   const rod = mas(tobillo, rot(ARRIBA, tibia), 200);
   const cadera = mas(rod, rot(ARRIBA, tibia - rodilla), 200);
@@ -22,13 +22,17 @@ export function perfil({ rodilla = 0, tibia = 0, tronco = 0, talon = 0, miraDere
   const codo = mas(hombro, { x: 0.3, y: 0.95 }, 120);
   const puntos = {
     hombro_der: hombro, cadera_der: cadera, rodilla_der: rod, tobillo_der: tobillo,
-    talon_der: { x: tobillo.x - 20, y: tobillo.y + 30 - talon * 200 },
-    punta_der: { x: tobillo.x + 60, y: tobillo.y + 30 },
+    // Talón despegado: el pie pivotea sobre la punta y el tobillo queda más
+    // alto respecto de ella (acá, bajando la punta: es lo mismo para la medida).
+    // talonTapado: el modelo ubica el talón más arriba de donde está (pasa
+    // cuando la cola lo tapa en el fondo de la sentadilla).
+    talon_der: { x: tobillo.x - 20, y: tobillo.y + 30 - talonTapado * 200 },
+    punta_der: { x: tobillo.x + 60, y: tobillo.y + 30 + talon * 200 },
     codo_der: codo, muneca_der: mas(codo, { x: 1, y: 0 }, 100),
   };
   const p = {};
   for (const [n, q] of Object.entries(puntos)) {
-    p[n] = { x: miraDerecha ? q.x : 1000 - q.x, y: q.y, v: visibilidad };
+    p[n] = { x: (miraDerecha ? q.x : 1000 - q.x) * escala, y: q.y * escala, v: visibilidad };
     // El lado tapado: en el mismo lugar (de costado se superponen) y menos visible.
     const otro = n.replace("_der", "_izq");
     p[otro] = { ...p[n], v: 0.3 };
@@ -43,7 +47,7 @@ const DE_PIE = { rodilla: 5, tibia: 2, tronco: 3, talon: 0 };
 
 function mezcla(a, b, f) {
   const r = { ...b };
-  for (const k of ["rodilla", "tibia", "tronco", "talon"]) r[k] = (a[k] ?? 0) + ((b[k] ?? 0) - (a[k] ?? 0)) * f;
+  for (const k of ["rodilla", "tibia", "tronco", "talon", "talonTapado"]) r[k] = (a[k] ?? 0) + ((b[k] ?? 0) - (a[k] ?? 0)) * f;
   return r;
 }
 
@@ -52,7 +56,7 @@ function mezcla(a, b, f) {
  * {fondo: postura en el punto más bajo, bajada, subida (s)}; entre una y otra
  * la persona queda de pie `pausa` segundos. Devuelve [{t, p}].
  */
-export function sentadillas(reps, { fps = 15, pausa = 1, extra = {} } = {}) {
+export function sentadillas(reps, { fps = 15, pausa = 1, extra = {}, escala = 1 } = {}) {
   const posturas = [];
   const quieto = (s) => { for (let i = 0; i < s * fps; i++) posturas.push({ ...DE_PIE, ...extra }); };
   quieto(pausa);
@@ -62,5 +66,5 @@ export function sentadillas(reps, { fps = 15, pausa = 1, extra = {} } = {}) {
     for (let i = 1; i <= subida * fps; i++) posturas.push(mezcla(abajo, DE_PIE, i / (subida * fps)));
     quieto(pausa);
   }
-  return posturas.map((postura, i) => ({ t: i / fps, p: perfil(postura) }));
+  return posturas.map((postura, i) => ({ t: i / fps, p: perfil({ ...postura, escala }) }));
 }

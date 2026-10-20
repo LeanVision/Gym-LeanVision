@@ -72,3 +72,27 @@ test("avisa si la persona no está de costado o no se ve entera", () => {
   const cortado = deCostado.map((c, i) => ({ ...c, a: i % 2 ? null : c.a }));
   assert.match(revisarToma(cortado).avisos.join(" "), /cuerpo entero/);
 });
+
+test("el talón tapado por la cola no cuenta como talón levantado", () => {
+  // Caso real: sentadilla profunda con el pie apoyado; el modelo ubicaba el
+  // talón sobre la pierna, ~25 % de la tibia más arriba.
+  const r = analizarSentadilla(cuadrosDe(sentadillas([{ fondo: { ...BUENA, talonTapado: 0.25 } }])));
+  assert.deepEqual(r.repeticiones[0].problemas, []);
+});
+
+test("un cuadro suelto con el pie mal ubicado no alcanza para marcar los talones", () => {
+  const cuadros = cuadrosDe(sentadillas([{ fondo: BUENA }]));
+  const { tFondo } = analizarSentadilla(cuadros).repeticiones[0];
+  const fondo = cuadros.findIndex((c) => c.t >= tFondo);
+  cuadros[fondo].a.alturaTobillo += 0.3;
+  assert.deepEqual(analizarSentadilla(cuadros).repeticiones[0].problemas, []);
+});
+
+test("con poca resolución no revisa los talones y avisa", () => {
+  // Tibia de 40 px (como un video de 202x360): el temblor del modelo es del
+  // tamaño de un despegue real.
+  const r = analizarSentadilla(cuadrosDe(sentadillas([{ fondo: { ...BUENA, talon: 0.15 } }], { escala: 0.2 })));
+  assert.equal(r.repeticiones.length, 1);
+  assert.deepEqual(r.repeticiones[0].problemas, []);
+  assert.match(r.avisos.join(" "), /talones/);
+});
