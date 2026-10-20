@@ -1,137 +1,190 @@
+/* Técnica Gym — estilo "póster": petróleo y mandarina.
+   Bloques de color sólido, cápsulas bien redondeadas y tipografía Archivo
+   extra ancha para los títulos. */
+
 :root {
-  --fondo: #f8fafc;
-  --superficie: #ffffff;
-  --texto: #0f172a;
-  --suave: #475569;
-  --borde: #e2e8f0;
-  --acento: #0891b2;
-  --acento-texto: #ffffff;
-  --bien: #16a34a;
-  --regular: #d97706;
-  --mal: #dc2626;
-  --aviso-fondo: #fef3c7;
-  --aviso-texto: #78350f;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --fondo: #0f172a;
-    --superficie: #1e293b;
-    --texto: #f1f5f9;
-    --suave: #94a3b8;
-    --borde: #334155;
-    --acento: #22d3ee;
-    --acento-texto: #0f172a;
-    --bien: #4ade80;
-    --regular: #fbbf24;
-    --mal: #f87171;
-    --aviso-fondo: #451a03;
-    --aviso-texto: #fde68a;
-  }
+  --fondo: #0D4F5C;      /* azul petróleo */
+  --tinta: #0A1F24;      /* texto sobre colores y botones */
+  --crema: #FFF8EE;      /* texto sobre el fondo, tarjetas neutras */
+  --mandarina: #FF9F1C;  /* sentadilla, errores */
+  --rosa: #FFB5C8;       /* destacados */
+  --ejercicio: var(--mandarina); /* color del ejercicio elegido (lo pone app.js) */
+  color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
+/* "hidden" tiene que ganarle a los display de abajo (botón volver, chips, avisos…). */
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body {
   margin: 0;
+  min-height: 100vh;
   background: var(--fondo);
-  color: var(--texto);
-  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--crema);
+  font: 500 16px/1.45 Archivo, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  transition: background-color .25s;
+}
+/* En el tutorial toda la pantalla toma el color del ejercicio, y el contenido sube en una hoja. */
+body[data-pantalla="tutorial"] { background: var(--ejercicio); color: var(--tinta); }
+
+.app { max-width: 480px; margin: 0 auto; padding: 0 18px 24px; }
+
+.ancha, .marca, .titulo-grande, .puntaje, .tarjeta-titulo, .subtitulo, .consejo-titulo, .paso-numero {
+  font-family: Archivo, system-ui, sans-serif;
+  font-stretch: 125%;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
 }
 
+/* Barra superior */
 .barra {
-  position: sticky; top: 0; z-index: 2;
-  display: flex; align-items: center; gap: 8px;
-  padding: 12px 16px;
-  padding-top: max(12px, env(safe-area-inset-top));
-  background: var(--superficie);
-  border-bottom: 1px solid var(--borde);
+  display: flex; align-items: center; gap: 10px;
+  min-height: 64px;
+  padding-top: max(10px, env(safe-area-inset-top));
 }
-.barra h1 { margin: 0; font-size: 1.15rem; }
+.marca { font-size: 20px; flex: 1; }
 .volver {
-  border: 0; background: none; color: var(--texto);
-  font-size: 1.4rem; padding: 0 8px 0 0; cursor: pointer;
-}
-
-main { max-width: 640px; margin: 0 auto; padding: 16px; }
-h2 { margin: 4px 0 12px; }
-h3 { margin: 24px 0 8px; font-size: 1.05rem; }
-.intro { color: var(--suave); margin-top: 0; }
-.nota, .privacidad { color: var(--suave); font-size: .9rem; }
-
-.tarjeta {
-  display: block; width: 100%; text-align: left;
-  margin: 0 0 12px; padding: 16px;
-  background: var(--superficie); color: var(--texto);
-  border: 1px solid var(--borde); border-radius: 12px;
-  font: inherit; cursor: pointer;
-}
-.tarjeta:not(.deshabilitada):hover { border-color: var(--acento); }
-.tarjeta.deshabilitada { opacity: .55; cursor: default; }
-.tarjeta-titulo { display: block; font-weight: 600; font-size: 1.1rem; }
-.tarjeta-texto { display: block; color: var(--suave); font-size: .92rem; }
-
-.pasos, .errores, .consejos { padding-left: 1.3em; margin: 0; }
-.pasos li, .errores li, .consejos li { margin-bottom: 6px; }
-.errores strong { display: block; }
-
-.esquema { margin: 8px 0; padding: 8px; background: var(--superficie); border: 1px solid var(--borde); border-radius: 12px; }
-.esquema svg { width: 100%; height: auto; display: block; }
-.esquema .piso, .esquema .tripode { stroke: var(--suave); stroke-width: 2; }
-.esquema .persona { stroke: var(--texto); stroke-width: 4; fill: none; stroke-linecap: round; }
-.esquema .celular { fill: var(--acento); }
-.esquema .flecha { stroke: var(--acento); stroke-width: 2; stroke-dasharray: 5 4; }
-.esquema .punta { fill: var(--acento); }
-.esquema .rotulo { fill: var(--suave); font-size: 12px; }
-
-.acciones { display: flex; flex-wrap: wrap; gap: 10px; margin: 24px 0 8px; }
-.boton {
-  flex: 1 1 140px;
-  display: inline-flex; align-items: center; justify-content: center;
-  min-height: 48px; padding: 0 16px;
-  border: 1px solid var(--acento); border-radius: 10px;
-  background: transparent; color: var(--acento);
-  font: inherit; font-weight: 600; cursor: pointer;
-}
-.boton.principal { background: var(--acento); color: var(--acento-texto); }
-
-.progreso { height: 10px; background: var(--borde); border-radius: 5px; overflow: hidden; }
-.progreso-barra { height: 100%; width: 0; background: var(--acento); transition: width .2s; }
-
-.resumen { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
-.puntaje {
-  flex: 0 0 72px; height: 72px; border-radius: 50%;
+  width: 44px; height: 44px; flex-shrink: 0;
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.6rem; font-weight: 700;
-  border: 4px solid var(--borde);
+  border: 0; border-radius: 999px;
+  background: var(--tinta); color: var(--crema);
+  cursor: pointer;
 }
-.puntaje.bien { border-color: var(--bien); color: var(--bien); }
-.puntaje.regular { border-color: var(--regular); color: var(--regular); }
-.puntaje.mal { border-color: var(--mal); color: var(--mal); }
-.resumen-titulo { font-weight: 600; font-size: 1.1rem; }
-.resumen-texto { color: var(--suave); }
+body[data-pantalla="tutorial"] .volver { color: var(--ejercicio); }
+.sticker {
+  display: inline-block;
+  transform: rotate(-6deg);
+  background: var(--rosa); color: var(--tinta);
+  border: 2px solid var(--tinta); border-radius: 999px;
+  padding: 3px 12px;
+  font-weight: 800; font-size: 13px; white-space: nowrap;
+}
 
-.avisos { background: var(--aviso-fondo); color: var(--aviso-texto); border-radius: 10px; padding: 12px; margin-bottom: 12px; }
+/* Títulos y texto */
+.titulo-grande { margin: 8px 0 10px; font-size: clamp(40px, 13vw, 54px); line-height: 0.9; overflow-wrap: anywhere; }
+.intro { margin: 0 0 20px; max-width: 320px; font-size: 16px; }
+.subtitulo { margin: 26px 0 10px; font-size: 18px; }
+.nota { margin: 8px 0 0; font-size: 13px; opacity: .9; }
+.centrada { text-align: center; }
+
+/* Inicio: un bloque de color por ejercicio */
+.tarjetas { display: flex; flex-direction: column; gap: 10px; }
+.tarjeta {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  width: 100%; min-height: 96px; padding: 16px 20px;
+  border: 0; border-radius: 32px;
+  color: var(--tinta); text-align: left;
+  font: inherit; cursor: pointer;
+  transition: transform .15s;
+}
+.tarjeta:hover { transform: translateY(-2px); }
+.tarjeta:active { transform: scale(.98); }
+.tarjeta-titulo { display: block; font-size: 26px; line-height: 1; }
+.tarjeta-texto { display: block; margin-top: 6px; font-size: 13px; font-weight: 600; }
+.tarjeta svg { flex-shrink: 0; }
+.pie {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-top: 28px; font-size: 13px;
+}
+.privado { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+
+/* Tutorial */
+.hoja {
+  margin: 18px -18px -24px; padding: 22px 18px 28px;
+  min-height: calc(100vh - 210px);
+  background: var(--fondo); color: var(--crema);
+  border-radius: 32px 32px 0 0;
+}
+.pestanas { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+.pestanas button {
+  min-height: 44px; padding: 0 16px;
+  border: 2px solid var(--crema); border-radius: 999px;
+  background: none; color: var(--crema);
+  font: 700 13px Archivo, sans-serif; cursor: pointer;
+}
+.pestanas button[aria-selected="true"] { background: var(--crema); color: var(--tinta); }
+
+.pasos { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.pasos li {
+  display: flex; gap: 12px; align-items: center;
+  background: var(--crema); color: var(--tinta);
+  border-radius: 22px; padding: 12px 14px;
+  font-size: 15px; line-height: 1.4;
+}
+.pasos li.clave { background: var(--rosa); font-weight: 600; }
+.paso-numero { font-size: 22px; width: 28px; flex-shrink: 0; }
+
+.errores { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.errores li { background: var(--crema); color: var(--tinta); border-radius: 22px; padding: 14px 16px; font-size: 14px; }
+.errores strong { display: block; margin-bottom: 2px; font-size: 15px; }
+
+.esquema { margin: 0 0 14px; padding: 10px; border: 2px solid var(--crema); border-radius: 22px; }
+.esquema svg { display: block; width: 100%; height: auto; }
+.esquema .piso { stroke: var(--crema); stroke-width: 2; fill: none; stroke-linecap: round; }
+.esquema .persona { stroke: var(--crema); stroke-width: 4; fill: none; stroke-linecap: round; }
+.esquema .celular { fill: var(--rosa); }
+.esquema .flecha { stroke: var(--mandarina); stroke-width: 2.5; fill: none; stroke-dasharray: 6 5; stroke-linecap: round; }
+.esquema .rotulo { fill: var(--crema); font: 700 12px Archivo, sans-serif; }
+.consejos { margin: 0; padding-left: 1.2em; font-size: 14px; }
+.consejos li { margin-bottom: 6px; }
+
+/* Botones */
+.acciones { display: flex; flex-direction: column; gap: 10px; margin-top: 24px; }
+.boton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  min-height: 56px; padding: 0 20px;
+  border-radius: 999px;
+  font: 800 17px Archivo, sans-serif; cursor: pointer;
+}
+.boton.principal { background: var(--tinta); color: var(--crema); border: 0; }
+.boton.secundario { background: none; color: var(--crema); border: 2px solid var(--crema); min-height: 50px; font-size: 15px; }
+.punto-rec { width: 14px; height: 14px; border-radius: 50%; background: var(--ejercicio); }
+
+/* Analizando */
+.progreso { height: 14px; background: var(--tinta); border-radius: 999px; overflow: hidden; margin-top: 12px; }
+.progreso-barra { height: 100%; width: 0; background: var(--mandarina); border-radius: 999px; transition: width .2s; }
+
+/* Resultado */
+.resumen { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: 4px; }
+.puntaje { font-size: 104px; line-height: .82; }
+.puntaje-texto { margin-top: 8px; font-size: 14px; font-weight: 600; }
+.chips { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; padding-bottom: 4px; }
+.sticker-ejercicio { transform: rotate(5deg); margin-bottom: 4px; }
+.chip { background: var(--crema); color: var(--tinta); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 700; }
+.chip-alerta { background: var(--mandarina); }
+.resumen-texto { margin: 14px 0 0; font-size: 15px; }
+
+.avisos { margin-top: 14px; padding: 14px 16px; border-radius: 22px; background: var(--crema); color: var(--tinta); font-size: 14px; }
 .avisos p { margin: 0 0 6px; }
 .avisos p:last-child { margin: 0; }
 
-.reproductor { position: relative; border-radius: 12px; overflow: hidden; background: #000; }
+.reproductor { position: relative; margin-top: 14px; border-radius: 32px; overflow: hidden; background: var(--tinta); }
 .reproductor video, .reproductor canvas { display: block; width: 100%; max-height: 70vh; object-fit: contain; }
 .reproductor canvas { position: absolute; inset: 0; height: 100%; pointer-events: none; }
 
 .consejo-principal {
-  margin-top: 12px; padding: 12px;
-  background: var(--superficie); border: 1px solid var(--borde);
-  border-left: 4px solid var(--regular); border-radius: 10px;
+  margin-top: 12px; padding: 14px 18px;
+  background: var(--rosa); color: var(--tinta);
+  border-radius: 26px; font-size: 14px;
 }
-.consejo-principal strong { display: block; }
+.consejo-principal.todo-bien { background: var(--crema); }
+.consejo-titulo { display: block; margin-bottom: 4px; font-size: 16px; }
 
-.repeticiones { list-style: none; padding: 0; margin: 0; }
+.repeticiones { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 8px; }
 .repeticion {
-  display: block; width: 100%; text-align: left; margin-bottom: 8px; padding: 12px;
-  background: var(--superficie); color: var(--texto);
-  border: 1px solid var(--borde); border-left: 4px solid var(--bien); border-radius: 10px;
-  font: inherit; cursor: pointer;
+  min-height: 64px; border: 3px solid transparent; border-radius: 22px;
+  background: var(--crema); color: var(--tinta);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  font: 600 12px Archivo, sans-serif; cursor: pointer;
 }
-.repeticion.con-errores { border-left-color: var(--mal); }
-.repeticion-cabecera { display: flex; justify-content: space-between; font-weight: 600; }
-.repeticion ul { margin: 6px 0 0; padding-left: 1.2em; color: var(--suave); font-size: .92rem; }
+.repeticion strong { font-weight: 900; font-size: 18px; }
+.repeticion.con-errores { background: var(--mandarina); }
+.repeticion[aria-pressed="true"] { border-color: var(--crema); outline: 3px solid var(--tinta); outline-offset: -6px; }
+.detalle-rep { margin-top: 10px; padding: 14px 16px; border-radius: 22px; background: var(--crema); color: var(--tinta); font-size: 14px; }
+.detalle-rep h3 { margin: 0 0 6px; font: 900 15px Archivo, sans-serif; font-stretch: 125%; text-transform: uppercase; }
+.detalle-rep ul { margin: 0; padding-left: 1.2em; }
+.detalle-rep li { margin-bottom: 4px; }
+
+:focus-visible { outline: 3px solid var(--rosa); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

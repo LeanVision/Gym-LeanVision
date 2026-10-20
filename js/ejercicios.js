@@ -8,7 +8,11 @@ import * as flexiones from "./flexiones.js";
 export const EJERCICIOS = {
   sentadilla: {
     nombre: "Sentadilla",
-    resumen: "Profundidad, inclinación del tronco, talones y control de la bajada",
+    resumen: "Profundidad · tronco · talones",
+    color: "#FF9F1C",
+    // Dibujo de la tarjeta: viewBox y trazos del muñequito.
+    icono: { caja: "0 0 54 64", trazos: '<circle cx="32" cy="9" r="6"/><path d="M30 17l-10 18 14 6-4 18M20 35l-7 22"/>' },
+    pasoClave: 3, // el paso que se resalta en el tutorial (desde 0)
     pasos: [
       "Pies al ancho de los hombros, puntas un poco hacia afuera.",
       "Tomá aire, apretá el abdomen y mantené el pecho arriba.",
@@ -24,7 +28,10 @@ export const EJERCICIOS = {
   },
   pesoMuerto: {
     nombre: "Peso muerto",
-    resumen: "Cadera y pecho juntos, barra pegada al cuerpo, posición de arranque y final",
+    resumen: "Cadera · barra · final",
+    color: "#FFB5C8",
+    icono: { caja: "0 0 58 60", trazos: '<circle cx="40" cy="10" r="6"/><path d="M36 17L18 28l6 9-4 17M18 28l12 4 2 22M4 46h50"/>' },
+    pasoClave: 3,
     pasos: [
       "Pies al ancho de la cadera, con la barra arriba de la mitad del pie (a unos 3 cm de las tibias).",
       "Agachate y agarrá la barra apenas por fuera de las piernas, con los brazos estirados.",
@@ -40,7 +47,10 @@ export const EJERCICIOS = {
   },
   flexiones: {
     nombre: "Flexiones de brazos",
-    resumen: "Cuerpo en línea recta, profundidad, brazos estirados arriba y posición de la cabeza",
+    resumen: "Línea · codos · cabeza",
+    color: "#FFF8EE",
+    icono: { caja: "0 0 64 44", trazos: '<circle cx="54" cy="10" r="6"/><path d="M48 15L6 26M46 17l3 16M4 38h56"/>' },
+    pasoClave: 1,
     pasos: [
       "Apoyá las manos en el piso un poco más abiertas que los hombros, justo debajo de ellos.",
       "Estirá las piernas y apoyá las puntas de los pies: el cuerpo en línea recta de la cabeza a los talones.",
