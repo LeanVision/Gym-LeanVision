@@ -11,12 +11,9 @@
 import { percentil, separarRepeticiones } from "./repeticiones.js";
 
 export const UMBRALES = {
-  // Repetición: la cadera se flexiona al menos esto por encima de la posición de pie...
+  // Repetición: la cadera se flexiona al menos esto por encima de la posición de pie (ver repeticiones.js).
   inicioRep: 40,
   // ...y termina cuando vuelve a quedar a menos de esto.
-  // Más holgado que en la sentadilla: si no termina derecho (cadera
-  // flexionada ~25°), la repetición igual tiene que cerrarse.
-  finRep: 25,
   duracionMinimaRep: 0.8, // s
   // Rodillas abajo de todo: más que esto es una sentadilla con la barra,
   // menos es tirar con las piernas rectas (eso es otro ejercicio: el peso

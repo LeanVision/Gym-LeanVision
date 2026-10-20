@@ -7,10 +7,8 @@
 import { percentil, separarRepeticiones } from "./repeticiones.js";
 
 export const UMBRALES = {
-  // Repetición: la rodilla se flexiona al menos esto por encima de la posición de pie...
+  // Repetición: la rodilla se flexiona al menos esto por encima de la posición de pie (ver repeticiones.js).
   inicioRep: 35,
-  // ...y termina cuando vuelve a quedar a menos de esto.
-  finRep: 15,
   duracionMinimaRep: 0.6, // s: más corto es ruido o un amague
   // Profundidad: el muslo debería llegar al paralelo (0°). Hasta 15° por
   // encima se acepta; más, es una sentadilla corta.
