@@ -92,10 +92,18 @@ export function angulos(p, lado) {
     // donde está (en un video real daba "talón levantado" con el pie apoyado).
     alturaTobillo: visto("punta") ? (p["punta" + s].y - p["tobillo" + s].y) / largoPierna : null,
     largoTibiaPx: largoPierna,
+    // Manos (la barra) respecto de la mitad del pie, en largos de tronco:
+    // positivo = adelante. En el peso muerto la barra tiene que subir pegada
+    // a las piernas, sobre la mitad del pie.
+    barra: null,
     // De costado los dos hombros se superponen; de frente quedan separados.
     separacionHombros: null,
     largoTronco,
   };
+  if (visto("muneca") && largoTronco > 0) {
+    const mitadPie = visto("punta") ? (tobillo.x + q("punta").x) / 2 : tobillo.x;
+    a.barra = (q("muneca").x - mitadPie) / largoTronco;
+  }
   const hi = p.hombro_izq, hd = p.hombro_der;
   if (hi && hd && hi.v >= VISIBILIDAD_MINIMA && hd.v >= VISIBILIDAD_MINIMA && largoTronco > 0) {
     a.separacionHombros = Math.abs(hi.x - hd.x) / largoTronco;

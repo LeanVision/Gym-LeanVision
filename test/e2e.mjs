@@ -3,6 +3,7 @@
 // pose de un archivo local, así corre sin internet.
 //
 //   MODELO_POSE=pose_landmarker_full.task VIDEO=sentadilla.webm npm run test:e2e
+//   EJERCICIO="Peso muerto" MODELO_POSE=... VIDEO=peso-muerto.webm npm run test:e2e
 //
 // Opcional: CHROMIUM=/ruta/a/chrome si playwright no encuentra uno instalado.
 // Chromium sin códecs propietarios no lee H.264: usar un .webm (VP9).
@@ -47,7 +48,7 @@ try {
     ruta.fulfill({ body: await readFile(MODELO_POSE), contentType: "application/octet-stream" }));
 
   await pagina.goto(url);
-  await pagina.click("text=Sentadilla");
+  await pagina.click(`.tarjeta-titulo:text-is("${process.env.EJERCICIO ?? "Sentadilla"}")`);
   await pagina.setInputFiles("#elegir", VIDEO);
   await pagina.waitForSelector("#resultado:not([hidden])", { timeout: 5 * 60_000 });
   const analisis = await pagina.evaluate(() => window.ultimoAnalisis);
