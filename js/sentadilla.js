@@ -4,6 +4,8 @@
 // barra o sin peso vista de costado; conviene que los revise un profesional
 // (kinesiólogo, entrenador) y ajustarlos con videos reales.
 
+import { percentil, separarRepeticiones } from "./repeticiones.js";
+
 export const UMBRALES = {
   // Repetición: la rodilla se flexiona al menos esto por encima de la posición de pie...
   inicioRep: 35,
@@ -51,54 +53,6 @@ export const PROBLEMAS = {
   },
 };
 
-function percentil(valores, p) {
-  const v = [...valores].sort((a, b) => a - b);
-  if (!v.length) return null;
-  return v[Math.min(v.length - 1, Math.max(0, Math.round((p / 100) * (v.length - 1))))];
-}
-
-function suavizar(serie, ventana) {
-  return serie.map((_, i) => {
-    let suma = 0, n = 0;
-    for (let j = i - ventana; j <= i + ventana; j++) {
-      if (j >= 0 && j < serie.length && serie[j] != null) { suma += serie[j]; n++; }
-    }
-    return n ? suma / n : null;
-  });
-}
-
-/**
- * Separa las repeticiones a partir de la flexión de rodilla.
- * `cuadros`: [{t, a}] con `a` = ángulos del cuadro o null.
- * Devuelve [{inicio, fondo, fin}] como índices de `cuadros`.
- */
-export function separarRepeticiones(cuadros, u = UMBRALES) {
-  const fps = cuadros.length > 1 ? (cuadros.length - 1) / (cuadros.at(-1).t - cuadros[0].t) : 15;
-  const rodilla = suavizar(cuadros.map((c) => c.a?.rodilla ?? null), Math.max(1, Math.round(fps * 0.1)));
-  const deFondo = percentil(rodilla.filter((r) => r != null), 10);
-  if (deFondo == null) return [];
-
-  const reps = [];
-  let inicio = null, fondo = null, ultimoParado = 0;
-  rodilla.forEach((r, i) => {
-    // El suavizado rellena los cuadros sin cuerpo; esos no pueden ser el
-    // punto más bajo ni el inicio, porque no tienen ángulos para revisar.
-    if (r == null || !cuadros[i].a) return;
-    if (inicio == null) {
-      if (r <= deFondo + u.finRep) ultimoParado = i;
-      if (r >= deFondo + u.inicioRep) { inicio = ultimoParado; fondo = i; }
-      return;
-    }
-    if (r > rodilla[fondo]) fondo = i;
-    if (r <= deFondo + u.finRep) {
-      if (cuadros[i].t - cuadros[inicio].t >= u.duracionMinimaRep) reps.push({ inicio, fondo, fin: i });
-      inicio = null;
-      ultimoParado = i;
-    }
-  });
-  return reps;
-}
-
 /** Revisa una repetición. Devuelve {problemas: [{tipo, detalle}], medidas}. */
 export function revisarRepeticion(cuadros, rep, tobilloDePie, u = UMBRALES) {
   const fondo = cuadros[rep.fondo].a;
@@ -137,7 +91,7 @@ export function puntaje(problemas) {
 
 /** Analiza la serie completa. */
 export function analizarSentadilla(cuadros, u = UMBRALES) {
-  const reps = separarRepeticiones(cuadros, u);
+  const reps = separarRepeticiones(cuadros, "rodilla", u);
   // Referencia de pie: antes de la primera bajada (o todo el video si no hay).
   const dePie = cuadros.slice(0, reps[0]?.inicio + 1 || cuadros.length).filter((c) => c.a);
   const tobillo = dePie.map((c) => c.a.alturaTobillo).filter((v) => v != null);

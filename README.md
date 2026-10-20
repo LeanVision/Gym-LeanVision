@@ -2,7 +2,7 @@
 
 Web app que corrige la técnica en el gimnasio: te grabás haciendo el
 ejercicio con el celular y te dice qué corregir, repetición por repetición.
-Por ahora: **sentadilla**.
+Por ahora: **sentadilla** y **peso muerto**.
 
 - Se abre desde el navegador del celular, sin instalar nada.
 - El video se analiza **en el celular** (MediaPipe Pose): no se sube a ningún servidor.
@@ -35,13 +35,32 @@ costado o no se ve entera, avisa que los resultados pueden no ser exactos.
 Son los mismos criterios que se validaron con videos reales en
 [Ergonomia-LeanVision](https://github.com/LeanVision/Ergonomia-LeanVision).
 
+## Qué revisa en el peso muerto
+
+Desde una toma de costado; las repeticiones se cuentan con la flexión de cadera.
+
+| Error | Cómo se mide | Umbral |
+|---|---|---|
+| La cadera sube antes que el pecho | Cuánto se acuesta el tronco en la primera mitad de la subida | más de 10° |
+| La barra se aleja del cuerpo | Manos respecto de la mitad del pie, mediana de la subida | más de 0,25 largos de tronco adelante |
+| Cadera muy baja (como una sentadilla) | Flexión de rodilla abajo de todo | más de 100° |
+| Piernas demasiado rectas | Flexión de rodilla abajo de todo | menos de 15° |
+| No terminás derecho | Flexión de cadera arriba de todo | más de 20° |
+| Te tirás hacia atrás arriba | Tronco arriba de todo | más de 15° hacia atrás |
+
+Los umbrales están en `js/peso-muerto.js` (`UMBRALES`). **No revisa la
+espalda redondeada**: MediaPipe no tiene puntos en la columna, así que una
+espalda curva y una recta dan el mismo ángulo. El tutorial lo explica.
+
 ## Estructura
 
 - `index.html`, `css/estilos.css`: las pantallas (inicio, tutorial, análisis, resultado).
 - `js/app.js`: el recorrido entre pantallas y el resultado.
+- `js/ejercicios.js`: los ejercicios de la app (tutorial, errores y análisis de cada uno). Para agregar uno: su módulo de análisis y una entrada acá.
+- `js/repeticiones.js`: separa la serie en repeticiones (común a todos los ejercicios).
 - `js/pose.js`: MediaPipe Pose en el navegador; recorre el video cuadro a cuadro.
 - `js/geometria.js`: ángulos del cuerpo a partir de los puntos del esqueleto.
-- `js/sentadilla.js`: separa las repeticiones y revisa cada una.
+- `js/sentadilla.js`, `js/peso-muerto.js`: revisan cada repetición de su ejercicio.
 - `js/calidad.js`: si la toma sirve para corregir.
 - `js/dibujo.js`: el esqueleto sobre el video (verde = bien, rojo = con errores).
 
@@ -58,8 +77,9 @@ con **GitHub Pages** (Settings → Pages → Deploy from a branch → `main`, ca
 
 ```bash
 npm install
-npm test        # lógica: ángulos, repeticiones y errores, con esqueletos sintéticos
+npm test        # lógica de cada ejercicio, con esqueletos sintéticos
 MODELO_POSE=pose_landmarker_full.task VIDEO=sentadilla.webm npm run test:e2e   # la app entera en Chromium
+EJERCICIO="Peso muerto" MODELO_POSE=pose_landmarker_full.task VIDEO=peso-muerto.webm npm run test:e2e
 ```
 
 La prueba de punta a punta usa MediaPipe de `node_modules` y el modelo de un

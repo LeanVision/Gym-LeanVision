@@ -14,7 +14,7 @@ const ARRIBA = { x: 0, y: -1 };
  * tronco: inclinación del tronco; talon: cuánto se despega el talón (en largos de tibia).
  */
 export function perfil({ rodilla = 0, tibia = 0, tronco = 0, talon = 0, miraDerecha = true,
-  separacionHombros = 0, visibilidad = 0.9, escala = 1, talonTapado = 0 } = {}) {
+  separacionHombros = 0, visibilidad = 0.9, escala = 1, talonTapado = 0, barra = null } = {}) {
   const tobillo = { x: 300, y: 800 };
   const rod = mas(tobillo, rot(ARRIBA, tibia), 200);
   const cadera = mas(rod, rot(ARRIBA, tibia - rodilla), 200);
@@ -30,6 +30,9 @@ export function perfil({ rodilla = 0, tibia = 0, tronco = 0, talon = 0, miraDere
     punta_der: { x: tobillo.x + 60, y: tobillo.y + 30 + talon * 200 },
     codo_der: codo, muneca_der: mas(codo, { x: 1, y: 0 }, 100),
   };
+  // barra: las manos (la barra) a esa distancia de la mitad del pie, en
+  // largos de tronco (250 px), a la altura de la rodilla.
+  if (barra != null) puntos.muneca_der = { x: (tobillo.x + puntos.punta_der.x) / 2 + barra * 250, y: rod.y };
   const p = {};
   for (const [n, q] of Object.entries(puntos)) {
     p[n] = { x: (miraDerecha ? q.x : 1000 - q.x) * escala, y: q.y * escala, v: visibilidad };
@@ -47,7 +50,7 @@ const DE_PIE = { rodilla: 5, tibia: 2, tronco: 3, talon: 0 };
 
 function mezcla(a, b, f) {
   const r = { ...b };
-  for (const k of ["rodilla", "tibia", "tronco", "talon", "talonTapado"]) r[k] = (a[k] ?? 0) + ((b[k] ?? 0) - (a[k] ?? 0)) * f;
+  for (const k of ["rodilla", "tibia", "tronco", "talon", "talonTapado", "barra"]) r[k] = (a[k] ?? 0) + ((b[k] ?? 0) - (a[k] ?? 0)) * f;
   return r;
 }
 
@@ -65,6 +68,21 @@ export function sentadillas(reps, { fps = 15, pausa = 1, extra = {}, escala = 1 
     for (let i = 1; i <= bajada * fps; i++) posturas.push(mezcla(DE_PIE, abajo, i / (bajada * fps)));
     for (let i = 1; i <= subida * fps; i++) posturas.push(mezcla(abajo, DE_PIE, i / (subida * fps)));
     quieto(pausa);
+  }
+  return posturas.map((postura, i) => ({ t: i / fps, p: perfil({ ...postura, escala }) }));
+}
+
+/**
+ * Serie a partir de posturas clave: [[postura, segundos]], pasando de una a
+ * la siguiente en esos segundos (la primera se mantiene quieta).
+ */
+export function secuencia(claves, { fps = 15, escala = 1 } = {}) {
+  const posturas = [];
+  let anterior = claves[0][0];
+  for (const [postura, segundos] of claves) {
+    const n = Math.round(segundos * fps);
+    for (let i = 1; i <= n; i++) posturas.push(mezcla(anterior, postura, i / n));
+    anterior = postura;
   }
   return posturas.map((postura, i) => ({ t: i / fps, p: perfil({ ...postura, escala }) }));
 }

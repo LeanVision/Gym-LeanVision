@@ -17,14 +17,7 @@
     <!-- Inicio -->
     <section id="inicio" class="pantalla">
       <p class="intro">Grabate haciendo el ejercicio y te decimos qué corregir, repetición por repetición.</p>
-      <button class="tarjeta" data-ir="tutorial">
-        <span class="tarjeta-titulo">Sentadilla</span>
-        <span class="tarjeta-texto">Profundidad, inclinación del tronco, talones y control de la bajada</span>
-      </button>
-      <div class="tarjeta deshabilitada">
-        <span class="tarjeta-titulo">Peso muerto</span>
-        <span class="tarjeta-texto">Próximamente</span>
-      </div>
+      <div id="tarjetas"></div>
       <div class="tarjeta deshabilitada">
         <span class="tarjeta-titulo">Flexiones de brazos</span>
         <span class="tarjeta-texto">Próximamente</span>
@@ -34,19 +27,14 @@
 
     <!-- Tutorial -->
     <section id="tutorial" class="pantalla" hidden>
-      <h2>Sentadilla</h2>
+      <h2 id="tutorial-titulo"></h2>
 
       <h3>Cómo se hace</h3>
-      <ol class="pasos">
-        <li>Pies al ancho de los hombros, puntas un poco hacia afuera.</li>
-        <li>Tomá aire, apretá el abdomen y mantené el pecho arriba.</li>
-        <li>Bajá llevando la cadera hacia atrás y abajo, con las rodillas en la dirección de las puntas de los pies.</li>
-        <li>Bajá hasta que el muslo quede paralelo al piso, con todo el pie apoyado.</li>
-        <li>Subí empujando el piso con todo el pie, hasta quedar derecho.</li>
-      </ol>
+      <ol class="pasos" id="pasos"></ol>
 
       <h3>Qué revisamos</h3>
       <ul class="errores" id="lista-errores"></ul>
+      <p class="nota" id="no-revisamos"></p>
 
       <h3>Cómo filmarte</h3>
       <figure class="esquema">
@@ -71,6 +59,7 @@
         <li>Solo vos en la imagen, y buena luz.</li>
         <li>Hacé entre 3 y 10 repeticiones.</li>
       </ul>
+      <ul class="consejos" id="consejos-filmacion"></ul>
 
       <div class="acciones">
         <label class="boton principal">
