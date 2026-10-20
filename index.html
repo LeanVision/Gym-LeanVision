@@ -3,107 +3,155 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0f172a">
+  <meta name="theme-color" content="#0D4F5C">
   <title>Técnica Gym</title>
-  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,400;100,500;100,600;100,700;100,800;125,800;125,900&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/estilos.css?v=1.4.0">
+  <!-- Cada módulo con la versión: así el navegador no usa archivos viejos guardados. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "./js/app.js": "./js/app.js?v=1.4.0",
+      "./js/calidad.js": "./js/calidad.js?v=1.4.0",
+      "./js/dibujo.js": "./js/dibujo.js?v=1.4.0",
+      "./js/ejercicios.js": "./js/ejercicios.js?v=1.4.0",
+      "./js/flexiones.js": "./js/flexiones.js?v=1.4.0",
+      "./js/geometria.js": "./js/geometria.js?v=1.4.0",
+      "./js/peso-muerto.js": "./js/peso-muerto.js?v=1.4.0",
+      "./js/pose.js": "./js/pose.js?v=1.4.0",
+      "./js/repeticiones.js": "./js/repeticiones.js?v=1.4.0",
+      "./js/sentadilla.js": "./js/sentadilla.js?v=1.4.0",
+      "./js/version.js": "./js/version.js?v=1.4.0"
+    }
+  }
+  </script>
 </head>
-<body>
-  <header class="barra">
-    <button class="volver" id="volver" hidden aria-label="Volver">←</button>
-    <h1>Técnica Gym</h1>
-  </header>
+<body data-pantalla="inicio">
+  <div class="app">
+    <header class="barra">
+      <button class="volver" id="volver" hidden aria-label="Volver">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+      </button>
+      <span class="marca" id="marca">Técnica gym</span>
+      <span class="sticker" data-version></span>
+    </header>
 
-  <main>
-    <!-- Inicio -->
-    <section id="inicio" class="pantalla">
-      <p class="intro">Grabate haciendo el ejercicio y te decimos qué corregir, repetición por repetición.</p>
-      <div id="tarjetas"></div>
-      <p class="privacidad">El video se analiza en tu celular: no se sube a ningún servidor.</p>
-    </section>
+    <main>
+      <!-- Inicio -->
+      <section id="inicio" class="pantalla">
+        <h1 class="titulo-grande">Movete<br>mejor.</h1>
+        <p class="intro">Grabate de costado. Te decimos qué corregir, repetición por repetición.</p>
+        <div class="tarjetas" id="tarjetas"></div>
+        <footer class="pie">
+          <span class="privado">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+            Tu video no sale del celular
+          </span>
+          <span data-version></span>
+        </footer>
+      </section>
 
-    <!-- Tutorial -->
-    <section id="tutorial" class="pantalla" hidden>
-      <h2 id="tutorial-titulo"></h2>
+      <!-- Tutorial -->
+      <section id="tutorial" class="pantalla" hidden>
+        <h1 class="titulo-grande" id="tutorial-titulo"></h1>
+        <div class="hoja">
+          <div class="pestanas" role="tablist" aria-label="Secciones del tutorial">
+            <button role="tab" id="tab-pasos" aria-controls="panel-pasos" aria-selected="true">Cómo se hace</button>
+            <button role="tab" id="tab-errores" aria-controls="panel-errores" aria-selected="false">Qué revisamos</button>
+            <button role="tab" id="tab-filmar" aria-controls="panel-filmar" aria-selected="false">Filmar</button>
+          </div>
 
-      <h3>Cómo se hace</h3>
-      <ol class="pasos" id="pasos"></ol>
+          <div role="tabpanel" id="panel-pasos" aria-labelledby="tab-pasos">
+            <ol class="pasos" id="pasos"></ol>
+          </div>
 
-      <h3>Qué revisamos</h3>
-      <ul class="errores" id="lista-errores"></ul>
-      <p class="nota" id="no-revisamos"></p>
+          <div role="tabpanel" id="panel-errores" aria-labelledby="tab-errores" hidden>
+            <ul class="errores" id="lista-errores"></ul>
+            <p class="nota" id="no-revisamos"></p>
+          </div>
 
-      <h3>Cómo filmarte</h3>
-      <figure class="esquema">
-        <svg viewBox="0 0 320 150" role="img" aria-label="El celular a un costado de la persona, a unos 2 o 3 metros, a la altura de la cadera">
-          <line x1="10" y1="135" x2="310" y2="135" class="piso"/>
-          <circle cx="70" cy="40" r="10" class="persona"/>
-          <line x1="70" y1="50" x2="70" y2="95" class="persona"/>
-          <line x1="70" y1="95" x2="60" y2="135" class="persona"/>
-          <line x1="70" y1="95" x2="80" y2="135" class="persona"/>
-          <line x1="70" y1="60" x2="90" y2="80" class="persona"/>
-          <rect x="250" y="70" width="18" height="30" rx="3" class="celular"/>
-          <line x1="259" y1="100" x2="259" y2="135" class="tripode"/>
-          <line x1="100" y1="85" x2="240" y2="85" class="flecha" marker-end="url(#punta)"/>
-          <text x="170" y="78" text-anchor="middle" class="rotulo">2 a 3 metros</text>
-          <defs><marker id="punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="punta"/></marker></defs>
-        </svg>
-      </figure>
-      <ul class="consejos">
-        <li><strong>De costado</strong>: el celular a tu izquierda o derecha, no de frente.</li>
-        <li><strong>Cuerpo entero</strong>: que se vea de la cabeza a los pies durante toda la serie.</li>
-        <li><strong>Quieto y a la altura de la cadera</strong>: apoyalo en algo o pedile a alguien que lo sostenga.</li>
-        <li>Solo vos en la imagen, y buena luz.</li>
-        <li>Hacé entre 3 y 10 repeticiones.</li>
-      </ul>
-      <ul class="consejos" id="consejos-filmacion"></ul>
+          <div role="tabpanel" id="panel-filmar" aria-labelledby="tab-filmar" hidden>
+            <figure class="esquema">
+              <svg viewBox="0 0 320 120" role="img" aria-label="El celular a un costado de la persona, a 2 o 3 metros, a la altura de la cadera">
+                <path d="M8 112h304" class="piso"/>
+                <circle cx="48" cy="20" r="10" class="persona"/>
+                <path d="M48 30v40M48 70l-12 40M48 70l12 40M48 40l16 16" class="persona"/>
+                <path d="M80 64h170" class="flecha"/>
+                <path d="M244 58l8 6-8 6" class="flecha"/>
+                <rect x="266" y="40" width="24" height="40" rx="5" class="celular"/>
+                <path d="M278 80v32M268 112h20" class="piso"/>
+                <text x="165" y="52" text-anchor="middle" class="rotulo">2 a 3 metros</text>
+              </svg>
+            </figure>
+            <ul class="consejos">
+              <li><strong>De costado:</strong> el celular a tu izquierda o derecha, no de frente.</li>
+              <li><strong>Cuerpo entero:</strong> de la cabeza a los pies durante toda la serie.</li>
+              <li><strong>Quieto, a la altura de la cadera:</strong> apoyalo en algo o pedile a alguien que lo sostenga.</li>
+              <li>Solo vos en la imagen, con buena luz.</li>
+              <li>Entre 3 y 10 repeticiones.</li>
+            </ul>
+            <ul class="consejos" id="consejos-filmacion"></ul>
+          </div>
 
-      <div class="acciones">
-        <label class="boton principal">
-          Grabar
-          <input type="file" accept="video/*" capture="environment" id="grabar" hidden>
-        </label>
-        <label class="boton">
-          Elegir un video
-          <input type="file" accept="video/*" id="elegir" hidden>
-        </label>
-      </div>
-      <p class="nota">Esto no reemplaza a un profesional. Si sentís dolor, pará y consultá.</p>
-    </section>
-
-    <!-- Analizando -->
-    <section id="analizando" class="pantalla" hidden>
-      <h2>Analizando tu video…</h2>
-      <div class="progreso"><div class="progreso-barra" id="progreso"></div></div>
-      <p class="nota" id="estado">Cargando el modelo…</p>
-    </section>
-
-    <!-- Resultado -->
-    <section id="resultado" class="pantalla" hidden>
-      <div class="resumen">
-        <div class="puntaje" id="puntaje">–</div>
-        <div>
-          <div class="resumen-titulo" id="resumen-titulo"></div>
-          <div class="resumen-texto" id="resumen-texto"></div>
+          <div class="acciones">
+            <label class="boton principal">
+              <span class="punto-rec" aria-hidden="true"></span>
+              Grabar serie
+              <input type="file" accept="video/*" capture="environment" id="grabar" hidden>
+            </label>
+            <label class="boton secundario">
+              Elegir un video
+              <input type="file" accept="video/*" id="elegir" hidden>
+            </label>
+            <p class="nota centrada">No reemplaza a un profesional. Si sentís dolor, pará y consultá.</p>
+          </div>
         </div>
-      </div>
-      <div class="avisos" id="avisos" hidden></div>
+      </section>
 
-      <div class="reproductor">
-        <video id="video" playsinline controls muted></video>
-        <canvas id="esqueleto"></canvas>
-      </div>
+      <!-- Analizando -->
+      <section id="analizando" class="pantalla" hidden>
+        <h1 class="titulo-grande">Analizando…</h1>
+        <div class="progreso"><div class="progreso-barra" id="progreso"></div></div>
+        <p class="nota" id="estado">Cargando el modelo…</p>
+      </section>
 
-      <div id="consejos-principales"></div>
-      <h3>Repetición por repetición</h3>
-      <p class="nota">Tocá una repetición para ver el punto más bajo.</p>
-      <ol class="repeticiones" id="repeticiones"></ol>
+      <!-- Resultado -->
+      <section id="resultado" class="pantalla" hidden>
+        <div class="resumen">
+          <div>
+            <div class="puntaje" id="puntaje">–</div>
+            <div class="puntaje-texto">puntos de 100</div>
+          </div>
+          <div class="chips">
+            <span class="sticker sticker-ejercicio" id="resultado-ejercicio"></span>
+            <span class="chip" id="chip-reps"></span>
+            <span class="chip chip-alerta" id="chip-corregir" hidden></span>
+          </div>
+        </div>
+        <p class="resumen-texto" id="resumen-texto"></p>
+        <div class="avisos" id="avisos" hidden></div>
 
-      <div class="acciones">
-        <button class="boton principal" data-ir="tutorial">Grabar otra serie</button>
-      </div>
-    </section>
-  </main>
+        <div class="reproductor">
+          <video id="video" playsinline controls muted></video>
+          <canvas id="esqueleto"></canvas>
+        </div>
 
-  <script type="module" src="js/app.js"></script>
+        <div id="consejos-principales"></div>
+
+        <h2 class="subtitulo">Repetición por repetición</h2>
+        <div class="repeticiones" id="repeticiones"></div>
+        <div class="detalle-rep" id="detalle-rep" hidden></div>
+
+        <div class="acciones">
+          <button class="boton principal" data-ir="tutorial">Grabar otra serie</button>
+          <p class="nota centrada" data-version></p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="./js/app.js?v=1.4.0"></script>
 </body>
 </html>

@@ -90,6 +90,23 @@ cierra y se marca como error.
 - `js/calidad.js`: si la toma sirve para corregir.
 - `js/dibujo.js`: el esqueleto sobre el video (verde = bien, rojo = con errores).
 
+## Versiones
+
+La versión se ve en la app (arriba a la derecha y al pie). Está en
+`js/version.js`, en `package.json` y en los `?v=` de `index.html`: el CSS, la
+app y cada módulo (con un *import map*) se piden con la versión, así el
+navegador baja los archivos nuevos en vez de usar los guardados. Al publicar
+cambios hay que subirla en los tres lugares; `npm test` falla si no coinciden
+o si falta un módulo en el import map.
+
+| Versión | Cambios |
+|---|---|
+| 1.0 | Sentadilla |
+| 1.1 | Talones medidos con el tobillo; sin revisarlos con poca resolución |
+| 1.2 | Peso muerto |
+| 1.3 | Flexiones de brazos |
+| 1.4 | Diseño nuevo (petróleo y mandarina) y número de versión |
+
 ## Probarla en la computadora
 
 ```bash
