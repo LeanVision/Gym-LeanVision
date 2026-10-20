@@ -4,6 +4,7 @@
 import * as sentadilla from "./sentadilla.js";
 import * as pesoMuerto from "./peso-muerto.js";
 import * as flexiones from "./flexiones.js";
+import * as estocadas from "./estocadas.js";
 
 export const EJERCICIOS = {
   sentadilla: {
@@ -63,5 +64,24 @@ export const EJERCICIOS = {
     sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con los brazos a la vista, y que bajes doblando los codos.",
     problemas: flexiones.PROBLEMAS,
     analizar: flexiones.analizarFlexiones,
+  },
+  estocadas: {
+    nombre: "Estocadas",
+    resumen: "Profundidad · rodilla · torso",
+    color: "#7CF2C0",
+    icono: { caja: "0 0 64 64", trazos: '<circle cx="34" cy="9" r="6"/><path d="M33 16l-1 20M32 36l14 8-2 16M32 36l-14 12-12 2"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Parate derecho, con los pies al ancho de la cadera y el abdomen firme.",
+      "Dá un paso largo hacia adelante (o hacia atrás), con el pie de adelante bien apoyado.",
+      "Bajá la cadera recto hacia abajo hasta que las dos rodillas queden a unos 90°, con la de atrás cerca del piso.",
+      "Mantené el torso derecho y la rodilla de adelante en línea con el pie.",
+      "Empujá con el talón de adelante para volver arriba. Alterná las piernas.",
+    ],
+    noRevisamos: "Si la rodilla de adelante se va hacia adentro: eso se ve de frente, no de costado.",
+    consejosFilmacion: ["Hacé las estocadas en el lugar, sin avanzar caminando, para no salir del cuadro."],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con las dos piernas, y que bajes la rodilla de atrás hacia el piso.",
+    problemas: estocadas.PROBLEMAS,
+    analizar: estocadas.analizarEstocadas,
   },
 };

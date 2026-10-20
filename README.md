@@ -2,7 +2,7 @@
 
 Web app que corrige la técnica en el gimnasio: te grabás haciendo el
 ejercicio con el celular y te dice qué corregir, repetición por repetición.
-Por ahora: **sentadilla**, **peso muerto** y **flexiones de brazos**.
+Por ahora: **sentadilla**, **peso muerto**, **flexiones de brazos** y **estocadas**.
 
 - Se abre desde el navegador del celular, sin instalar nada.
 - El video se analiza **en el celular** (MediaPipe Pose): no se sube a ningún servidor.
@@ -68,6 +68,21 @@ Los umbrales están en `js/flexiones.js` (`UMBRALES`). No revisa los codos
 abiertos hacia los costados (no se ve de costado) ni las flexiones con las
 rodillas apoyadas.
 
+## Qué revisa en las estocadas
+
+Desde una toma de costado, con las dos piernas a la vista; la pierna de
+adelante es la que tiene el tobillo más adelante, así que sirve alternando
+piernas. Las repeticiones se cuentan con la flexión de la rodilla de adelante.
+
+| Error | Cómo se mide | Umbral |
+|---|---|---|
+| Poca profundidad | Flexión de la rodilla de adelante abajo de todo | menos de 75° |
+| Rodilla muy adelante | Tibia de adelante respecto de la vertical | más de 30° |
+| Torso inclinado | Tronco respecto de la vertical abajo de todo | más de 25° |
+
+Los umbrales están en `js/estocadas.js` (`UMBRALES`). No revisa la rodilla
+que se va hacia adentro (no se ve de costado).
+
 ## Cómo se separan las repeticiones
 
 `js/repeticiones.js`, común a los tres ejercicios: una repetición arranca
@@ -86,7 +101,7 @@ cierra y se marca como error.
 - `js/repeticiones.js`: separa la serie en repeticiones (común a todos los ejercicios).
 - `js/pose.js`: MediaPipe Pose en el navegador; recorre el video cuadro a cuadro.
 - `js/geometria.js`: ángulos del cuerpo a partir de los puntos del esqueleto.
-- `js/sentadilla.js`, `js/peso-muerto.js`, `js/flexiones.js`: revisan cada repetición de su ejercicio.
+- `js/sentadilla.js`, `js/peso-muerto.js`, `js/flexiones.js`, `js/estocadas.js`: revisan cada repetición de su ejercicio.
 - `js/calidad.js`: si la toma sirve para corregir.
 - `js/dibujo.js`: el esqueleto sobre el video (verde = bien, rojo = con errores).
 
@@ -106,6 +121,7 @@ o si falta un módulo en el import map.
 | 1.2 | Peso muerto |
 | 1.3 | Flexiones de brazos |
 | 1.4 | Diseño nuevo (petróleo y mandarina) y número de versión |
+| 1.5 | Estocadas |
 
 ## Probarla en la computadora
 

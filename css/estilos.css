@@ -62,7 +62,9 @@ body[data-pantalla="tutorial"] .volver { color: var(--ejercicio); }
 }
 
 /* Títulos y texto */
-.titulo-grande { margin: 8px 0 10px; font-size: clamp(40px, 13vw, 54px); line-height: 0.9; overflow-wrap: anywhere; }
+/* El tamaño acompaña el ancho para que palabras largas ("ESTOCADAS",
+   "SENTADILLA") entren enteras en un celular; solo se cortan si no entran solas. */
+.titulo-grande { margin: 8px 0 10px; font-size: clamp(30px, 10vw, 54px); line-height: 0.9; overflow-wrap: break-word; }
 .intro { margin: 0 0 20px; max-width: 320px; font-size: 16px; }
 .subtitulo { margin: 26px 0 10px; font-size: 18px; }
 .nota { margin: 8px 0 0; font-size: 13px; opacity: .9; }

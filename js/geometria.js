@@ -14,6 +14,8 @@ export const P = {
 
 // Por debajo de esta visibilidad el punto se toma como no visto.
 export const VISIBILIDAD_MINIMA = 0.5;
+// Para la pierna del lado opuesto a la cámara, que el propio cuerpo tapa a medias.
+export const VISIBILIDAD_PIERNA_TAPADA = 0.3;
 
 const LADO = ["hombro", "cadera", "rodilla", "tobillo", "talon", "punta"];
 
@@ -139,6 +141,28 @@ export function angulos(p, lado) {
   // dependen de hacia dónde mira la persona, sólo de "arriba" y "abajo".
   const sin = (n) => p[n + s];
   a.codo = visto("codo") && visto("muneca") ? flexion(sin("hombro"), sin("codo"), sin("muneca")) : null;
+
+  // Estocadas: las dos piernas. La de adelante es la que tiene el tobillo más
+  // adelante. La pierna del otro lado queda tapada a medias, así que se acepta
+  // con menos visibilidad (MediaPipe la estima bien igual).
+  const pierna = (l) => {
+    const pt = (n) => p[`${n}_${l}`];
+    if (!["cadera", "rodilla", "tobillo"].every((n) => pt(n) && pt(n).v >= VISIBILIDAD_PIERNA_TAPADA)) return null;
+    const m = (n) => ({ x: pt(n).x * adelante, y: pt(n).y });
+    return {
+      rodilla: flexion(m("cadera"), m("rodilla"), m("tobillo")),
+      tibia: anguloFirmado(arriba, resta(m("rodilla"), m("tobillo"))),
+      tobilloX: m("tobillo").x,
+    };
+  };
+  const pi = pierna("izq"), pd = pierna("der");
+  a.rodillaDelantera = a.tibiaDelantera = a.rodillaTrasera = null;
+  if (pi && pd) {
+    const [delantera, trasera] = pi.tobilloX >= pd.tobilloX ? [pi, pd] : [pd, pi];
+    a.rodillaDelantera = delantera.rodilla;
+    a.tibiaDelantera = delantera.tibia;
+    a.rodillaTrasera = trasera.rodilla;
+  }
   // Cadera respecto de la línea hombro-tobillo: positivo = caída (panza abajo).
   a.lineaCadera = desvioDeLinea(sin("hombro"), sin("cadera"), sin("tobillo"));
   // Cabeza respecto de la prolongación cadera-hombro: positivo = colgando.
