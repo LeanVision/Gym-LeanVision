@@ -5,7 +5,7 @@ import { P } from "./geometria.js";
 const HUESOS = [
   ["hombro", "cadera"], ["cadera", "rodilla"], ["rodilla", "tobillo"],
   ["tobillo", "talon"], ["talon", "punta"], ["tobillo", "punta"],
-  ["hombro", "codo"], ["codo", "muneca"],
+  ["hombro", "codo"], ["codo", "muneca"], ["hombro", "oreja"],
 ];
 
 /** Índice del cuadro analizado más cercano al tiempo t (los cuadros están ordenados). */

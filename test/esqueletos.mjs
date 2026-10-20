@@ -86,3 +86,63 @@ export function secuencia(claves, { fps = 15, escala = 1 } = {}) {
   }
   return posturas.map((postura, i) => ({ t: i / fps, p: perfil({ ...postura, escala }) }));
 }
+
+/**
+ * Esqueleto en posición de flexión de brazos, de perfil (cabeza hacia +x).
+ * codo: flexión del codo; cadera: desvío de la cadera respecto de la línea
+ * hombro-tobillo (+ = caída, - = arriba); cabeza: caída de la cabeza
+ * respecto de la línea del cuerpo (+ = colgando).
+ */
+export function plancha({ codo = 5, cadera = 0, cabeza = 0, miraDerecha = true, visibilidad = 0.9 } = {}) {
+  const PISO = 720;
+  const medio = rad(codo / 2);
+  // Brazo hacia abajo y algo hacia los pies; antebrazo hacia abajo y algo hacia la cabeza.
+  const brazo = { x: -Math.sin(medio), y: Math.cos(medio) };
+  const antebrazo = { x: Math.sin(medio), y: Math.cos(medio) };
+  const hombro = { x: 600, y: PISO - 230 * Math.cos(medio) };
+  const codoP = mas(hombro, brazo, 120);
+  const muneca = mas(codoP, antebrazo, 110);
+  const tobillo = { x: hombro.x - 600, y: PISO - 40 };
+  // Cadera a mitad de camino, corrida hacia abajo (caída) o arriba según `cadera`.
+  const d = { x: tobillo.x - hombro.x, y: tobillo.y - hombro.y };
+  const largo = Math.hypot(d.x, d.y);
+  let n = { x: -d.y / largo, y: d.x / largo };
+  if (n.y < 0) n = { x: -n.x, y: -n.y };
+  const cad = mas({ x: (hombro.x + tobillo.x) / 2, y: (hombro.y + tobillo.y) / 2 }, n, (largo / 2) * Math.tan(rad(cadera / 2)));
+  const rod = { x: (cad.x + tobillo.x) / 2, y: (cad.y + tobillo.y) / 2 };
+  // Oreja: prolongando la línea cadera-hombro, girada hacia abajo `cabeza` grados.
+  const linea = { x: hombro.x - cad.x, y: hombro.y - cad.y };
+  const lc = Math.hypot(linea.x, linea.y);
+  const u = { x: linea.x / lc, y: linea.y / lc };
+  const abajo = n; // la misma normal "hacia abajo" sirve: el cuerpo está casi horizontal
+  const oreja = mas(hombro, { x: u.x * Math.cos(rad(cabeza)) + abajo.x * Math.sin(rad(cabeza)),
+    y: u.y * Math.cos(rad(cabeza)) + abajo.y * Math.sin(rad(cabeza)) }, 60);
+  const puntos = {
+    hombro_der: hombro, codo_der: codoP, muneca_der: muneca, cadera_der: cad, rodilla_der: rod,
+    tobillo_der: tobillo, talon_der: { x: tobillo.x - 15, y: tobillo.y - 10 }, punta_der: { x: tobillo.x + 5, y: PISO },
+    oreja_der: oreja,
+  };
+  const p = {};
+  for (const [nombre, q] of Object.entries(puntos)) {
+    p[nombre] = { x: miraDerecha ? q.x : 1000 - q.x, y: q.y, v: visibilidad };
+    p[nombre.replace("_der", "_izq")] = { ...p[nombre], v: 0.3 };
+  }
+  return p;
+}
+
+/** Serie de flexiones: [[postura de plancha, segundos]], interpolando entre posturas. */
+export function serieFlexiones(claves, fps = 15) {
+  const campos = ["codo", "cadera", "cabeza"];
+  const posturas = [];
+  let anterior = claves[0][0];
+  for (const [postura, segundos] of claves) {
+    const n = Math.round(segundos * fps);
+    for (let i = 1; i <= n; i++) {
+      const r = { ...postura };
+      for (const k of campos) r[k] = (anterior[k] ?? 0) + ((postura[k] ?? 0) - (anterior[k] ?? 0)) * (i / n);
+      posturas.push(r);
+    }
+    anterior = postura;
+  }
+  return posturas.map((postura, i) => ({ t: i / fps, p: plancha(postura) }));
+}

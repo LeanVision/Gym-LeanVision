@@ -3,6 +3,7 @@
 
 import * as sentadilla from "./sentadilla.js";
 import * as pesoMuerto from "./peso-muerto.js";
+import * as flexiones from "./flexiones.js";
 
 export const EJERCICIOS = {
   sentadilla: {
@@ -36,5 +37,21 @@ export const EJERCICIOS = {
     sinRepeticiones: "Revisá que se vea todo el cuerpo de costado y que bajes hasta la barra en cada repetición.",
     problemas: pesoMuerto.PROBLEMAS,
     analizar: pesoMuerto.analizarPesoMuerto,
+  },
+  flexiones: {
+    nombre: "Flexiones de brazos",
+    resumen: "Cuerpo en línea recta, profundidad, brazos estirados arriba y posición de la cabeza",
+    pasos: [
+      "Apoyá las manos en el piso un poco más abiertas que los hombros, justo debajo de ellos.",
+      "Estirá las piernas y apoyá las puntas de los pies: el cuerpo en línea recta de la cabeza a los talones.",
+      "Apretá el abdomen y los glúteos, y mirá al piso un poco adelante de las manos.",
+      "Bajá doblando los codos, pegados al cuerpo (a unos 45°), hasta que el pecho quede cerca del piso.",
+      "Empujá el piso hasta estirar los brazos, sin perder la línea del cuerpo.",
+    ],
+    noRevisamos: "Si los codos se abren hacia los costados: eso se ve de frente o desde arriba, no de costado. Tampoco las flexiones con las rodillas apoyadas: hacelas con las piernas estiradas.",
+    consejosFilmacion: ["Para las flexiones, el celular más bajo: a unos 30-50 cm del piso, de costado."],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con los brazos a la vista, y que bajes doblando los codos.",
+    problemas: flexiones.PROBLEMAS,
+    analizar: flexiones.analizarFlexiones,
   },
 };

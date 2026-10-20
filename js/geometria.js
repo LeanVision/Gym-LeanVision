@@ -54,6 +54,37 @@ function flexion(a, vertice, b) {
   return 180 - Math.abs(anguloFirmado(resta(a, vertice), resta(b, vertice)));
 }
 
+/** Normal unitaria a `u` que apunta hacia abajo en la imagen (y crece hacia abajo). */
+function normalAbajo(u) {
+  const n = { x: -u.y, y: u.x };
+  return n.y >= 0 ? n : { x: -n.x, y: -n.y };
+}
+
+const punto = (v, w) => v.x * w.x + v.y * w.y;
+
+/**
+ * Cuánto se sale `medio` de la recta entre `a` y `b`, como el ángulo que se
+ * forma en `medio` (0 = alineados). Positivo = por debajo de la recta.
+ * En las flexiones: la cadera respecto de la línea hombro-tobillo.
+ */
+function desvioDeLinea(a, medio, b) {
+  const d = resta(b, a);
+  const largo = Math.hypot(d.x, d.y);
+  if (!largo) return null;
+  const n = normalAbajo({ x: d.x / largo, y: d.y / largo });
+  return grados(2 * Math.atan(punto(resta(medio, a), n) / (largo / 2)));
+}
+
+/** Ángulo de `extremo` respecto de la prolongación de la recta `desde`→`vertice`; positivo = hacia abajo. */
+function anguloBajoLinea(desde, vertice, extremo) {
+  const d = resta(vertice, desde);
+  const largo = Math.hypot(d.x, d.y);
+  if (!largo) return null;
+  const u = { x: d.x / largo, y: d.y / largo };
+  const v = resta(extremo, vertice);
+  return grados(Math.atan2(punto(v, normalAbajo(u)), punto(v, u)));
+}
+
 /**
  * Ángulos de un cuadro, de un lado. Devuelve null si falta algo esencial.
  *
@@ -104,6 +135,14 @@ export function angulos(p, lado) {
     const mitadPie = visto("punta") ? (tobillo.x + q("punta").x) / 2 : tobillo.x;
     a.barra = (q("muneca").x - mitadPie) / largoTronco;
   }
+  // Flexiones de brazos (cuerpo horizontal). Con los puntos sin espejar: no
+  // dependen de hacia dónde mira la persona, sólo de "arriba" y "abajo".
+  const sin = (n) => p[n + s];
+  a.codo = visto("codo") && visto("muneca") ? flexion(sin("hombro"), sin("codo"), sin("muneca")) : null;
+  // Cadera respecto de la línea hombro-tobillo: positivo = caída (panza abajo).
+  a.lineaCadera = desvioDeLinea(sin("hombro"), sin("cadera"), sin("tobillo"));
+  // Cabeza respecto de la prolongación cadera-hombro: positivo = colgando.
+  a.cabeza = visto("oreja") ? anguloBajoLinea(sin("cadera"), sin("hombro"), sin("oreja")) : null;
   const hi = p.hombro_izq, hd = p.hombro_der;
   if (hi && hd && hi.v >= VISIBILIDAD_MINIMA && hd.v >= VISIBILIDAD_MINIMA && largoTronco > 0) {
     a.separacionHombros = Math.abs(hi.x - hd.x) / largoTronco;

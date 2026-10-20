@@ -2,7 +2,7 @@
 
 Web app que corrige la técnica en el gimnasio: te grabás haciendo el
 ejercicio con el celular y te dice qué corregir, repetición por repetición.
-Por ahora: **sentadilla** y **peso muerto**.
+Por ahora: **sentadilla**, **peso muerto** y **flexiones de brazos**.
 
 - Se abre desde el navegador del celular, sin instalar nada.
 - El video se analiza **en el celular** (MediaPipe Pose): no se sube a ningún servidor.
@@ -52,6 +52,32 @@ Los umbrales están en `js/peso-muerto.js` (`UMBRALES`). **No revisa la
 espalda redondeada**: MediaPipe no tiene puntos en la columna, así que una
 espalda curva y una recta dan el mismo ángulo. El tutorial lo explica.
 
+## Qué revisa en las flexiones de brazos
+
+Desde una toma de costado y con el celular bajo; las repeticiones se cuentan con la flexión de codo.
+
+| Error | Cómo se mide | Umbral |
+|---|---|---|
+| Cadera caída | Cadera respecto de la línea hombro-tobillo (cuartil de la repetición) | más de 15° por debajo |
+| Cadera muy arriba | Ídem | más de 20° por encima |
+| Poca profundidad | Flexión de codo abajo de todo | menos de 75° |
+| No estirás los brazos arriba | Flexión de codo arriba de todo | más de 25° |
+| Cabeza colgando | Oreja respecto de la prolongación cadera-hombro (mediana) | más de 30° hacia abajo |
+
+Los umbrales están en `js/flexiones.js` (`UMBRALES`). No revisa los codos
+abiertos hacia los costados (no se ve de costado) ni las flexiones con las
+rodillas apoyadas.
+
+## Cómo se separan las repeticiones
+
+`js/repeticiones.js`, común a los tres ejercicios: una repetición arranca
+cuando el ángulo del ejercicio (rodilla, cadera o codo) empieza a moverse
+desde su mínimo, cuenta si sube al menos `inicioRep` grados, y termina en el
+mínimo siguiente, cuando volvió al menos el 60 % y empieza a subir otra vez.
+No exige volver exactamente a la posición inicial: así una repetición que
+no termina arriba (sin estirar los brazos, sin pararse derecho) igual se
+cierra y se marca como error.
+
 ## Estructura
 
 - `index.html`, `css/estilos.css`: las pantallas (inicio, tutorial, análisis, resultado).
@@ -60,7 +86,7 @@ espalda curva y una recta dan el mismo ángulo. El tutorial lo explica.
 - `js/repeticiones.js`: separa la serie en repeticiones (común a todos los ejercicios).
 - `js/pose.js`: MediaPipe Pose en el navegador; recorre el video cuadro a cuadro.
 - `js/geometria.js`: ángulos del cuerpo a partir de los puntos del esqueleto.
-- `js/sentadilla.js`, `js/peso-muerto.js`: revisan cada repetición de su ejercicio.
+- `js/sentadilla.js`, `js/peso-muerto.js`, `js/flexiones.js`: revisan cada repetición de su ejercicio.
 - `js/calidad.js`: si la toma sirve para corregir.
 - `js/dibujo.js`: el esqueleto sobre el video (verde = bien, rojo = con errores).
 
