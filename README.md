@@ -215,6 +215,7 @@ o si falta un módulo en el import map.
 | 1.8 | Dominadas |
 | 1.9 | Press de banca |
 | 1.10 | Remo: con barra, en polea y en máquina, con aviso si el video parece de otra forma |
+| 1.11 | Inicio y elección de variantes en grilla de dos columnas |
 
 ## Probarla en la computadora
 

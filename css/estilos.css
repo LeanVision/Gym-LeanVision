@@ -71,28 +71,32 @@ body[data-pantalla="tutorial"] .volver { color: var(--ejercicio); }
 .centrada { text-align: center; }
 
 /* Inicio: un bloque de color por ejercicio */
-.tarjetas { display: flex; flex-direction: column; gap: 10px; }
+.tarjetas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .tarjeta {
-  display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  width: 100%; min-height: 96px; padding: 16px 20px;
-  border: 0; border-radius: 32px;
+  display: flex; flex-direction: column; align-items: flex-start; justify-content: space-between; gap: 14px;
+  min-width: 0; min-height: 168px; padding: 16px;
+  border: 0; border-radius: 28px;
   color: var(--tinta); text-align: left;
   font: inherit; cursor: pointer;
   transition: transform .15s;
 }
 .tarjeta:hover { transform: translateY(-2px); }
 .tarjeta:active { transform: scale(.98); }
-.tarjeta-titulo { display: block; font-size: 26px; line-height: 1; }
-.tarjeta-texto { display: block; margin-top: 6px; font-size: 13px; font-weight: 600; }
-.tarjeta svg { flex-shrink: 0; }
+/* En los recuadros la letra va de ancho normal (la extra ancha no entra en
+   media pantalla). Si un nombre largo igual no entra, app.js achica todos los
+   títulos de la grilla al mismo tamaño, para que queden parejos. */
+.tarjeta > span { width: 100%; min-width: 0; }
+.tarjeta .tarjeta-titulo { display: block; font-size: 21px; line-height: 1.02; font-stretch: 100%; }
+.tarjeta-texto { display: block; margin-top: 6px; font-size: 12px; font-weight: 600; line-height: 1.3; }
+.tarjeta svg { order: -1; flex-shrink: 0; width: 46px; height: 46px; }
+/* Si queda un recuadro solo en la última fila, ocupa el ancho entero. */
+.tarjeta:last-child:nth-child(odd) { grid-column: 1 / -1; min-height: 120px; }
 .pie {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   margin-top: 28px; font-size: 13px;
 }
 .privado { display: flex; align-items: center; gap: 8px; font-weight: 600; }
 
-/* Variantes: misma tarjeta, apenas más bajas */
-#tarjetas-variantes .tarjeta { min-height: 80px; }
 #variantes-nota { margin-top: 16px; }
 
 /* Tutorial */

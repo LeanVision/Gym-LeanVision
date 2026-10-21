@@ -5,5 +5,6 @@
 //
 // 1.0 sentadilla · 1.1 talones · 1.2 peso muerto · 1.3 flexiones · 1.4 diseño nuevo · 1.5 estocadas · 1.6 abdominales y animación ·
 // 1.7 variantes de abdominales · 1.8 dominadas ·
-// 1.9 press de banca · 1.10 remo
-export const VERSION = "1.10.0";
+// 1.9 press de banca · 1.10 remo ·
+// 1.11 inicio en grilla
+export const VERSION = "1.11.0";
