@@ -52,7 +52,8 @@ function piernaDePie(cadera, tobillo, hacia = [1, 0]) {
 
 // Cada ejercicio: { arriba, abajo, figura(p) } con p = postura interpolada.
 // figura devuelve { lineas: [[puntos…]], cabeza: [x, y], discos?: [{x, y, r}] }.
-// Opcionales: caja (viewBox, si la figura no entra en el normal) y sinPiso.
+// Opcionales: muebles (banco, barra: más claros que el cuerpo), caja (viewBox,
+// si la figura no entra en el normal) y sinPiso.
 const FIGURAS = {
   sentadilla: {
     arriba: { cx: 57, cy: 53, tronco: 5, brazo: -70 },
@@ -134,8 +135,29 @@ const FIGURAS = {
       const rodilla = polar(cadera, L.muslo, 280);
       const tobillo = polar(rodilla, L.tibia, 190); // rodillas dobladas, pies atrás
       return {
-        lineas: [[[38, 6], [100, 6]], [hombro, codo, mano], t.hueso, [cadera, rodilla, tobillo]],
+        muebles: [[[38, 6], [100, 6]]],
+        lineas: [[hombro, codo, mano], t.hueso, [cadera, rodilla, tobillo]],
         cabeza: t.cabeza,
+      };
+    },
+  },
+  pressBanca: {
+    // Acostado en el banco: los hombros y la cadera quietos, la barra sube y baja.
+    arriba: { manoY: 38 },
+    abajo: { manoY: 58 },
+    figura: (p) => {
+      const banco = PISO - 24;
+      const cadera = [36, banco - 5];
+      const t = torso(cadera, 0, 0);
+      const mano = [t.hombro[0] - 2, p.manoY];
+      const codo = articulacion(t.hombro, mano, L.brazo, L.antebrazo, [-1, 0.3]);
+      const tobillo = [10, PISO - 3];
+      const rodilla = articulacion(cadera, tobillo, L.muslo, L.tibia, [-0.3, -1]);
+      return {
+        muebles: [[[24, banco], [92, banco]], [[30, banco], [30, PISO]], [[86, banco], [86, PISO]]],
+        lineas: [[cadera, rodilla, tobillo, [tobillo[0] + 7, PISO]], t.hueso, [t.hombro, codo, mano]],
+        cabeza: t.cabeza,
+        discos: [{ x: mano[0], y: mano[1], r: 8 }],
       };
     },
   },
@@ -244,13 +266,16 @@ export function animar(svg, idEjercicio) {
   const grupo = svg.querySelector(".figura");
 
   const dibujar = (f) => {
-    const { lineas, cabeza, discos = [] } = def.figura(interpolar(desde, hasta, f));
+    const { lineas, cabeza, discos = [], muebles = [] } = def.figura(interpolar(desde, hasta, f));
+    const linea = (puntos, clase) => {
+      const e = document.createElementNS(SVG, "polyline");
+      e.setAttribute("points", puntos.map((q) => q.map((v) => v.toFixed(1)).join(",")).join(" "));
+      if (clase) e.setAttribute("class", clase);
+      return e;
+    };
     grupo.replaceChildren(
-      ...lineas.map((puntos) => {
-        const e = document.createElementNS(SVG, "polyline");
-        e.setAttribute("points", puntos.map((q) => q.map((v) => v.toFixed(1)).join(",")).join(" "));
-        return e;
-      }),
+      ...muebles.map((puntos) => linea(puntos, "mueble")),
+      ...lineas.map((puntos) => linea(puntos)),
       ...[{ x: cabeza[0], y: cabeza[1], r: L.cabeza, clase: "cabeza" }, ...discos.map((d) => ({ ...d, clase: "disco" }))].map((c) => {
         const e = document.createElementNS(SVG, "circle");
         e.setAttribute("cx", c.x.toFixed(1));

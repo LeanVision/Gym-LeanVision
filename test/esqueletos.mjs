@@ -288,3 +288,47 @@ export function serieDominadas(claves, fps = 15) {
   }
   return posturas.map((postura, i) => ({ t: i / fps, p: colgado(postura) }));
 }
+
+/**
+ * Esqueleto acostado en un banco con la barra (press de banca), de perfil
+ * (cabeza hacia +x). codo: flexión del codo (0 = brazos estirados hacia
+ * arriba); cola: cuánto se despega la cadera del banco (en largos de tronco).
+ */
+export function banca({ codo = 5, cola = 0, miraDerecha = true, visibilidad = 0.9 } = {}) {
+  const m = rad(codo / 2);
+  const hombro = { x: 600, y: 500 };
+  // Brazo hacia arriba y hacia los pies; antebrazo hacia arriba y hacia la cabeza.
+  const codoP = mas(hombro, { x: -Math.sin(m), y: -Math.cos(m) }, 120);
+  const muneca = mas(codoP, { x: Math.sin(m), y: -Math.cos(m) }, 110);
+  const cadera = { x: 350, y: 500 - cola * 250 };
+  const rodilla = { x: 200, y: 450 };
+  const tobillo = { x: 160, y: 650 };
+  const puntos = {
+    hombro_der: hombro, codo_der: codoP, muneca_der: muneca, cadera_der: cadera, rodilla_der: rodilla, tobillo_der: tobillo,
+    talon_der: { x: tobillo.x + 15, y: tobillo.y + 20 }, punta_der: { x: tobillo.x - 50, y: tobillo.y + 20 },
+    oreja_der: { x: hombro.x + 70, y: hombro.y - 10 },
+  };
+  const p = {};
+  for (const [nombre, q] of Object.entries(puntos)) {
+    p[nombre] = { x: miraDerecha ? q.x : 1000 - q.x, y: q.y, v: visibilidad };
+    p[nombre.replace("_der", "_izq")] = { ...p[nombre], v: 0.3 };
+  }
+  return p;
+}
+
+/** Serie de press de banca: [[postura, segundos]], interpolando entre posturas. */
+export function serieBanca(claves, fps = 15) {
+  const campos = ["codo", "cola"];
+  const posturas = [];
+  let anterior = claves[0][0];
+  for (const [postura, segundos] of claves) {
+    const n = Math.round(segundos * fps);
+    for (let i = 1; i <= n; i++) {
+      const r = { ...postura };
+      for (const k of campos) r[k] = (anterior[k] ?? 0) + ((postura[k] ?? 0) - (anterior[k] ?? 0)) * (i / n);
+      posturas.push(r);
+    }
+    anterior = postura;
+  }
+  return posturas.map((postura, i) => ({ t: i / fps, p: banca(postura) }));
+}

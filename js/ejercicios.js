@@ -6,6 +6,7 @@ import * as pesoMuerto from "./peso-muerto.js";
 import * as flexiones from "./flexiones.js";
 import * as estocadas from "./estocadas.js";
 import * as dominadas from "./dominadas.js";
+import * as pressBanca from "./press-banca.js";
 import * as abdominales from "./abdominales.js";
 
 // Lo que se repite en todas las variantes de abdominales.
@@ -108,6 +109,25 @@ export const EJERCICIOS = {
     sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con los brazos y la barra a la vista, y que subas doblando los codos.",
     problemas: dominadas.PROBLEMAS,
     analizar: dominadas.analizarDominadas,
+  },
+  pressBanca: {
+    nombre: "Press de banca",
+    resumen: "Pecho · bloqueo · cola",
+    color: "#FFE14D",
+    icono: { caja: "0 0 64 48", trazos: '<circle cx="54" cy="28" r="5"/><path d="M14 33h34M14 33l-6 12M42 33V12M36 12h12M8 39h44"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Acostate en el banco con los ojos debajo de la barra, los pies firmes en el piso y los glúteos apoyados.",
+      "Agarrá la barra un poco más abierta que los hombros, juntá los omóplatos y sacala con los brazos estirados, arriba de los hombros.",
+      "Bajala despacio hasta tocar suavemente el pecho, a la altura de la parte baja del esternón, con los codos a unos 45-70° del cuerpo.",
+      "Empujá hacia arriba hasta estirar los brazos, sin despegar la cola del banco.",
+      "Entrená con alguien que te asista (spotter), sobre todo con peso alto.",
+    ],
+    noRevisamos: "Si los codos se abren a 90° del cuerpo o la barra se tuerce: eso se ve de frente o desde arriba, no de costado.",
+    consejosFilmacion: ["Para el press de banca, el celular a la altura del banco, de costado: que se vean la barra, los brazos y la cadera."],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con los brazos a la vista, y que bajes la barra doblando los codos.",
+    problemas: pressBanca.PROBLEMAS,
+    analizar: pressBanca.analizarPressBanca,
   },
   // Abdominales: un grupo con varias variantes (ver GRUPOS más abajo).
   encogimiento: {
