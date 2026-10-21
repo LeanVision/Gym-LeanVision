@@ -57,6 +57,7 @@ try {
   console.log(JSON.stringify({
     toma: analisis.toma,
     otraVariante: analisis.otraVariante,
+    cuadros3d: analisis.cuadros3d,
     puntaje: analisis.analisis.puntaje,
     repeticiones: analisis.analisis.repeticiones.map((r) => ({
       numero: r.numero, tFondo: +r.tFondo.toFixed(1), puntaje: r.puntaje,
@@ -67,6 +68,14 @@ try {
   if (process.env.CAPTURA) {
     await pagina.setViewportSize({ width: 412, height: 915 });
     await pagina.screenshot({ path: process.env.CAPTURA, fullPage: true });
+    // La vista 3D en el punto más bajo de la primera repetición, desde cada lado.
+    const tFondo = analisis.analisis.repeticiones[0]?.tFondo ?? 0;
+    await pagina.evaluate((t) => { document.getElementById("video").currentTime = t; }, tFondo);
+    await pagina.waitForTimeout(500);
+    for (const vista of ["frente", "costado", "arriba"]) {
+      await pagina.click(`[data-vista="${vista}"]`);
+      await pagina.locator("#vista3d").screenshot({ path: process.env.CAPTURA.replace(/\.png$/, `-3d-${vista}.png`) });
+    }
   }
   if (!analisis.analisis.repeticiones.length) throw new Error("No se encontraron repeticiones");
 } finally {

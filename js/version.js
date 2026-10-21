@@ -7,5 +7,5 @@
 // 1.7 variantes de abdominales · 1.8 dominadas ·
 // 1.9 press de banca · 1.10 remo ·
 // 1.11 inicio en grilla · 1.12 curl de bíceps ·
-// 1.13 press militar
-export const VERSION = "1.13.0";
+// 1.13 press militar · 1.14 vista 3D
+export const VERSION = "1.14.0";

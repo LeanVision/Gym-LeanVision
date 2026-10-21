@@ -8,30 +8,31 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,400;100,500;100,600;100,700;100,800;100,900;125,800;125,900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/estilos.css?v=1.13.0">
+  <link rel="stylesheet" href="css/estilos.css?v=1.14.0">
   <!-- Cada módulo con la versión: así el navegador no usa archivos viejos guardados. -->
   <script type="importmap">
   {
     "imports": {
-      "./js/abdominales.js": "./js/abdominales.js?v=1.13.0",
-      "./js/animacion.js": "./js/animacion.js?v=1.13.0",
-      "./js/app.js": "./js/app.js?v=1.13.0",
-      "./js/calidad.js": "./js/calidad.js?v=1.13.0",
-      "./js/curl.js": "./js/curl.js?v=1.13.0",
-      "./js/dibujo.js": "./js/dibujo.js?v=1.13.0",
-      "./js/estocadas.js": "./js/estocadas.js?v=1.13.0",
-      "./js/dominadas.js": "./js/dominadas.js?v=1.13.0",
-      "./js/ejercicios.js": "./js/ejercicios.js?v=1.13.0",
-      "./js/flexiones.js": "./js/flexiones.js?v=1.13.0",
-      "./js/geometria.js": "./js/geometria.js?v=1.13.0",
-      "./js/peso-muerto.js": "./js/peso-muerto.js?v=1.13.0",
-      "./js/pose.js": "./js/pose.js?v=1.13.0",
-      "./js/press-banca.js": "./js/press-banca.js?v=1.13.0",
-      "./js/press-militar.js": "./js/press-militar.js?v=1.13.0",
-      "./js/remo.js": "./js/remo.js?v=1.13.0",
-      "./js/repeticiones.js": "./js/repeticiones.js?v=1.13.0",
-      "./js/sentadilla.js": "./js/sentadilla.js?v=1.13.0",
-      "./js/version.js": "./js/version.js?v=1.13.0"
+      "./js/abdominales.js": "./js/abdominales.js?v=1.14.0",
+      "./js/animacion.js": "./js/animacion.js?v=1.14.0",
+      "./js/app.js": "./js/app.js?v=1.14.0",
+      "./js/calidad.js": "./js/calidad.js?v=1.14.0",
+      "./js/curl.js": "./js/curl.js?v=1.14.0",
+      "./js/dibujo.js": "./js/dibujo.js?v=1.14.0",
+      "./js/esqueleto3d.js": "./js/esqueleto3d.js?v=1.14.0",
+      "./js/estocadas.js": "./js/estocadas.js?v=1.14.0",
+      "./js/dominadas.js": "./js/dominadas.js?v=1.14.0",
+      "./js/ejercicios.js": "./js/ejercicios.js?v=1.14.0",
+      "./js/flexiones.js": "./js/flexiones.js?v=1.14.0",
+      "./js/geometria.js": "./js/geometria.js?v=1.14.0",
+      "./js/peso-muerto.js": "./js/peso-muerto.js?v=1.14.0",
+      "./js/pose.js": "./js/pose.js?v=1.14.0",
+      "./js/press-banca.js": "./js/press-banca.js?v=1.14.0",
+      "./js/press-militar.js": "./js/press-militar.js?v=1.14.0",
+      "./js/remo.js": "./js/remo.js?v=1.14.0",
+      "./js/repeticiones.js": "./js/repeticiones.js?v=1.14.0",
+      "./js/sentadilla.js": "./js/sentadilla.js?v=1.14.0",
+      "./js/version.js": "./js/version.js?v=1.14.0"
     }
   }
   </script>
@@ -163,6 +164,19 @@
           <canvas id="esqueleto"></canvas>
         </div>
 
+        <section class="vista3d" id="vista3d" hidden>
+          <div class="vista3d-cabecera">
+            <h2 class="subtitulo">Vista 3D</h2>
+            <div class="vistas" role="group" aria-label="Elegir la vista">
+              <button data-vista="frente">Frente</button>
+              <button data-vista="costado" aria-pressed="true">Costado</button>
+              <button data-vista="arriba">Arriba</button>
+            </div>
+          </div>
+          <canvas id="esqueleto3d" aria-label="Esqueleto en 3D, sincronizado con el video"></canvas>
+          <p class="nota">Arrastrá para girarlo. El 3D se estima desde un solo video: sirve para mirar el movimiento desde otro lado; las correcciones salen de la vista de costado.</p>
+        </section>
+
         <div id="consejos-principales"></div>
 
         <h2 class="subtitulo" id="titulo-reps">Repetición por repetición</h2>
@@ -177,6 +191,6 @@
     </main>
   </div>
 
-  <script type="module" src="./js/app.js?v=1.13.0"></script>
+  <script type="module" src="./js/app.js?v=1.14.0"></script>
 </body>
 </html>

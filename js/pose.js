@@ -37,8 +37,9 @@ function esperar(video, evento) {
 }
 
 /**
- * Recorre el video cuadro a cuadro y devuelve [{t, landmarks}] (landmarks =
- * los 33 puntos normalizados, o null si no se vio a nadie).
+ * Recorre el video cuadro a cuadro y devuelve [{t, landmarks, mundo}]
+ * (landmarks = los 33 puntos normalizados, mundo = los mismos en 3D, en
+ * metros; null si no se vio a nadie).
  * `alAvanzar(fraccion)` informa el progreso.
  */
 export async function estimarPoses(video, alAvanzar = () => {}) {
@@ -53,7 +54,9 @@ export async function estimarPoses(video, alAvanzar = () => {}) {
     video.currentTime = t;
     await esperar(video, "seeked");
     const r = detector.detectForVideo(video, Math.round(base + t * 1000));
-    resultado.push({ t, landmarks: r.landmarks?.[0] ?? null });
+    // landmarks: en la imagen (2D, lo que usa el análisis); mundo: los mismos
+    // puntos en 3D, en metros (para la vista 3D).
+    resultado.push({ t, landmarks: r.landmarks?.[0] ?? null, mundo: r.worldLandmarks?.[0] ?? null });
     alAvanzar(Math.min(1, t / duracion));
   }
   alAvanzar(1);
