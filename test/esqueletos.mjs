@@ -242,3 +242,49 @@ export function serieAbdominales(claves, fps = 15) {
   }
   return posturas.map((postura, i) => ({ t: i / fps, p: encogimiento(postura) }));
 }
+
+/**
+ * Esqueleto colgado de una barra (dominadas), de perfil (adelante = +x).
+ * codo: flexión del codo (0 = brazos estirados); tronco: inclinación del
+ * tronco respecto de la vertical (balanceo); cadera: flexión de cadera
+ * (rodillas hacia adelante); nariz: false si no se ve la cara.
+ */
+export function colgado({ codo = 5, tronco = 0, cadera = 0, nariz = true, miraDerecha = true, visibilidad = 0.9 } = {}) {
+  const m = rad(codo / 2);
+  const muneca = { x: 500, y: 200 };
+  // Antebrazo hacia abajo y algo adelante; brazo hacia abajo y algo atrás.
+  const codoP = mas(muneca, { x: Math.sin(m), y: Math.cos(m) }, 110);
+  const hombro = mas(codoP, { x: -Math.sin(m), y: Math.cos(m) }, 120);
+  const cad = mas(hombro, rot({ x: 0, y: 1 }, -tronco), 250);
+  const rod = mas(cad, rot({ x: 0, y: 1 }, -tronco - cadera), 200);
+  const tobillo = mas(rod, rot({ x: 0, y: 1 }, -tronco), 200);
+  const puntos = {
+    muneca_der: muneca, codo_der: codoP, hombro_der: hombro, cadera_der: cad, rodilla_der: rod, tobillo_der: tobillo,
+    talon_der: { x: tobillo.x - 15, y: tobillo.y + 10 }, punta_der: { x: tobillo.x + 30, y: tobillo.y + 40 },
+    oreja_der: { x: hombro.x, y: hombro.y - 90 },
+  };
+  if (nariz) puntos.nariz = { x: hombro.x + 30, y: hombro.y - 110 };
+  const p = {};
+  for (const [nombre, q] of Object.entries(puntos)) {
+    p[nombre] = { x: miraDerecha ? q.x : 1000 - q.x, y: q.y, v: visibilidad };
+    if (nombre !== "nariz") p[nombre.replace("_der", "_izq")] = { ...p[nombre], v: 0.3 };
+  }
+  return p;
+}
+
+/** Serie de dominadas: [[postura, segundos]], interpolando entre posturas. */
+export function serieDominadas(claves, fps = 15) {
+  const campos = ["codo", "tronco", "cadera"];
+  const posturas = [];
+  let anterior = claves[0][0];
+  for (const [postura, segundos] of claves) {
+    const n = Math.round(segundos * fps);
+    for (let i = 1; i <= n; i++) {
+      const r = { ...postura };
+      for (const k of campos) r[k] = (anterior[k] ?? 0) + ((postura[k] ?? 0) - (anterior[k] ?? 0)) * (i / n);
+      posturas.push(r);
+    }
+    anterior = postura;
+  }
+  return posturas.map((postura, i) => ({ t: i / fps, p: colgado(postura) }));
+}

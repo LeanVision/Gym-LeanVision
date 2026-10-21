@@ -83,6 +83,21 @@ piernas. Las repeticiones se cuentan con la flexión de la rodilla de adelante.
 Los umbrales están en `js/estocadas.js` (`UMBRALES`). No revisa la rodilla
 que se va hacia adentro (no se ve de costado).
 
+## Qué revisa en las dominadas
+
+Colgado de una barra, filmado de costado con la barra, las manos y los pies a
+la vista; las repeticiones se cuentan con la flexión de codo.
+
+| Error | Cómo se mide | Umbral |
+|---|---|---|
+| No pasás la barbilla | Nariz respecto de las manos (la barra) arriba de todo; sin la cara, flexión de codo | menos de 0,15 largos de tronco por encima / menos de 120° |
+| No estirás los brazos abajo | Flexión de codo al terminar la repetición | más de 25° |
+| Te balanceás | Cuánto va y viene el tronco, o cuánto suben las rodillas | más de 20° / cadera doblada más de 45° |
+| Te dejás caer | Tiempo de bajada | menos de 0,8 s |
+
+Los umbrales están en `js/dominadas.js` (`UMBRALES`). No revisa los hombros
+que suben hacia las orejas (las escápulas): de costado no se distingue bien.
+
 ## Qué revisa en los abdominales
 
 Hay muchas variantes y cada una se hace distinto, así que en el inicio
@@ -158,6 +173,7 @@ o si falta un módulo en el import map.
 | 1.5 | Estocadas |
 | 1.6 | Abdominales; muñequito animado mientras analiza; los títulos no cortan palabras |
 | 1.7 | Cinco variantes de abdominales, con aviso si el video parece de otra |
+| 1.8 | Dominadas |
 
 ## Probarla en la computadora
 
