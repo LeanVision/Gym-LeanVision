@@ -113,6 +113,22 @@ las repeticiones se cuentan con la flexión de codo.
 Los umbrales están en `js/press-banca.js` (`UMBRALES`). No revisa los codos
 abiertos a 90° ni la barra torcida (se ven de frente o desde arriba).
 
+## Qué revisa en el press militar
+
+Parado, con barra, filmado de costado con la barra arriba de la cabeza a la
+vista; las repeticiones se cuentan con la extensión del codo (sube al empujar).
+
+| Error | Cómo se mide | Umbral |
+|---|---|---|
+| Te tirás hacia atrás | Torso respecto de la vertical (p10 de la repetición) | más de 12° hacia atrás |
+| Usás las piernas | Cuánto se doblan las rodillas en la repetición | más de 15° |
+| No estirás arriba | Flexión de codo arriba de todo | más de 20° |
+| No bajás hasta los hombros | Manos sobre los hombros al terminar la repetición | más de 0,3 largos de tronco |
+| La barra termina adelante | Manos respecto de la mitad del pie, arriba de todo | más de 0,25 largos de tronco adelante |
+
+Los umbrales están en `js/press-militar.js` (`UMBRALES`). No revisa los codos
+abiertos ni la barra torcida (se ven de frente).
+
 ## Qué revisa en el curl de bíceps
 
 Parado, con mancuernas o barra, filmado de costado; las repeticiones se
@@ -187,6 +203,23 @@ se despega del piso (el modelo no tiene puntos en la columna); las de giro
 Los umbrales son un punto de partida y los está revisando un kinesiólogo; la
 app lo avisa en cada tutorial.
 
+## Vista 3D
+
+Además de los puntos en la imagen (2D, los que usa el análisis), MediaPipe
+devuelve los mismos 33 puntos en 3D, en metros y centrados en la cadera
+(`worldLandmarks`). `js/pose.js` los guarda y el resultado muestra el
+esqueleto en 3D sincronizado con el video (`js/esqueleto3d.js`): se gira
+arrastrando y tiene vistas de frente, de costado y desde arriba (el frente
+sale de hacia dónde mira la nariz).
+
+Es una estimación desde un solo video: la profundidad tiene más error que el
+2D. En el video real de sentadilla, la flexión de rodilla en 3D difiere de la
+2D en ±11° cuadro a cuadro (abajo de todo: 112° en 3D contra 122° en 2D) y
+la inclinación del tronco coincide (37° contra 36°). Por eso, por ahora, las
+correcciones siguen saliendo del 2D; el 3D es para mirar, y el paso siguiente
+es usarlo para lo que de costado no se ve (rodillas hacia adentro, codos
+abiertos), validándolo con videos de frente.
+
 ## Cómo se separan las repeticiones
 
 `js/repeticiones.js`, común a los tres ejercicios: una repetición arranca
@@ -233,6 +266,8 @@ o si falta un módulo en el import map.
 | 1.10 | Remo: con barra, en polea y en máquina, con aviso si el video parece de otra forma |
 | 1.11 | Inicio y elección de variantes en grilla de dos columnas |
 | 1.12 | Curl de bíceps |
+| 1.13 | Press militar |
+| 1.14 | Vista 3D del esqueleto en el resultado |
 
 ## Probarla en la computadora
 

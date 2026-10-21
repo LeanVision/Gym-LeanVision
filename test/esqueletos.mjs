@@ -433,3 +433,53 @@ export function serieCurl(claves, fps = 15) {
   }
   return posturas.map((postura, i) => ({ t: i / fps, p: curlBiceps(postura) }));
 }
+
+/**
+ * Esqueleto parado haciendo press militar, de perfil (adelante = +x).
+ * codo: flexión del codo (≈110 con la barra en los hombros, ≈5 arriba);
+ * arriba: hacia dónde apunta el brazo con los codos estirados, en grados
+ * desde abajo girando hacia adelante (175 = arriba de la cabeza; menos =
+ * la barra adelante); tronco: inclinación (negativo = hacia atrás);
+ * rodilla: flexión de rodilla (impulso con las piernas).
+ */
+export function pressMilitar({ codo = 110, arriba = 175, tronco = 0, rodilla = 3, miraDerecha = true, visibilidad = 0.9 } = {}) {
+  const tobillo = { x: 300, y: 800 };
+  const rod = mas(tobillo, rot(ARRIBA, rodilla / 2), 200);
+  const cadera = mas(rod, rot(ARRIBA, -rodilla / 2), 200);
+  const hombro = mas(cadera, rot(ARRIBA, tronco), 250);
+  // Dirección desde abajo girando hacia adelante (x adelante, y abajo).
+  const dir = (g) => ({ x: Math.sin(rad(g)), y: Math.cos(rad(g)) });
+  const brazo = arriba - ((codo - 5) * (arriba - 40)) / 105;
+  const codoP = mas(hombro, dir(brazo), 120);
+  const muneca = mas(codoP, dir(brazo + codo), 110);
+  const puntos = {
+    hombro_der: hombro, codo_der: codoP, muneca_der: muneca, cadera_der: cadera, rodilla_der: rod, tobillo_der: tobillo,
+    talon_der: { x: tobillo.x - 20, y: tobillo.y + 30 }, punta_der: { x: tobillo.x + 60, y: tobillo.y + 30 },
+  };
+  const p = {};
+  for (const [nombre, q] of Object.entries(puntos)) {
+    p[nombre] = { x: miraDerecha ? q.x : 1000 - q.x, y: q.y, v: visibilidad };
+    p[nombre.replace("_der", "_izq")] = { ...p[nombre], v: 0.3 };
+  }
+  return p;
+}
+
+/** Serie de press militar: [[postura, segundos]], interpolando entre posturas. */
+export function seriePressMilitar(claves, fps = 15) {
+  const campos = ["codo", "arriba", "tronco", "rodilla"];
+  const posturas = [];
+  let anterior = claves[0][0];
+  for (const [postura, segundos] of claves) {
+    const n = Math.round(segundos * fps);
+    for (let i = 1; i <= n; i++) {
+      const r = { ...postura };
+      for (const k of campos) {
+        const a = anterior[k] ?? postura[k], b = postura[k] ?? anterior[k];
+        if (a != null) r[k] = a + (b - a) * (i / n);
+      }
+      posturas.push(r);
+    }
+    anterior = postura;
+  }
+  return posturas.map((postura, i) => ({ t: i / fps, p: pressMilitar(postura) }));
+}

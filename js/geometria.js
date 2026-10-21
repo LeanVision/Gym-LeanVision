@@ -141,6 +141,8 @@ export function angulos(p, lado) {
   // dependen de hacia dónde mira la persona, sólo de "arriba" y "abajo".
   const sin = (n) => p[n + s];
   a.codo = visto("codo") && visto("muneca") ? flexion(sin("hombro"), sin("codo"), sin("muneca")) : null;
+  // Press militar: las manos (la barra) por encima de los hombros, en largos de tronco.
+  a.alturaManos = visto("muneca") && largoTronco > 0 ? (sin("hombro").y - sin("muneca").y) / largoTronco : null;
   // Curl de bíceps: el brazo (hombro-codo) respecto del tronco, positivo =
   // el codo adelante del cuerpo. Con los puntos espejados ("adelante" = +x).
   a.brazo = visto("codo") ? -anguloFirmado(resta(cadera, hombro), resta(q("codo"), hombro)) : null;
