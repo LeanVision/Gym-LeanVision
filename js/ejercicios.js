@@ -8,6 +8,7 @@ import * as estocadas from "./estocadas.js";
 import * as dominadas from "./dominadas.js";
 import * as pressBanca from "./press-banca.js";
 import * as curl from "./curl.js";
+import * as pressMilitar from "./press-militar.js";
 import * as remo from "./remo.js";
 import * as abdominales from "./abdominales.js";
 
@@ -130,6 +131,25 @@ export const EJERCICIOS = {
     sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con los brazos a la vista, y que bajes la barra doblando los codos.",
     problemas: pressBanca.PROBLEMAS,
     analizar: pressBanca.analizarPressBanca,
+  },
+  pressMilitar: {
+    nombre: "Press militar",
+    resumen: "Torso · piernas · bloqueo",
+    color: "#FFC48C",
+    icono: { caja: "0 0 48 64", trazos: '<path d="M8 6h32"/><circle cx="24" cy="18" r="5"/><path d="M24 24v18l-4 18M24 42l4 18M24 27l-8-6v-15M24 27l8-6v-15"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Parate con los pies al ancho de la cadera y la barra apoyada adelante de los hombros, las manos apenas más abiertas que los hombros.",
+      "Apretá el abdomen y los glúteos: el cuerpo firme y derecho, las rodillas estiradas.",
+      "Empujá la barra hacia arriba en línea recta, corriendo apenas la cabeza hacia atrás para que pase, hasta estirar los brazos.",
+      "Arriba, la barra sobre la mitad del pie y la cabeza un poco adelante, entre los brazos.",
+      "Bajá controlando hasta la altura del mentón o la parte alta del pecho.",
+    ],
+    noRevisamos: "Si los codos se abren hacia los costados o la barra se tuerce: eso se ve de frente, no de costado.",
+    consejosFilmacion: ["Para el press militar, que se vean la barra arriba de la cabeza y los pies: alejá un poco el celular."],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con los brazos y la barra a la vista, y que empujes hasta estirar los brazos.",
+    problemas: pressMilitar.PROBLEMAS,
+    analizar: pressMilitar.analizarPressMilitar,
   },
   curl: {
     nombre: "Curl de bíceps",

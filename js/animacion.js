@@ -161,6 +161,23 @@ const FIGURAS = {
       };
     },
   },
+  pressMilitar: {
+    // Parado: la barra sube de los hombros hasta arriba de la cabeza.
+    caja: "0 -14 120 114",
+    arriba: { brazo: -40, antebrazo: 82 },
+    abajo: { brazo: 86, antebrazo: 90 },
+    figura: (p) => {
+      const cadera = [58, 57];
+      const t = torso(cadera, 90, 90);
+      const codo = polar(t.hombro, L.brazo, p.brazo);
+      const mano = polar(codo, L.antebrazo, p.antebrazo);
+      return {
+        lineas: [piernaDePie(cadera, [60, PISO - 3]), t.hueso, [t.hombro, codo, mano]],
+        cabeza: t.cabeza,
+        discos: [{ x: mano[0], y: mano[1], r: 6 }],
+      };
+    },
+  },
   curl: {
     // Parado: el codo queda quieto al costado y el antebrazo sube con la mancuerna.
     arriba: { antebrazo: -78 },

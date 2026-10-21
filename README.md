@@ -113,6 +113,22 @@ las repeticiones se cuentan con la flexión de codo.
 Los umbrales están en `js/press-banca.js` (`UMBRALES`). No revisa los codos
 abiertos a 90° ni la barra torcida (se ven de frente o desde arriba).
 
+## Qué revisa en el press militar
+
+Parado, con barra, filmado de costado con la barra arriba de la cabeza a la
+vista; las repeticiones se cuentan con la extensión del codo (sube al empujar).
+
+| Error | Cómo se mide | Umbral |
+|---|---|---|
+| Te tirás hacia atrás | Torso respecto de la vertical (p10 de la repetición) | más de 12° hacia atrás |
+| Usás las piernas | Cuánto se doblan las rodillas en la repetición | más de 15° |
+| No estirás arriba | Flexión de codo arriba de todo | más de 20° |
+| No bajás hasta los hombros | Manos sobre los hombros al terminar la repetición | más de 0,3 largos de tronco |
+| La barra termina adelante | Manos respecto de la mitad del pie, arriba de todo | más de 0,25 largos de tronco adelante |
+
+Los umbrales están en `js/press-militar.js` (`UMBRALES`). No revisa los codos
+abiertos ni la barra torcida (se ven de frente).
+
 ## Qué revisa en el curl de bíceps
 
 Parado, con mancuernas o barra, filmado de costado; las repeticiones se
@@ -233,6 +249,7 @@ o si falta un módulo en el import map.
 | 1.10 | Remo: con barra, en polea y en máquina, con aviso si el video parece de otra forma |
 | 1.11 | Inicio y elección de variantes en grilla de dos columnas |
 | 1.12 | Curl de bíceps |
+| 1.13 | Press militar |
 
 ## Probarla en la computadora
 
