@@ -29,17 +29,25 @@ function mostrar(id, { volviendo = false } = {}) {
   window.scrollTo(0, 0);
 }
 
-// Los títulos grandes no cortan palabras: si una no entra en el ancho, se
-// achica el título hasta que entre.
+// Los títulos no cortan palabras: si una no entra en el ancho, se achica el
+// título hasta que entre (los grandes de cada pantalla y los de los recuadros).
 const TITULO_MINIMO = 22; // px
+const TITULO_RECUADRO_MINIMO = 12; // px
 function ajustarTitulos() {
-  document.querySelectorAll(".pantalla:not([hidden]) .titulo-grande").forEach((h) => {
+  document.querySelectorAll(".pantalla:not([hidden]) :is(.titulo-grande, .tarjeta-titulo)").forEach((h) => {
     h.style.fontSize = "";
+    const minimo = h.classList.contains("tarjeta-titulo") ? TITULO_RECUADRO_MINIMO : TITULO_MINIMO;
     let tamano = parseFloat(getComputedStyle(h).fontSize);
-    while (h.scrollWidth > h.clientWidth && tamano > TITULO_MINIMO) {
-      tamano -= 2;
+    while (h.scrollWidth > h.clientWidth && tamano > minimo) {
+      tamano -= 1;
       h.style.fontSize = `${tamano}px`;
     }
+  });
+  // En cada grilla, todos los recuadros con el tamaño del más chico.
+  document.querySelectorAll(".pantalla:not([hidden]) .tarjetas").forEach((grilla) => {
+    const titulos = [...grilla.querySelectorAll(".tarjeta-titulo")];
+    const menor = Math.min(...titulos.map((h) => parseFloat(getComputedStyle(h).fontSize)));
+    titulos.forEach((h) => { h.style.fontSize = `${menor}px`; });
   });
 }
 addEventListener("resize", ajustarTitulos);
@@ -72,6 +80,8 @@ $("tarjetas").innerHTML = Object.entries(EJERCICIOS).map(([id, e]) => {
   gruposPuestos.add(e.grupo);
   return tarjeta("grupo", e.grupo, GRUPOS[e.grupo]);
 }).join("");
+
+ajustarTitulos();
 
 function elegirGrupo(idGrupo) {
   const g = GRUPOS[idGrupo];
