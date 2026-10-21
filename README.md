@@ -284,6 +284,7 @@ o si falta un módulo en el import map.
 | 1.13 | Press militar |
 | 1.14 | Vista 3D del esqueleto en el resultado |
 | 1.14.1 | Arreglo para iPhone: el análisis se quedaba en 0 % |
+| 1.14.2 | En iPhone, los .mp4 de Archivos se pueden elegir |
 
 ## Probarla en la computadora
 
