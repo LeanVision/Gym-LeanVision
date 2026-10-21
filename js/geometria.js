@@ -2,7 +2,10 @@
 //
 // Todo en 2D y en píxeles (x a la derecha, y hacia ABAJO): las coordenadas
 // normalizadas de MediaPipe se multiplican por el ancho y el alto del video,
-// si no un video vertical deforma los ángulos. Supone la cámara de costado.
+// si no un video vertical deforma los ángulos. Los ángulos se calculan como
+// si la cámara estuviera de costado: si el video está filmado en diagonal o
+// de frente, `prepararCuadros` arma esa vista de costado con los puntos 3D
+// (ver `aVistaDeCostado`).
 
 export const P = {
   nariz: 0, oreja_izq: 7, oreja_der: 8,
@@ -206,10 +209,91 @@ export function angulos(p, lado) {
   return a;
 }
 
-/** Convierte las poses crudas ([{t, landmarks}]) en ángulos por cuadro, del lado que mejor se ve. */
-export function prepararCuadros(poses, ancho, alto) {
-  const puntos = poses.map((p) => (p.landmarks ? aPixeles(p.landmarks, ancho, alto) : null));
+// Cámara de costado o en diagonal: hasta este ángulo (0° = de costado, 90° =
+// de frente) se usan los puntos de la imagen, que de costado son los más
+// precisos; con más ángulo, la vista de costado armada con los puntos 3D.
+// Desde `frenteMinimo` la toma es casi de frente y se avisa.
+export const VISTA = { lateralMaxima: 25, frenteMinimo: 70 };
+
+const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y, (a.z ?? 0) - (b.z ?? 0));
+const mediana = (v) => {
+  const o = [...v].sort((a, b) => a - b);
+  return o.length ? o[Math.floor(o.length / 2)] : null;
+};
+
+/**
+ * El eje de izquierda a derecha del cuerpo, en el piso (x, z de los puntos
+ * 3D), promediando todo el video: cadera izquierda − derecha más hombro
+ * izquierdo − derecho. null si no hay puntos 3D.
+ */
+export function ejeLateral(poses) {
+  let x = 0, z = 0;
+  for (const { mundo: m } of poses) {
+    if (!m) continue;
+    const lx = m[23].x - m[24].x + m[11].x - m[12].x;
+    const lz = m[23].z - m[24].z + m[11].z - m[12].z;
+    const largo = Math.hypot(lx, lz);
+    if (largo) { x += lx / largo; z += lz / largo; }
+  }
+  const largo = Math.hypot(x, z);
+  return largo ? { x: x / largo, z: z / largo } : null;
+}
+
+/** Desde dónde filmó la cámara: 0° = de costado, 90° = de frente (o de espaldas). */
+export function anguloDeCamara(eje) {
+  return (Math.atan2(Math.abs(eje.x), Math.abs(eje.z)) * 180) / Math.PI;
+}
+
+/**
+ * Vista de costado armada con los puntos 3D (en metros, y hacia abajo): se
+ * proyectan sobre el plano del cuerpo (el perpendicular al eje lateral), que
+ * es lo que vería una cámara puesta justo al costado. `escala` pasa de metros
+ * a píxeles del video, para que los largos sigan siendo comparables (la
+ * resolución mínima de los talones, por ejemplo). La visibilidad de cada
+ * punto sale de los puntos de la imagen.
+ */
+export function aVistaDeCostado(mundo, landmarks, eje, escala) {
+  const puntos = {};
+  for (const [nombre, i] of Object.entries(P)) {
+    const m = mundo[i];
+    if (!m) continue;
+    // "Adelante" en el piso, perpendicular al eje lateral.
+    const adelante = -m.x * eje.z + m.z * eje.x;
+    puntos[nombre] = { x: adelante * escala, y: m.y * escala, v: landmarks?.[i]?.visibility ?? 1 };
+  }
+  return puntos;
+}
+
+/** Píxeles del video por metro: el largo de la tibia en la imagen sobre su largo en 3D. */
+function pixelesPorMetro(poses, ancho, alto) {
+  const razones = [];
+  for (const p of poses) {
+    if (!p.landmarks || !p.mundo) continue;
+    for (const [r, t] of [[25, 27], [26, 28]]) {
+      const enImagen = Math.hypot((p.landmarks[r].x - p.landmarks[t].x) * ancho, (p.landmarks[r].y - p.landmarks[t].y) * alto);
+      const en3d = dist(p.mundo[r], p.mundo[t]);
+      if (en3d > 0.1) razones.push(enImagen / en3d);
+    }
+  }
+  return mediana(razones) ?? 1000;
+}
+
+/**
+ * Convierte las poses crudas ([{t, landmarks, mundo}]) en ángulos por
+ * cuadro, del lado que mejor se ve. Si la cámara no estaba de costado, arma
+ * la vista de costado con los puntos 3D. `forzar` ("2d" o "3d") es para
+ * pruebas. Devuelve {cuadros, lado, vista: {angulo, desde3d}}.
+ */
+export function prepararCuadros(poses, ancho, alto, { forzar } = {}) {
+  const eje = ejeLateral(poses);
+  const angulo = eje ? anguloDeCamara(eje) : null;
+  const desde3d = eje != null && (forzar === "3d" || (forzar !== "2d" && angulo > VISTA.lateralMaxima));
+  const escala = desde3d ? pixelesPorMetro(poses, ancho, alto) : null;
+  const puntos = poses.map((p) => {
+    if (!p.landmarks) return null;
+    return desde3d && p.mundo ? aVistaDeCostado(p.mundo, p.landmarks, eje, escala) : aPixeles(p.landmarks, ancho, alto);
+  });
   const lado = elegirLado(puntos);
   const cuadros = poses.map((p, i) => ({ t: p.t, a: puntos[i] ? angulos(puntos[i], lado) : null }));
-  return { cuadros, lado };
+  return { cuadros, lado, vista: { angulo, desde3d } };
 }

@@ -4,8 +4,7 @@ import { prepararCuadros } from "./geometria.js";
 import { revisarToma } from "./calidad.js";
 import { EJERCICIOS, GRUPOS } from "./ejercicios.js";
 import { estimarPoses } from "./pose.js";
-import { dibujar, cuadroEn } from "./dibujo.js";
-import { crearVista3D, giroDeFrente } from "./esqueleto3d.js";
+import { dibujar } from "./dibujo.js";
 import { animar } from "./animacion.js";
 import { VERSION } from "./version.js";
 
@@ -166,8 +165,9 @@ async function analizar(archivo) {
     if (!poses.some((p) => p.landmarks)) {
       throw new Error("no encontramos a nadie en el video");
     }
-    const { cuadros, lado } = prepararCuadros(poses, video.videoWidth, video.videoHeight);
-    ultimo = { poses, lado, cuadros, toma: revisarToma(cuadros) };
+    // window.forzarVista ("2d" o "3d") es solo para las pruebas.
+    const { cuadros, lado, vista } = prepararCuadros(poses, video.videoWidth, video.videoHeight, { forzar: window.forzarVista });
+    ultimo = { poses, lado, cuadros, vista, toma: revisarToma(cuadros, vista) };
     analizarUltimo();
   } catch (error) {
     console.error(error);
@@ -182,13 +182,13 @@ async function analizar(archivo) {
 
 /** Analiza el último video con el ejercicio elegido (sin volver a buscar las poses). */
 function analizarUltimo() {
-  const { poses, lado, cuadros, toma } = ultimo;
+  const { poses, lado, cuadros, toma, vista } = ultimo;
   const analisis = ejercicio.analizar(cuadros);
   // Variantes: si el video parece de otra, se avisa y se ofrece analizarlo como esa.
   const parecida = ejercicio.grupo ? GRUPOS[ejercicio.grupo].detectar(cuadros) : null;
   const otraVariante = parecida && parecida !== idEjercicio ? parecida : null;
   mostrarResultado({ poses, lado, toma, analisis, otraVariante });
-  window.ultimoAnalisis = { ejercicio: ejercicio.nombre, toma, analisis, lado, otraVariante, cuadros3d: poses.filter((p) => p.mundo).length }; // para las pruebas y para depurar
+  window.ultimoAnalisis = { ejercicio: ejercicio.nombre, toma, analisis, lado, otraVariante, vista, cuadros3d: poses.filter((p) => p.mundo).length }; // para las pruebas y para depurar
 }
 
 $("analizar-como").addEventListener("click", (ev) => {
@@ -257,21 +257,7 @@ function mostrarResultado({ poses, lado, toma, analisis, otraVariante }) {
     return r.problemas.length ? COLOR_ESQUELETO.conErrores : COLOR_ESQUELETO.bien;
   };
   const canvas = $("esqueleto");
-  // Vista 3D, si el modelo devolvió los puntos 3D.
-  const con3d = poses.some((p) => p.mundo);
-  $("vista3d").hidden = !con3d;
-  const vista3d = con3d ? crearVista3D($("esqueleto3d"), giroDeFrente(poses)) : null;
-  document.querySelectorAll("[data-vista]").forEach((b) => {
-    b.setAttribute("aria-pressed", String(b.dataset.vista === "costado"));
-    b.onclick = () => {
-      document.querySelectorAll("[data-vista]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-      vista3d?.ver(b.dataset.vista);
-    };
-  });
-  const redibujar = () => {
-    dibujar(canvas, video, poses, lado, colorDe);
-    if (vista3d && poses.length) vista3d.dibujar(poses[cuadroEn(poses, video.currentTime)].mundo, colorDe(video.currentTime));
-  };
+  const redibujar = () => dibujar(canvas, video, poses, lado, colorDe);
   const bucle = () => {
     redibujar();
     if (!video.paused && !video.ended) {
