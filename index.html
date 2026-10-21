@@ -8,31 +8,31 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,400;100,500;100,600;100,700;100,800;100,900;125,800;125,900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/estilos.css?v=1.14.1">
+  <link rel="stylesheet" href="css/estilos.css?v=1.14.2">
   <!-- Cada módulo con la versión: así el navegador no usa archivos viejos guardados. -->
   <script type="importmap">
   {
     "imports": {
-      "./js/abdominales.js": "./js/abdominales.js?v=1.14.1",
-      "./js/animacion.js": "./js/animacion.js?v=1.14.1",
-      "./js/app.js": "./js/app.js?v=1.14.1",
-      "./js/calidad.js": "./js/calidad.js?v=1.14.1",
-      "./js/curl.js": "./js/curl.js?v=1.14.1",
-      "./js/dibujo.js": "./js/dibujo.js?v=1.14.1",
-      "./js/esqueleto3d.js": "./js/esqueleto3d.js?v=1.14.1",
-      "./js/estocadas.js": "./js/estocadas.js?v=1.14.1",
-      "./js/dominadas.js": "./js/dominadas.js?v=1.14.1",
-      "./js/ejercicios.js": "./js/ejercicios.js?v=1.14.1",
-      "./js/flexiones.js": "./js/flexiones.js?v=1.14.1",
-      "./js/geometria.js": "./js/geometria.js?v=1.14.1",
-      "./js/peso-muerto.js": "./js/peso-muerto.js?v=1.14.1",
-      "./js/pose.js": "./js/pose.js?v=1.14.1",
-      "./js/press-banca.js": "./js/press-banca.js?v=1.14.1",
-      "./js/press-militar.js": "./js/press-militar.js?v=1.14.1",
-      "./js/remo.js": "./js/remo.js?v=1.14.1",
-      "./js/repeticiones.js": "./js/repeticiones.js?v=1.14.1",
-      "./js/sentadilla.js": "./js/sentadilla.js?v=1.14.1",
-      "./js/version.js": "./js/version.js?v=1.14.1"
+      "./js/abdominales.js": "./js/abdominales.js?v=1.14.2",
+      "./js/animacion.js": "./js/animacion.js?v=1.14.2",
+      "./js/app.js": "./js/app.js?v=1.14.2",
+      "./js/calidad.js": "./js/calidad.js?v=1.14.2",
+      "./js/curl.js": "./js/curl.js?v=1.14.2",
+      "./js/dibujo.js": "./js/dibujo.js?v=1.14.2",
+      "./js/esqueleto3d.js": "./js/esqueleto3d.js?v=1.14.2",
+      "./js/estocadas.js": "./js/estocadas.js?v=1.14.2",
+      "./js/dominadas.js": "./js/dominadas.js?v=1.14.2",
+      "./js/ejercicios.js": "./js/ejercicios.js?v=1.14.2",
+      "./js/flexiones.js": "./js/flexiones.js?v=1.14.2",
+      "./js/geometria.js": "./js/geometria.js?v=1.14.2",
+      "./js/peso-muerto.js": "./js/peso-muerto.js?v=1.14.2",
+      "./js/pose.js": "./js/pose.js?v=1.14.2",
+      "./js/press-banca.js": "./js/press-banca.js?v=1.14.2",
+      "./js/press-militar.js": "./js/press-militar.js?v=1.14.2",
+      "./js/remo.js": "./js/remo.js?v=1.14.2",
+      "./js/repeticiones.js": "./js/repeticiones.js?v=1.14.2",
+      "./js/sentadilla.js": "./js/sentadilla.js?v=1.14.2",
+      "./js/version.js": "./js/version.js?v=1.14.2"
     }
   }
   </script>
@@ -121,7 +121,9 @@
             </label>
             <label class="boton secundario">
               Elegir un video
-              <input type="file" accept="video/*" id="elegir" hidden>
+              <!-- Con las extensiones además de "video/*": en iPhone, el selector de
+                   Archivos a veces deja grises (sin poder elegir) los .mp4 si solo dice "video/*". -->
+              <input type="file" accept="video/*,.mp4,.mov,.m4v,.webm" id="elegir" hidden>
             </label>
             <p class="nota centrada">No reemplaza a un profesional. Si sentís dolor, pará y consultá.</p>
           </div>
@@ -191,6 +193,6 @@
     </main>
   </div>
 
-  <script type="module" src="./js/app.js?v=1.14.1"></script>
+  <script type="module" src="./js/app.js?v=1.14.2"></script>
 </body>
 </html>
