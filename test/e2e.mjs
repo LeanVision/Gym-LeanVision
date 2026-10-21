@@ -6,6 +6,8 @@
 //   EJERCICIO="Peso muerto" MODELO_POSE=... VIDEO=peso-muerto.webm npm run test:e2e
 //
 // Opcional: CHROMIUM=/ruta/a/chrome si playwright no encuentra uno instalado.
+// SIN_SALTOS=1 simula un iPhone que no avisa al saltar de cuadro ("seeked"):
+// prueba el plan B, que recorre el video reproduciéndolo.
 // Chromium sin códecs propietarios no lee H.264: usar un .webm (VP9).
 
 import { createServer } from "node:http";
@@ -39,6 +41,14 @@ const navegador = await chromium.launch({ executablePath: CHROMIUM || undefined,
 try {
   const pagina = await navegador.newPage();
   pagina.on("console", (m) => m.type() === "error" && console.log("[consola]", m.text()));
+  if (process.env.SIN_SALTOS) {
+    await pagina.addInitScript(() => {
+      const agregar = HTMLMediaElement.prototype.addEventListener;
+      HTMLMediaElement.prototype.addEventListener = function (tipo, ...resto) {
+        if (tipo !== "seeked") agregar.call(this, tipo, ...resto);
+      };
+    });
+  }
   await pagina.route("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@*/**", async (ruta) => {
     const archivo = new URL(ruta.request().url()).pathname.split("/").slice(4).join("/");
     const cuerpo = await readFile(join(RAIZ, "node_modules/@mediapipe/tasks-vision", archivo));
@@ -51,6 +61,7 @@ try {
   await pagina.click(`.tarjeta-titulo:text-is("${process.env.EJERCICIO ?? "Sentadilla"}")`);
   // Los grupos (Abdominales) llevan a elegir la variante: VARIANTE=Plancha, etc.
   if (process.env.VARIANTE) await pagina.click(`#tarjetas-variantes .tarjeta-titulo:text-is("${process.env.VARIANTE}")`);
+  const inicio = Date.now();
   await pagina.setInputFiles("#elegir", VIDEO);
   await pagina.waitForSelector("#resultado:not([hidden])", { timeout: 5 * 60_000 });
   const analisis = await pagina.evaluate(() => window.ultimoAnalisis);
@@ -58,6 +69,7 @@ try {
     toma: analisis.toma,
     otraVariante: analisis.otraVariante,
     cuadros3d: analisis.cuadros3d,
+    segundos: +((Date.now() - inicio) / 1000).toFixed(1),
     puntaje: analisis.analisis.puntaje,
     repeticiones: analisis.analisis.repeticiones.map((r) => ({
       numero: r.numero, tFondo: +r.tFondo.toFixed(1), puntaje: r.puntaje,

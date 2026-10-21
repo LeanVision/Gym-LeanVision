@@ -168,6 +168,9 @@ body[data-pantalla="tutorial"] .volver { color: var(--ejercicio); }
 .progreso { height: 14px; background: var(--tinta); border-radius: 999px; overflow: hidden; margin-top: 12px; }
 .progreso-barra { height: 100%; width: 0; background: var(--mandarina); border-radius: 999px; transition: width .2s; }
 
+/* El video mientras se analiza: visible para el navegador, invisible para la persona. */
+video.analizandose { position: fixed; left: 0; top: 0; width: 160px; height: 90px; opacity: 0; pointer-events: none; z-index: -1; }
+
 /* Resultado */
 .otra-variante {
   margin-top: 14px; padding: 16px; border-radius: 22px;

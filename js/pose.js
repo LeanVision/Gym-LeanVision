@@ -26,13 +26,83 @@ async function crearDetector() {
   }
 }
 
-function esperar(video, evento) {
+// Si el navegador no avisa que terminó de saltar a un cuadro en este tiempo,
+// se deja de saltar y se recorre el video reproduciéndolo.
+const ESPERA_SALTO = 4000; // ms
+
+/**
+ * Espera un evento del video. Con `ms`, devuelve false si no llegó a tiempo
+ * (sin `ms` espera siempre). Rechaza si el video da error.
+ */
+function esperar(video, evento, ms) {
   return new Promise((resolver, rechazar) => {
-    const ok = () => { limpiar(); resolver(); };
+    let reloj = null;
+    const ok = () => { limpiar(); resolver(true); };
     const error = () => { limpiar(); rechazar(new Error("No se pudo leer el video")); };
-    const limpiar = () => { video.removeEventListener(evento, ok); video.removeEventListener("error", error); };
+    const limpiar = () => {
+      clearTimeout(reloj);
+      video.removeEventListener(evento, ok);
+      video.removeEventListener("error", error);
+    };
     video.addEventListener(evento, ok, { once: true });
     video.addEventListener("error", error, { once: true });
+    if (ms) reloj = setTimeout(() => { limpiar(); resolver(false); }, ms);
+  });
+}
+
+/**
+ * Deja el video listo para leer cuadros. En iPhone (Safari, y Chrome que
+ * usa el mismo motor) el video no carga imágenes hasta reproducirlo una vez,
+ * así que se lo reproduce y pausa enseguida (está sin sonido).
+ */
+async function prepararVideo(video) {
+  video.muted = true;
+  video.playsInline = true;
+  video.preload = "auto";
+  if (video.readyState < 1) await esperar(video, "loadedmetadata");
+  if (video.readyState < 2) {
+    try { await video.play(); } catch { /* si no deja reproducir, se sigue igual */ }
+    video.pause();
+    if (video.readyState < 2) await esperar(video, "loadeddata", ESPERA_SALTO);
+  }
+}
+
+/**
+ * Plan B: recorre el video reproduciéndolo, para navegadores que no avisan
+ * al saltar. En cada cuadro a analizar pausa, analiza y sigue: así no se
+ * saltea cuadros aunque el modelo sea lento. Sigue desde `desde` segundos.
+ */
+function recorrerReproduciendo(video, resultado, desde, analizarCuadro, alAvanzar) {
+  return new Promise((resolver, rechazar) => {
+    const paso = 1 / CONFIG.cuadrosPorSegundo;
+    let ultimo = desde - paso;
+    let terminado = false;
+    const seguir = () => video.play().catch((e) => rechazar(new Error(`No se pudo reproducir el video (${e.message})`)));
+    const cuadro = (t) => {
+      if (terminado) return;
+      esperarCuadro();
+      if (t - ultimo < paso * 0.9) return;
+      ultimo = t;
+      video.pause();
+      analizarCuadro(t);
+      alAvanzar(Math.min(1, t / video.duration));
+      if (!video.ended) seguir();
+    };
+    let pedido = 0;
+    const esperarCuadro = () => {
+      pedido = video.requestVideoFrameCallback
+        ? video.requestVideoFrameCallback((_, meta) => cuadro(meta.mediaTime))
+        : requestAnimationFrame(() => cuadro(video.currentTime));
+    };
+    video.addEventListener("ended", () => {
+      terminado = true;
+      video.cancelVideoFrameCallback?.(pedido);
+      cancelAnimationFrame(pedido);
+      resolver(resultado);
+    }, { once: true });
+    video.currentTime = desde;
+    esperarCuadro();
+    seguir();
   });
 }
 
@@ -44,19 +114,28 @@ function esperar(video, evento) {
  */
 export async function estimarPoses(video, alAvanzar = () => {}) {
   detector ??= await crearDetector();
-  if (video.readyState < 1) await esperar(video, "loadedmetadata");
+  await prepararVideo(video);
   const duracion = video.duration;
   const paso = 1 / CONFIG.cuadrosPorSegundo;
   const resultado = [];
   // Cada análisis arranca con timestamps nuevos: MediaPipe exige que crezcan.
   const base = performance.now();
-  for (let t = 0; t < duracion; t += paso) {
-    video.currentTime = t;
-    await esperar(video, "seeked");
-    const r = detector.detectForVideo(video, Math.round(base + t * 1000));
+  let ultimaMarca = 0;
+  const analizarCuadro = (t) => {
+    ultimaMarca = Math.max(ultimaMarca + 1, Math.round(base + t * 1000));
+    const r = detector.detectForVideo(video, ultimaMarca);
     // landmarks: en la imagen (2D, lo que usa el análisis); mundo: los mismos
     // puntos en 3D, en metros (para la vista 3D).
     resultado.push({ t, landmarks: r.landmarks?.[0] ?? null, mundo: r.worldLandmarks?.[0] ?? null });
+  };
+  for (let t = 0; t < duracion; t += paso) {
+    video.currentTime = t;
+    if (!(await esperar(video, "seeked", ESPERA_SALTO))) {
+      // Este navegador no avisa al saltar: se sigue reproduciendo el video.
+      await recorrerReproduciendo(video, resultado, t, analizarCuadro, alAvanzar);
+      break;
+    }
+    analizarCuadro(t);
     alAvanzar(Math.min(1, t / duracion));
   }
   alAvanzar(1);
