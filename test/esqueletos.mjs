@@ -390,3 +390,46 @@ export function serieRemo(claves, fps = 15) {
   }
   return posturas.map((postura, i) => ({ t: i / fps, p: remando(postura) }));
 }
+
+/**
+ * Esqueleto parado haciendo curl de bíceps, de perfil (adelante = +x).
+ * codo: flexión del codo (0 = brazo estirado); tronco: inclinación del
+ * tronco (balanceo); brazo: cuánto se va el codo adelante del tronco.
+ */
+export function curlBiceps({ codo = 5, tronco = 0, brazo = 0, miraDerecha = true, visibilidad = 0.9 } = {}) {
+  const tobillo = { x: 300, y: 800 };
+  const rodilla = mas(tobillo, rot(ARRIBA, 2), 200);
+  const cadera = mas(rodilla, rot(ARRIBA, 0), 200);
+  const hombro = mas(cadera, rot(ARRIBA, tronco), 250);
+  const abajoTronco = rot({ x: 0, y: 1 }, tronco);
+  const dirBrazo = rot(abajoTronco, -brazo);
+  const codoP = mas(hombro, dirBrazo, 120);
+  const muneca = mas(codoP, rot(dirBrazo, -codo), 110);
+  const puntos = {
+    hombro_der: hombro, codo_der: codoP, muneca_der: muneca, cadera_der: cadera, rodilla_der: rodilla, tobillo_der: tobillo,
+    talon_der: { x: tobillo.x - 20, y: tobillo.y + 30 }, punta_der: { x: tobillo.x + 60, y: tobillo.y + 30 },
+  };
+  const p = {};
+  for (const [nombre, q] of Object.entries(puntos)) {
+    p[nombre] = { x: miraDerecha ? q.x : 1000 - q.x, y: q.y, v: visibilidad };
+    p[nombre.replace("_der", "_izq")] = { ...p[nombre], v: 0.3 };
+  }
+  return p;
+}
+
+/** Serie de curl: [[postura, segundos]], interpolando entre posturas. */
+export function serieCurl(claves, fps = 15) {
+  const campos = ["codo", "tronco", "brazo"];
+  const posturas = [];
+  let anterior = claves[0][0];
+  for (const [postura, segundos] of claves) {
+    const n = Math.round(segundos * fps);
+    for (let i = 1; i <= n; i++) {
+      const r = { ...postura };
+      for (const k of campos) r[k] = (anterior[k] ?? 0) + ((postura[k] ?? 0) - (anterior[k] ?? 0)) * (i / n);
+      posturas.push(r);
+    }
+    anterior = postura;
+  }
+  return posturas.map((postura, i) => ({ t: i / fps, p: curlBiceps(postura) }));
+}

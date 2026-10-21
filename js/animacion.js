@@ -161,6 +161,22 @@ const FIGURAS = {
       };
     },
   },
+  curl: {
+    // Parado: el codo queda quieto al costado y el antebrazo sube con la mancuerna.
+    arriba: { antebrazo: -78 },
+    abajo: { antebrazo: 68 },
+    figura: (p) => {
+      const cadera = [58, 53];
+      const t = torso(cadera, 90, 90);
+      const codo = [t.hombro[0] - 1, t.hombro[1] + L.brazo];
+      const mano = polar(codo, L.antebrazo, p.antebrazo);
+      return {
+        lineas: [piernaDePie(cadera, [60, PISO - 3]), t.hueso, [t.hombro, codo, mano]],
+        cabeza: t.cabeza,
+        discos: [{ x: mano[0], y: mano[1], r: 4 }],
+      };
+    },
+  },
   // Remo: la mano va de los brazos estirados (arriba) al abdomen (abajo).
   remoBarra: {
     arriba: { mx: 0, my: 31, tronco: 50 },
