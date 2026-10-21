@@ -172,6 +172,14 @@ export function angulos(p, lado) {
   // cadera, en largos de tibia: crece si los pies se despegan del piso.
   a.elevacionTronco = grados(Math.atan2(cadera.y - hombro.y, Math.abs(hombro.x - cadera.x)));
   a.tobilloSobreCadera = (cadera.y - tobillo.y) / largoPierna;
+  // Sentado (remo en polea o máquina): el tronco respecto de la vertical,
+  // positivo = inclinado hacia los pies. Sentado los pies no sirven para
+  // saber dónde es "adelante" (apuntan para arriba), así que se usa de qué
+  // lado de la cadera están los tobillos.
+  {
+    const haciaPies = Math.sign(p["tobillo" + s].x - p["cadera" + s].x) || 1;
+    a.troncoHaciaPies = anguloFirmado(arriba, { x: (p["hombro" + s].x - p["cadera" + s].x) * haciaPies, y: p["hombro" + s].y - p["cadera" + s].y });
+  }
   // Press de banca: la cadera respecto de los hombros, en largos de tronco
   // (acostado en el banco ~0; positivo = la cola se despega hacia arriba).
   a.alturaCadera = largoTronco > 0 ? (hombro.y - cadera.y) / largoTronco : null;

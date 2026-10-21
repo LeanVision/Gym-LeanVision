@@ -332,3 +332,61 @@ export function serieBanca(claves, fps = 15) {
   }
   return posturas.map((postura, i) => ({ t: i / fps, p: banca(postura) }));
 }
+
+const ADELANTE_V = { x: 1, y: 0 };
+
+/**
+ * Esqueleto remando, de perfil (adelante = +x). forma: "parado" (remo con
+ * barra, inclinado), "polea" (sentado, piernas casi estiradas) o "maquina"
+ * (sentado, rodillas a 90°). tronco: inclinación respecto de la vertical
+ * (positivo = hacia adelante, hacia los pies); codo: flexión del codo
+ * (0 = brazos estirados).
+ */
+export function remando({ forma = "parado", tronco = 45, codo = 5, miraDerecha = true, visibilidad = 0.9 } = {}) {
+  let cadera, rodilla, tobillo, pie;
+  if (forma === "parado") {
+    tobillo = { x: 300, y: 800 };
+    rodilla = mas(tobillo, rot(ARRIBA, 8), 200);
+    cadera = mas(rodilla, rot(ARRIBA, -12), 200);
+    pie = { talon: { x: tobillo.x - 20, y: tobillo.y + 30 }, punta: { x: tobillo.x + 60, y: tobillo.y + 30 } };
+  } else {
+    cadera = { x: 300, y: 700 };
+    rodilla = forma === "polea" ? { x: 495, y: 660 } : { x: 500, y: 700 };
+    tobillo = forma === "polea" ? { x: 690, y: 700 } : { x: 500, y: 900 };
+    pie = { talon: { x: tobillo.x - 10, y: tobillo.y + 30 }, punta: { x: tobillo.x + 10, y: tobillo.y - 50 } };
+  }
+  const hombro = mas(cadera, rot(ARRIBA, tronco), 250);
+  // Brazos: estirados hacia abajo (parado) o hacia adelante (sentado). Al
+  // tirar, el brazo gira hacia atrás y el antebrazo queda doblado `codo` grados.
+  const base = forma === "parado" ? { x: 0, y: 1 } : ADELANTE_V;
+  const giro = forma === "parado" ? codo * 0.7 : -codo * 0.7;
+  const codoP = mas(hombro, rot(base, giro), 120);
+  const muneca = mas(codoP, rot(base, giro + (forma === "parado" ? -codo : codo)), 110);
+  const puntos = {
+    hombro_der: hombro, codo_der: codoP, muneca_der: muneca, cadera_der: cadera, rodilla_der: rodilla,
+    tobillo_der: tobillo, talon_der: pie.talon, punta_der: pie.punta,
+  };
+  const p = {};
+  for (const [nombre, q] of Object.entries(puntos)) {
+    p[nombre] = { x: miraDerecha ? q.x : 1000 - q.x, y: q.y, v: visibilidad };
+    p[nombre.replace("_der", "_izq")] = { ...p[nombre], v: 0.3 };
+  }
+  return p;
+}
+
+/** Serie de remo: [[postura, segundos]], interpolando entre posturas. */
+export function serieRemo(claves, fps = 15) {
+  const campos = ["tronco", "codo"];
+  const posturas = [];
+  let anterior = claves[0][0];
+  for (const [postura, segundos] of claves) {
+    const n = Math.round(segundos * fps);
+    for (let i = 1; i <= n; i++) {
+      const r = { ...postura };
+      for (const k of campos) r[k] = (anterior[k] ?? 0) + ((postura[k] ?? 0) - (anterior[k] ?? 0)) * (i / n);
+      posturas.push(r);
+    }
+    anterior = postura;
+  }
+  return posturas.map((postura, i) => ({ t: i / fps, p: remando(postura) }));
+}

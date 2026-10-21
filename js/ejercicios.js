@@ -7,6 +7,7 @@ import * as flexiones from "./flexiones.js";
 import * as estocadas from "./estocadas.js";
 import * as dominadas from "./dominadas.js";
 import * as pressBanca from "./press-banca.js";
+import * as remo from "./remo.js";
 import * as abdominales from "./abdominales.js";
 
 // Lo que se repite en todas las variantes de abdominales.
@@ -129,6 +130,67 @@ export const EJERCICIOS = {
     problemas: pressBanca.PROBLEMAS,
     analizar: pressBanca.analizarPressBanca,
   },
+  // Remo: un grupo con varias formas (ver GRUPOS más abajo).
+  remoBarra: {
+    nombre: "Remo con barra",
+    grupo: "remo",
+    resumen: "Torso · impulso · recorrido",
+    color: "#C6F36B",
+    icono: { caja: "0 0 60 56", trazos: '<circle cx="45" cy="11" r="5"/><path d="M40 16L18 30l6 10-2 14M36 19l-4 12M26 31h14M10 54h40"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Parate con los pies al ancho de la cadera y agarrá la barra un poco más abierta que los hombros.",
+      "Doblá apenas las rodillas e inclinate hacia adelante desde la cadera, con la espalda recta, hasta que el torso quede a unos 45° o más.",
+      "Tirá la barra hacia el abdomen llevando los codos hacia atrás y juntando los omóplatos, sin mover el torso.",
+      "Bajala despacio hasta estirar los brazos.",
+      "Mantené el cuello en línea con la espalda, mirando al piso un poco adelante.",
+    ],
+    noRevisamos: "Si la espalda se redondea: el modelo no tiene puntos en la columna y no lo puede medir. Mantenela recta.",
+    consejosFilmacion: [],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con los brazos a la vista, y que tires doblando los codos.",
+    problemas: remo.conBarra.PROBLEMAS,
+    analizar: remo.conBarra.analizar,
+  },
+  remoPolea: {
+    nombre: "Remo en polea",
+    grupo: "remo",
+    resumen: "Torso · balanceo · recorrido",
+    color: "#C6F36B",
+    icono: { caja: "0 0 64 48", trazos: '<circle cx="16" cy="9" r="5"/><path d="M16 15v19h16l8 6M16 22l12 6h26M8 36h20M56 20v24"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Sentate con los pies apoyados en la plataforma y las rodillas apenas dobladas.",
+      "Agarrá el agarre con los brazos estirados y el torso derecho, el pecho arriba.",
+      "Tirá hacia el abdomen llevando los codos hacia atrás y juntando los omóplatos, con el torso quieto.",
+      "Volvé despacio hasta estirar los brazos, dejando que los omóplatos se separen, sin inclinarte hacia adelante.",
+      "No te tires hacia atrás para mover el peso.",
+    ],
+    noRevisamos: "Si la espalda se redondea al volver: el modelo no tiene puntos en la columna. Mantenela recta.",
+    consejosFilmacion: ["Para el remo sentado, el celular a la altura del asiento, de costado: que se vean los brazos y los pies."],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con los brazos a la vista, y que tires doblando los codos.",
+    problemas: remo.polea.PROBLEMAS,
+    analizar: remo.polea.analizar,
+  },
+  remoMaquina: {
+    nombre: "Remo en máquina",
+    grupo: "remo",
+    resumen: "Pecho · vuelta · recorrido",
+    color: "#C6F36B",
+    icono: { caja: "0 0 64 52", trazos: '<circle cx="18" cy="9" r="5"/><path d="M18 15v20h18v14M18 22l10 6h12M44 8v28M10 36h26"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Ajustá el asiento para que los agarres queden a la altura del pecho y apoyá el pecho en el apoyo.",
+      "Agarrá los agarres con los brazos estirados.",
+      "Tirá llevando los codos hacia atrás y juntando los omóplatos, sin despegar el pecho del apoyo.",
+      "Volvé despacio hasta estirar los brazos, sin que las placas choquen.",
+      "Mantené los hombros abajo, lejos de las orejas.",
+    ],
+    noRevisamos: "Si los hombros se suben hacia las orejas o los codos se abren: de costado no se distingue bien.",
+    consejosFilmacion: ["Para el remo sentado, el celular a la altura del asiento, de costado: que se vean los brazos y los pies."],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con los brazos a la vista, y que tires doblando los codos.",
+    problemas: remo.maquina.PROBLEMAS,
+    analizar: remo.maquina.analizar,
+  },
   // Abdominales: un grupo con varias variantes (ver GRUPOS más abajo).
   encogimiento: {
     nombre: "Encogimiento",
@@ -238,6 +300,15 @@ export const EJERCICIOS = {
 // tarjeta y al tocarla se elige la variante. `detectar` dice qué variante
 // parece el video, para avisar si no es la elegida.
 export const GRUPOS = {
+  remo: {
+    nombre: "Remo",
+    resumen: "3 formas",
+    color: "#C6F36B",
+    icono: { caja: "0 0 60 56", trazos: '<circle cx="45" cy="11" r="5"/><path d="M40 16L18 30l6 10-2 14M36 19l-4 12M26 31h14M10 54h40"/>' },
+    intro: "Elegí cómo lo hacés. Si el video parece de otra forma, te avisamos.",
+    noSeRevisan: "Por ahora no revisamos el remo con mancuerna a una mano ni el remo al mentón.",
+    detectar: remo.detectarVariante,
+  },
   abdominales: {
     nombre: "Abdominales",
     resumen: "5 variantes",
