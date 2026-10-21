@@ -6,6 +6,8 @@
 //   EJERCICIO="Peso muerto" MODELO_POSE=... VIDEO=peso-muerto.webm npm run test:e2e
 //
 // Opcional: CHROMIUM=/ruta/a/chrome si playwright no encuentra uno instalado.
+// VISTA=2d o VISTA=3d fuerza de dónde salen los ángulos (si no, la app lo
+// elige según el ángulo de la cámara).
 // SIN_SALTOS=1 simula un iPhone que no avisa al saltar de cuadro ("seeked"):
 // prueba el plan B, que recorre el video reproduciéndolo.
 // Chromium sin códecs propietarios no lee H.264: usar un .webm (VP9).
@@ -41,6 +43,7 @@ const navegador = await chromium.launch({ executablePath: CHROMIUM || undefined,
 try {
   const pagina = await navegador.newPage();
   pagina.on("console", (m) => m.type() === "error" && console.log("[consola]", m.text()));
+  if (process.env.VISTA) await pagina.addInitScript((v) => { window.forzarVista = v; }, process.env.VISTA);
   if (process.env.SIN_SALTOS) {
     await pagina.addInitScript(() => {
       const agregar = HTMLMediaElement.prototype.addEventListener;
@@ -69,6 +72,7 @@ try {
     toma: analisis.toma,
     otraVariante: analisis.otraVariante,
     cuadros3d: analisis.cuadros3d,
+    vista: analisis.vista,
     segundos: +((Date.now() - inicio) / 1000).toFixed(1),
     puntaje: analisis.analisis.puntaje,
     repeticiones: analisis.analisis.repeticiones.map((r) => ({
@@ -80,14 +84,6 @@ try {
   if (process.env.CAPTURA) {
     await pagina.setViewportSize({ width: 412, height: 915 });
     await pagina.screenshot({ path: process.env.CAPTURA, fullPage: true });
-    // La vista 3D en el punto más bajo de la primera repetición, desde cada lado.
-    const tFondo = analisis.analisis.repeticiones[0]?.tFondo ?? 0;
-    await pagina.evaluate((t) => { document.getElementById("video").currentTime = t; }, tFondo);
-    await pagina.waitForTimeout(500);
-    for (const vista of ["frente", "costado", "arriba"]) {
-      await pagina.click(`[data-vista="${vista}"]`);
-      await pagina.locator("#vista3d").screenshot({ path: process.env.CAPTURA.replace(/\.png$/, `-3d-${vista}.png`) });
-    }
   }
   if (!analisis.analisis.repeticiones.length) throw new Error("No se encontraron repeticiones");
 } finally {

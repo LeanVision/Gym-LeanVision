@@ -195,20 +195,6 @@ video.analizandose { position: fixed; left: 0; top: 0; width: 160px; height: 90p
 .reproductor video, .reproductor canvas { display: block; width: 100%; max-height: 70vh; object-fit: contain; }
 .reproductor canvas { position: absolute; inset: 0; height: 100%; pointer-events: none; }
 
-/* Vista 3D: el esqueleto estimado en 3D, que se gira arrastrando */
-.vista3d-cabecera { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
-.vista3d-cabecera .subtitulo { margin: 0; }
-.vistas { display: flex; gap: 6px; }
-.vistas button {
-  min-height: 36px; padding: 0 12px;
-  border: 2px solid var(--crema); border-radius: 999px;
-  background: none; color: var(--crema);
-  font: 700 12px Archivo, sans-serif; cursor: pointer;
-}
-.vistas button[aria-pressed="true"] { background: var(--crema); color: var(--tinta); }
-#esqueleto3d { display: block; width: 100%; aspect-ratio: 1; margin-top: 10px; border-radius: 32px; background: var(--tinta); cursor: grab; }
-#esqueleto3d:active { cursor: grabbing; }
-
 .consejo-principal {
   margin-top: 12px; padding: 14px 18px;
   background: var(--rosa); color: var(--tinta);

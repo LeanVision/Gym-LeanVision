@@ -218,22 +218,29 @@ el mismo motor) hay que cuidar dos cosas:
   resultados; `SIN_SALTOS=1 npm run test:e2e` lo prueba simulando un
   navegador que nunca avisa al saltar.
 
-## Vista 3D
+## Cámara de costado o en diagonal
 
-Además de los puntos en la imagen (2D, los que usa el análisis), MediaPipe
-devuelve los mismos 33 puntos en 3D, en metros y centrados en la cadera
-(`worldLandmarks`). `js/pose.js` los guarda y el resultado muestra el
-esqueleto en 3D sincronizado con el video (`js/esqueleto3d.js`): se gira
-arrastrando y tiene vistas de frente, de costado y desde arriba (el frente
-sale de hacia dónde mira la nariz).
+La cámara no tiene que estar justo de costado. Además de los puntos en la
+imagen, MediaPipe devuelve los mismos 33 puntos en 3D, en metros y centrados
+en la cadera (`worldLandmarks`). Con ellos `prepararCuadros` (geometria.js):
 
-Es una estimación desde un solo video: la profundidad tiene más error que el
-2D. En el video real de sentadilla, la flexión de rodilla en 3D difiere de la
-2D en ±11° cuadro a cuadro (abajo de todo: 112° en 3D contra 122° en 2D) y
-la inclinación del tronco coincide (37° contra 36°). Por eso, por ahora, las
-correcciones siguen saliendo del 2D; el 3D es para mirar, y el paso siguiente
-es usarlo para lo que de costado no se ve (rodillas hacia adentro, codos
-abiertos), validándolo con videos de frente.
+1. Calcula el eje izquierda-derecha del cuerpo (caderas y hombros, en el
+   piso) y de ahí el ángulo de la cámara: 0° = de costado, 90° = de frente.
+2. Hasta 25° usa los puntos de la imagen, como siempre: de costado son los
+   más precisos.
+3. Con más ángulo arma una **vista de costado virtual**: proyecta los puntos
+   3D sobre el plano del cuerpo, que es lo que vería una cámara puesta justo
+   al costado, y en la escala de píxeles del video. Todos los análisis
+   corren igual sobre esa vista.
+4. Desde 70° (casi de frente) avisa que la profundidad se ve mal.
+
+Pruebas: un esqueleto conocido "filmado" a 0°, 30°, 45°, 60° y 80° da los
+mismos ángulos (±1°), y una serie de sentadillas da los mismos errores que de
+costado (`test/vista-camara.test.mjs`); con la imagen sola, a 60° la rodilla
+sale con más de 10° de error. En el video real de sentadilla (de costado) la
+app mide la cámara a 7° y usa la imagen; forzando el 3D (`VISTA=3d npm run
+test:e2e`) el resultado es el mismo (3 repeticiones, sin errores) con medidas
+que difieren unos grados. Falta validarlo con videos reales en diagonal.
 
 ## Cómo se separan las repeticiones
 
@@ -282,9 +289,10 @@ o si falta un módulo en el import map.
 | 1.11 | Inicio y elección de variantes en grilla de dos columnas |
 | 1.12 | Curl de bíceps |
 | 1.13 | Press militar |
-| 1.14 | Vista 3D del esqueleto en el resultado |
+| 1.14 | Vista 3D del esqueleto en el resultado (se sacó en 1.15) |
 | 1.14.1 | Arreglo para iPhone: el análisis se quedaba en 0 % |
 | 1.14.2 | En iPhone, los .mp4 de Archivos se pueden elegir |
+| 1.15 | Cámara en diagonal: los ángulos salen del 3D si no está de costado; se saca la vista 3D aparte |
 
 ## Probarla en la computadora
 

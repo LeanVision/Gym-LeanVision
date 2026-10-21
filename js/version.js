@@ -8,5 +8,5 @@
 // 1.9 press de banca · 1.10 remo ·
 // 1.11 inicio en grilla · 1.12 curl de bíceps ·
 // 1.13 press militar · 1.14 vista 3D ·
-// 1.14.1 arreglo para iPhone · 1.14.2 elegir videos de Archivos en iPhone
-export const VERSION = "1.14.2";
+// 1.14.1 arreglo para iPhone · 1.15.0 elegir videos de Archivos en iPhone
+export const VERSION = "1.15.0";
