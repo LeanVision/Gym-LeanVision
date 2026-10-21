@@ -113,6 +113,22 @@ las repeticiones se cuentan con la flexión de codo.
 Los umbrales están en `js/press-banca.js` (`UMBRALES`). No revisa los codos
 abiertos a 90° ni la barra torcida (se ven de frente o desde arriba).
 
+## Qué revisa en el curl de bíceps
+
+Parado, con mancuernas o barra, filmado de costado; las repeticiones se
+cuentan con la flexión de codo (del brazo del lado de la cámara).
+
+| Error | Cómo se mide | Umbral |
+|---|---|---|
+| Te balanceás | Cuánto va y viene el tronco en la repetición | más de 10° |
+| Llevás el codo adelante | Brazo (hombro-codo) respecto del tronco | más de 25° adelante |
+| No subís del todo | Flexión de codo arriba de todo | menos de 110° |
+| No estirás los brazos abajo | Flexión de codo al terminar la repetición | más de 30° |
+| Bajás de golpe | Tiempo de bajada | menos de 0,8 s |
+
+Los umbrales están en `js/curl.js` (`UMBRALES`). No revisa las muñecas
+dobladas ni si un brazo trabaja más que el otro.
+
 ## Qué revisa en el remo
 
 El remo se hace de varias formas, así que en el inicio "Remo" lleva a elegir
@@ -216,6 +232,7 @@ o si falta un módulo en el import map.
 | 1.9 | Press de banca |
 | 1.10 | Remo: con barra, en polea y en máquina, con aviso si el video parece de otra forma |
 | 1.11 | Inicio y elección de variantes en grilla de dos columnas |
+| 1.12 | Curl de bíceps |
 
 ## Probarla en la computadora
 

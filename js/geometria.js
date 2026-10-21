@@ -141,6 +141,9 @@ export function angulos(p, lado) {
   // dependen de hacia dónde mira la persona, sólo de "arriba" y "abajo".
   const sin = (n) => p[n + s];
   a.codo = visto("codo") && visto("muneca") ? flexion(sin("hombro"), sin("codo"), sin("muneca")) : null;
+  // Curl de bíceps: el brazo (hombro-codo) respecto del tronco, positivo =
+  // el codo adelante del cuerpo. Con los puntos espejados ("adelante" = +x).
+  a.brazo = visto("codo") ? -anguloFirmado(resta(cadera, hombro), resta(q("codo"), hombro)) : null;
   // Dominadas: la nariz respecto de las manos (la barra), en largos de
   // tronco: positivo = la nariz por encima de las manos.
   a.barbilla = visto("muneca") && p.nariz?.v >= VISIBILIDAD_MINIMA && largoTronco > 0

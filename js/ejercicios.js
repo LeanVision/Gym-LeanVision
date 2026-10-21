@@ -7,6 +7,7 @@ import * as flexiones from "./flexiones.js";
 import * as estocadas from "./estocadas.js";
 import * as dominadas from "./dominadas.js";
 import * as pressBanca from "./press-banca.js";
+import * as curl from "./curl.js";
 import * as remo from "./remo.js";
 import * as abdominales from "./abdominales.js";
 
@@ -129,6 +130,25 @@ export const EJERCICIOS = {
     sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con los brazos a la vista, y que bajes la barra doblando los codos.",
     problemas: pressBanca.PROBLEMAS,
     analizar: pressBanca.analizarPressBanca,
+  },
+  curl: {
+    nombre: "Curl de bíceps",
+    resumen: "Balanceo · codo · recorrido",
+    color: "#FF8A80",
+    icono: { caja: "0 0 48 64", trazos: '<circle cx="24" cy="8" r="6"/><path d="M24 15v24l-5 22M24 39l5 22M24 18v14l10-8"/><circle cx="36" cy="22" r="3"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Parate derecho con los pies al ancho de la cadera y una mancuerna en cada mano (o la barra), con los brazos estirados.",
+      "Pegá los codos al costado del cuerpo y apretá el abdomen.",
+      "Subí doblando solo los codos, sin moverlos de lugar y sin balancear el torso, hasta que el antebrazo quede casi vertical.",
+      "Bajá despacio hasta estirar los brazos por completo.",
+      "Las muñecas firmes, en línea con el antebrazo.",
+    ],
+    noRevisamos: "Las muñecas dobladas ni si un brazo trabaja más que el otro: de costado se ve bien solo el brazo del lado de la cámara.",
+    consejosFilmacion: ["Para el curl, que el brazo del lado de la cámara no quede tapado por el cuerpo."],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con el brazo del lado de la cámara a la vista, y que subas doblando los codos.",
+    problemas: curl.PROBLEMAS,
+    analizar: curl.analizarCurl,
   },
   // Remo: un grupo con varias formas (ver GRUPOS más abajo).
   remoBarra: {
