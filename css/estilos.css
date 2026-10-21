@@ -157,6 +157,7 @@ body[data-pantalla="tutorial"] .volver { color: var(--ejercicio); }
 .escenario .piso { stroke: var(--tinta); stroke-width: 2.5; stroke-linecap: round; opacity: .35; }
 .escenario polyline { fill: none; stroke: var(--tinta); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; }
 .escenario .cabeza { fill: var(--tinta); }
+.escenario polyline.mueble { stroke-width: 3.5; opacity: .45; }
 .escenario .disco { fill: none; stroke: var(--tinta); stroke-width: 3; }
 .sticker-porcentaje { position: absolute; top: 14px; right: 14px; font-size: 16px; transform: rotate(6deg); }
 

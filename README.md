@@ -98,6 +98,21 @@ la vista; las repeticiones se cuentan con la flexión de codo.
 Los umbrales están en `js/dominadas.js` (`UMBRALES`). No revisa los hombros
 que suben hacia las orejas (las escápulas): de costado no se distingue bien.
 
+## Qué revisa en el press de banca
+
+Acostado en banco plano con barra, filmado de costado a la altura del banco;
+las repeticiones se cuentan con la flexión de codo.
+
+| Error | Cómo se mide | Umbral |
+|---|---|---|
+| Despegás la cola del banco | Cuánto sube la cadera respecto de los hombros, comparado con el principio de la repetición | más de 0,12 largos de tronco |
+| No llegás al pecho | Flexión de codo abajo de todo | menos de 75° |
+| No estirás arriba | Flexión de codo al terminar la repetición | más de 25° |
+| Bajás de golpe | Tiempo de bajada | menos de 0,6 s |
+
+Los umbrales están en `js/press-banca.js` (`UMBRALES`). No revisa los codos
+abiertos a 90° ni la barra torcida (se ven de frente o desde arriba).
+
 ## Qué revisa en los abdominales
 
 Hay muchas variantes y cada una se hace distinto, así que en el inicio
@@ -174,6 +189,7 @@ o si falta un módulo en el import map.
 | 1.6 | Abdominales; muñequito animado mientras analiza; los títulos no cortan palabras |
 | 1.7 | Cinco variantes de abdominales, con aviso si el video parece de otra |
 | 1.8 | Dominadas |
+| 1.9 | Press de banca |
 
 ## Probarla en la computadora
 

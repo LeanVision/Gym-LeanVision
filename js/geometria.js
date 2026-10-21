@@ -172,6 +172,9 @@ export function angulos(p, lado) {
   // cadera, en largos de tibia: crece si los pies se despegan del piso.
   a.elevacionTronco = grados(Math.atan2(cadera.y - hombro.y, Math.abs(hombro.x - cadera.x)));
   a.tobilloSobreCadera = (cadera.y - tobillo.y) / largoPierna;
+  // Press de banca: la cadera respecto de los hombros, en largos de tronco
+  // (acostado en el banco ~0; positivo = la cola se despega hacia arriba).
+  a.alturaCadera = largoTronco > 0 ? (hombro.y - cadera.y) / largoTronco : null;
   // Piernas respecto del piso, con el muslo (así doblar las rodillas no
   // cambia la medida): 0 = en el piso, 90 = verticales.
   a.elevacionPiernas = grados(Math.atan2(cadera.y - rodilla.y, Math.abs(rodilla.x - cadera.x)));
