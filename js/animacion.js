@@ -161,6 +161,58 @@ const FIGURAS = {
       };
     },
   },
+  // Remo: la mano va de los brazos estirados (arriba) al abdomen (abajo).
+  remoBarra: {
+    arriba: { mx: 0, my: 31, tronco: 50 },
+    abajo: { mx: -11, my: 15, tronco: 50 },
+    figura: (p) => {
+      const cadera = [44, 56];
+      const t = torso(cadera, 90 - p.tronco, 90 - p.tronco);
+      const mano = [t.hombro[0] + p.mx, t.hombro[1] + p.my];
+      const codo = articulacion(t.hombro, mano, L.brazo, L.antebrazo, [-1, -0.6]);
+      return {
+        lineas: [piernaDePie(cadera, [58, PISO - 3]), t.hueso, [t.hombro, codo, mano]],
+        cabeza: t.cabeza,
+        discos: [{ x: mano[0], y: mano[1], r: 7 }],
+      };
+    },
+  },
+  remoPolea: {
+    arriba: { mx: 30, my: 6, tronco: 80 },
+    abajo: { mx: 9, my: 14, tronco: 94 },
+    figura: (p) => {
+      const asiento = PISO - 14;
+      const cadera = [30, asiento - 3];
+      const tobillo = [72, asiento - 4];
+      const rodilla = articulacion(cadera, tobillo, L.muslo, L.tibia, [0, -1]);
+      const t = torso(cadera, p.tronco, p.tronco);
+      const mano = [t.hombro[0] + p.mx, t.hombro[1] + p.my];
+      const codo = articulacion(t.hombro, mano, L.brazo, L.antebrazo, [-0.5, 1]);
+      return {
+        muebles: [[[14, asiento], [44, asiento]], [[29, asiento], [29, PISO]], [[78, asiento - 16], [78, PISO]], [mano, [104, PISO - 6]]],
+        lineas: [[cadera, rodilla, tobillo, [tobillo[0] + 3, tobillo[1] - 7]], t.hueso, [t.hombro, codo, mano]],
+        cabeza: t.cabeza,
+      };
+    },
+  },
+  remoMaquina: {
+    arriba: { mx: 30, my: 2 },
+    abajo: { mx: 6, my: 8 },
+    figura: (p) => {
+      const asiento = PISO - 22;
+      const cadera = [30, asiento - 3];
+      const rodilla = [52, asiento - 3];
+      const tobillo = [52, PISO - 3];
+      const t = torso(cadera, 82, 86);
+      const mano = [t.hombro[0] + p.mx, t.hombro[1] + p.my];
+      const codo = articulacion(t.hombro, mano, L.brazo, L.antebrazo, [-0.4, 1]);
+      return {
+        muebles: [[[16, asiento], [42, asiento]], [[28, asiento], [28, PISO]], [[t.hombro[0] + 7, t.hombro[1] - 6], [t.hombro[0] + 7, t.hombro[1] + 16], [t.hombro[0] + 7, PISO]]],
+        lineas: [[cadera, rodilla, tobillo, [tobillo[0] + 8, PISO]], t.hueso, [t.hombro, codo, mano]],
+        cabeza: t.cabeza,
+      };
+    },
+  },
   encogimiento: {
     // Acostado boca arriba: la cadera y los pies quedan en el piso.
     arriba: { tronco: 38, cuello: 30 },

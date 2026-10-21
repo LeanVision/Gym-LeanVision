@@ -113,6 +113,30 @@ las repeticiones se cuentan con la flexión de codo.
 Los umbrales están en `js/press-banca.js` (`UMBRALES`). No revisa los codos
 abiertos a 90° ni la barra torcida (se ven de frente o desde arriba).
 
+## Qué revisa en el remo
+
+El remo se hace de varias formas, así que en el inicio "Remo" lleva a elegir
+la forma (`js/remo.js`), igual que los abdominales. Si el video parece de
+otra forma, el resultado lo avisa: parado (muslos casi verticales) es con
+barra; sentado con las rodillas bien dobladas, la máquina; sentado con las
+piernas más estiradas, la polea. En las tres las repeticiones se cuentan con
+la flexión de codo.
+
+| Forma | Error | Cómo se mide | Umbral |
+|---|---|---|---|
+| Todas | Poco recorrido | Flexión de codo al tirar | menos de 75° |
+| | No estirás los brazos | Flexión de codo al volver | más de 30° |
+| Con barra | Torso muy erguido | Torso respecto de la vertical (mediana de la repetición) | menos de 30° |
+| | Usás impulso con el torso | Cuánto se mueve el torso en la repetición | más de 15° |
+| En polea | Te tirás hacia atrás | Torso al tirar, respecto de la vertical | más de 15° hacia atrás |
+| | Te balanceás | Cuánto se mueve el torso en la repetición | más de 25° |
+| En máquina | Despegás el pecho del apoyo | Cuánto se mueve el torso en la repetición | más de 10° |
+| | Soltás el peso de golpe | Tiempo de vuelta | menos de 0,6 s |
+
+Sentado, "adelante" se toma hacia el lado de los pies (los pies apuntan para
+arriba y no sirven). No revisa la espalda redondeada ni los codos abiertos.
+Todavía no están el remo con mancuerna a una mano ni el remo al mentón.
+
 ## Qué revisa en los abdominales
 
 Hay muchas variantes y cada una se hace distinto, así que en el inicio
@@ -190,6 +214,7 @@ o si falta un módulo en el import map.
 | 1.7 | Cinco variantes de abdominales, con aviso si el video parece de otra |
 | 1.8 | Dominadas |
 | 1.9 | Press de banca |
+| 1.10 | Remo: con barra, en polea y en máquina, con aviso si el video parece de otra forma |
 
 ## Probarla en la computadora
 
