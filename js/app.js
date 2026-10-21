@@ -150,6 +150,12 @@ async function analizar(archivo) {
   const video = $("video");
   if (video.src) URL.revokeObjectURL(video.src);
   video.src = URL.createObjectURL(archivo);
+  // Mientras se analiza, el video no puede estar en una pantalla oculta: en
+  // iPhone un video con display:none no carga cuadros y el análisis se
+  // queda en 0 %. Se lo pasa a un lugar visible pero transparente.
+  const lugar = video.parentElement;
+  document.body.append(video);
+  video.classList.add("analizandose");
   try {
     const poses = await estimarPoses(video, (f) => {
       $("progreso").style.width = `${Math.round(f * 100)}%`;
@@ -157,6 +163,9 @@ async function analizar(archivo) {
       $("porcentaje").textContent = `${Math.round(f * 100)} %`;
       $("estado").textContent = "Revisando tu movimiento cuadro por cuadro…";
     });
+    if (!poses.some((p) => p.landmarks)) {
+      throw new Error("no encontramos a nadie en el video");
+    }
     const { cuadros, lado } = prepararCuadros(poses, video.videoWidth, video.videoHeight);
     ultimo = { poses, lado, cuadros, toma: revisarToma(cuadros) };
     analizarUltimo();
@@ -165,6 +174,9 @@ async function analizar(archivo) {
     $("estado").textContent = `No se pudo analizar el video: ${error.message}. Probá con otro archivo.`;
     $("volver").hidden = false;
     pararAnimacion();
+  } finally {
+    video.classList.remove("analizandose");
+    lugar.prepend(video);
   }
 }
 

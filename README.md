@@ -203,6 +203,21 @@ se despega del piso (el modelo no tiene puntos en la columna); las de giro
 Los umbrales son un punto de partida y los está revisando un kinesiólogo; la
 app lo avisa en cada tutorial.
 
+## Cómo se recorre el video
+
+`js/pose.js` salta por el video a 15 cuadros por segundo (`currentTime` y el
+evento `seeked`) y analiza cada cuadro. En iPhone (Safari, y Chrome, que usa
+el mismo motor) hay que cuidar dos cosas:
+
+- El video tiene que estar en la página y visible para el navegador: con
+  `display: none` no carga cuadros. Mientras se analiza, `app.js` lo pasa a un
+  lugar fijo y transparente, y antes de empezar se lo reproduce y pausa una
+  vez (sin sonido) para que cargue.
+- Si un salto no avisa en 4 s, se pasa al plan B: reproducir el video y, en
+  cada cuadro a analizar, pausar, analizar y seguir. Da los mismos
+  resultados; `SIN_SALTOS=1 npm run test:e2e` lo prueba simulando un
+  navegador que nunca avisa al saltar.
+
 ## Vista 3D
 
 Además de los puntos en la imagen (2D, los que usa el análisis), MediaPipe
@@ -268,6 +283,7 @@ o si falta un módulo en el import map.
 | 1.12 | Curl de bíceps |
 | 1.13 | Press militar |
 | 1.14 | Vista 3D del esqueleto en el resultado |
+| 1.14.1 | Arreglo para iPhone: el análisis se quedaba en 0 % |
 
 ## Probarla en la computadora
 
