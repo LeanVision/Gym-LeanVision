@@ -141,6 +141,10 @@ export function angulos(p, lado) {
   // dependen de hacia dónde mira la persona, sólo de "arriba" y "abajo".
   const sin = (n) => p[n + s];
   a.codo = visto("codo") && visto("muneca") ? flexion(sin("hombro"), sin("codo"), sin("muneca")) : null;
+  // Dominadas: la nariz respecto de las manos (la barra), en largos de
+  // tronco: positivo = la nariz por encima de las manos.
+  a.barbilla = visto("muneca") && p.nariz?.v >= VISIBILIDAD_MINIMA && largoTronco > 0
+    ? (sin("muneca").y - p.nariz.y) / largoTronco : null;
 
   // Estocadas: las dos piernas. La de adelante es la que tiene el tobillo más
   // adelante. La pierna del otro lado queda tapada a medias, así que se acepta

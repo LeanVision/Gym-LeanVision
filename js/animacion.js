@@ -51,7 +51,8 @@ function piernaDePie(cadera, tobillo, hacia = [1, 0]) {
 }
 
 // Cada ejercicio: { arriba, abajo, figura(p) } con p = postura interpolada.
-// figura devuelve { lineas: [[puntos…]], cabeza: [x, y], extra?: [{x, y, r}] }.
+// figura devuelve { lineas: [[puntos…]], cabeza: [x, y], discos?: [{x, y, r}] }.
+// Opcionales: caja (viewBox, si la figura no entra en el normal) y sinPiso.
 const FIGURAS = {
   sentadilla: {
     arriba: { cx: 57, cy: 53, tronco: 5, brazo: -70 },
@@ -112,6 +113,28 @@ const FIGURAS = {
           t.hueso,
           brazoRecto(t.hombro, -95),
         ],
+        cabeza: t.cabeza,
+      };
+    },
+  },
+  dominadas: {
+    // Colgado de la barra (sin piso): las manos quedan fijas y sube el cuerpo.
+    caja: "0 -6 120 106",
+    sinPiso: true,
+    arriba: { hy: 12, inc: 8 },
+    abajo: { hy: 37, inc: 2 },
+    figura: (p) => {
+      const mano = [70, 6];
+      const hombro = [57, p.hy];
+      const codo = articulacion(hombro, mano, L.brazo, L.antebrazo, [1, 0.6]);
+      // El tronco cuelga del hombro, apenas inclinado hacia atrás arriba (pecho a la barra).
+      const cadera = polar(hombro, L.tronco, 270 - p.inc);
+      // La cabeza apenas hacia atrás, para que el brazo no la tape.
+      const t = torso(cadera, 90 - p.inc, 104);
+      const rodilla = polar(cadera, L.muslo, 280);
+      const tobillo = polar(rodilla, L.tibia, 190); // rodillas dobladas, pies atrás
+      return {
+        lineas: [[[38, 6], [100, 6]], [hombro, codo, mano], t.hueso, [cadera, rodilla, tobillo]],
         cabeza: t.cabeza,
       };
     },
@@ -199,7 +222,7 @@ const FIGURAS = {
 // La animación arranca en la primera postura: de pie (o arriba) en casi
 // todos; el encogimiento, el abdominal completo y la elevación de piernas
 // empiezan acostados.
-const ORDEN = { encogimiento: ["abajo", "arriba"], abdominalCompleto: ["abajo", "arriba"], elevacionPiernas: ["abajo", "arriba"] };
+const ORDEN = { dominadas: ["abajo", "arriba"], encogimiento: ["abajo", "arriba"], abdominalCompleto: ["abajo", "arriba"], elevacionPiernas: ["abajo", "arriba"] };
 
 function interpolar(a, b, f) {
   const r = {};
@@ -216,7 +239,8 @@ const SVG = "http://www.w3.org/2000/svg";
 export function animar(svg, idEjercicio) {
   const def = FIGURAS[idEjercicio] ?? FIGURAS.sentadilla;
   const [desde, hasta] = (ORDEN[idEjercicio] ?? ["arriba", "abajo"]).map((k) => def[k]);
-  svg.innerHTML = `<path class="piso" d="M4 ${PISO + 1}h112"/><g class="figura"></g>`;
+  svg.setAttribute("viewBox", def.caja ?? "0 0 120 100");
+  svg.innerHTML = `${def.sinPiso ? "" : `<path class="piso" d="M4 ${PISO + 1}h112"/>`}<g class="figura"></g>`;
   const grupo = svg.querySelector(".figura");
 
   const dibujar = (f) => {

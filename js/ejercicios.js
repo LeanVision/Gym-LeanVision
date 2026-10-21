@@ -5,6 +5,7 @@ import * as sentadilla from "./sentadilla.js";
 import * as pesoMuerto from "./peso-muerto.js";
 import * as flexiones from "./flexiones.js";
 import * as estocadas from "./estocadas.js";
+import * as dominadas from "./dominadas.js";
 import * as abdominales from "./abdominales.js";
 
 // Lo que se repite en todas las variantes de abdominales.
@@ -88,6 +89,25 @@ export const EJERCICIOS = {
     sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con las dos piernas, y que bajes la rodilla de atrás hacia el piso.",
     problemas: estocadas.PROBLEMAS,
     analizar: estocadas.analizarEstocadas,
+  },
+  dominadas: {
+    nombre: "Dominadas",
+    resumen: "Barbilla · brazos · balanceo",
+    color: "#9ED8FF",
+    icono: { caja: "0 0 56 64", trazos: '<path d="M4 5h48M20 5l5 14M36 5l-5 14"/><circle cx="28" cy="20" r="6"/><path d="M28 27v16l-2 17"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Agarrá la barra con las palmas hacia adelante, las manos un poco más abiertas que los hombros.",
+      "Colgate con los brazos estirados, las piernas juntas y el abdomen firme. Bajá los hombros, lejos de las orejas.",
+      "Subí llevando el pecho hacia la barra hasta que el mentón la pase, sin patear ni balancearte.",
+      "Bajá despacio, controlando, hasta estirar los brazos por completo.",
+      "Si todavía no llegás, ayudate con una banda elástica o hacé solo la bajada lenta.",
+    ],
+    noRevisamos: "Si los hombros se suben hacia las orejas: de costado el modelo no lo distingue bien. Empezá cada repetición bajando los hombros.",
+    consejosFilmacion: ["Para las dominadas, el celular un poco más lejos (3 a 4 metros): que se vean la barra, las manos y los pies."],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con los brazos y la barra a la vista, y que subas doblando los codos.",
+    problemas: dominadas.PROBLEMAS,
+    analizar: dominadas.analizarDominadas,
   },
   // Abdominales: un grupo con varias variantes (ver GRUPOS más abajo).
   encogimiento: {
