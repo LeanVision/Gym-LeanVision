@@ -85,17 +85,37 @@ que se va hacia adentro (no se ve de costado).
 
 ## Qué revisa en los abdominales
 
-Encogimientos, acostado boca arriba y filmado de costado con el celular bajo.
-Las repeticiones se cuentan con cuánto se despega el tronco del piso.
+Hay muchas variantes y cada una se hace distinto, así que en el inicio
+"Abdominales" lleva a elegir la variante, y cada una tiene su tutorial y su
+análisis (`js/abdominales.js`). Si el video parece de otra variante, el
+resultado lo avisa y ofrece analizarlo como esa, sin volver a procesar el
+video. La variante se reconoce por lo que se mueve: el tronco (encogimiento o
+abdominal completo, según cuánto sube), las piernas (elevación si van
+estiradas, crunch inverso si van dobladas) o nada (plancha).
 
-| Error | Cómo se mide | Umbral |
-|---|---|---|
-| Tirás del cuello | Cabeza doblada hacia el pecho respecto del tronco | más de 35° |
-| Despegás los pies | Cuánto suben los tobillos respecto de la cadera | más de 0,3 largos de tibia |
-| Muy rápido, con impulso | Duración de la repetición entera | menos de 1 s |
+| Variante | Error | Cómo se mide | Umbral |
+|---|---|---|---|
+| Encogimiento | Tirás del cuello | Cabeza doblada hacia el pecho respecto del tronco | más de 35° |
+| | Despegás los pies | Cuánto suben los tobillos respecto de la cadera | más de 0,3 largos de tibia |
+| | Muy rápido, con impulso | Duración de la repetición | menos de 1 s |
+| Abdominal completo | No llegás arriba | Tronco respecto del piso arriba de todo | menos de 60° |
+| | Despegás los pies | Igual que en el encogimiento | más de 0,3 largos de tibia |
+| | Muy rápido, con impulso | Duración de la repetición | menos de 1,5 s |
+| Elevación de piernas | Doblás las rodillas | Flexión de rodilla | más de 30° |
+| | Poco recorrido | Muslo respecto del piso arriba de todo | menos de 70° |
+| | Bajás de golpe | Tiempo de bajada | menos de 0,8 s |
+| Crunch inverso | La cadera no se despega | Ángulo tronco-muslo arriba de todo | menos de 120° de flexión |
+| | Estirás las piernas | Flexión de rodilla | menos de 60° |
+| | Muy rápido, con impulso | Duración de la repetición | menos de 1,2 s |
+| Plancha | Cadera caída / muy arriba | Cadera respecto de la línea hombro-tobillo | más de 15° abajo / 20° arriba |
+| | Cabeza colgando | Cabeza respecto de la línea del cuerpo | más de 30° |
 
-Los umbrales están en `js/abdominales.js` (`UMBRALES`). No revisa si la zona
-lumbar se despega del piso (el modelo no tiene puntos en la columna).
+La plancha no tiene repeticiones: se mide cuánto se aguanta (la plancha más
+larga del video, de al menos 3 s). Ninguna variante revisa si la zona lumbar
+se despega del piso (el modelo no tiene puntos en la columna); las de giro
+(bicicleta, oblicuos, russian twist) no se ven de costado y no se revisan.
+Los umbrales son un punto de partida y los está revisando un kinesiólogo; la
+app lo avisa en cada tutorial.
 
 ## Cómo se separan las repeticiones
 
@@ -137,6 +157,7 @@ o si falta un módulo en el import map.
 | 1.4 | Diseño nuevo (petróleo y mandarina) y número de versión |
 | 1.5 | Estocadas |
 | 1.6 | Abdominales; muñequito animado mientras analiza; los títulos no cortan palabras |
+| 1.7 | Cinco variantes de abdominales, con aviso si el video parece de otra |
 
 ## Probarla en la computadora
 

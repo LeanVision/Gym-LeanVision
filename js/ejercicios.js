@@ -7,6 +7,10 @@ import * as flexiones from "./flexiones.js";
 import * as estocadas from "./estocadas.js";
 import * as abdominales from "./abdominales.js";
 
+// Lo que se repite en todas las variantes de abdominales.
+const LUMBAR = "Si la zona lumbar se despega del piso: el modelo no tiene puntos en la columna y no lo puede medir. Mantenela apoyada.";
+const FILMAR_PISO = "Para los abdominales, el celular bajo: a unos 30-50 cm del piso, de costado, con la cabeza y los pies adentro del cuadro.";
+
 export const EJERCICIOS = {
   sentadilla: {
     nombre: "Sentadilla",
@@ -85,8 +89,10 @@ export const EJERCICIOS = {
     problemas: estocadas.PROBLEMAS,
     analizar: estocadas.analizarEstocadas,
   },
-  abdominales: {
-    nombre: "Abdominales",
+  // Abdominales: un grupo con varias variantes (ver GRUPOS más abajo).
+  encogimiento: {
+    nombre: "Encogimiento",
+    grupo: "abdominales",
     resumen: "Cuello · pies · ritmo",
     color: "#C3B1FF",
     icono: { caja: "0 0 64 44", trazos: '<circle cx="51" cy="14" r="6"/><path d="M30 38l14-16M30 38L18 22 8 38M44 22l-14 2M4 38h56"/>' },
@@ -98,10 +104,107 @@ export const EJERCICIOS = {
       "Arriba, la zona lumbar sigue apoyada y los pies también. Soltá el aire al subir.",
       "Bajá despacio, sin dejarte caer, y volvé a empezar.",
     ],
-    noRevisamos: "Si la zona lumbar se despega del piso: el modelo no tiene puntos en la columna y no lo puede medir. Mantenela apoyada.",
-    consejosFilmacion: ["Para los abdominales, el celular bajo: a unos 30-50 cm del piso, de costado, con la cabeza y los pies adentro del cuadro."],
+    noRevisamos: LUMBAR,
+    consejosFilmacion: [FILMAR_PISO],
     sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, acostado, y que despegues los hombros del piso en cada repetición.",
-    problemas: abdominales.PROBLEMAS,
-    analizar: abdominales.analizarAbdominales,
+    problemas: abdominales.encogimiento.PROBLEMAS,
+    analizar: abdominales.encogimiento.analizar,
+  },
+  abdominalCompleto: {
+    nombre: "Abdominal completo",
+    grupo: "abdominales",
+    resumen: "Recorrido · pies · ritmo",
+    color: "#C3B1FF",
+    icono: { caja: "0 0 64 44", trazos: '<circle cx="40" cy="8" r="6"/><path d="M28 38l9-23M28 38L16 22 6 38M36 17l-12 6M2 38h58"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Acostate boca arriba, con las rodillas dobladas y los pies apoyados (si querés, sujetos debajo de algo).",
+      "Cruzá los brazos sobre el pecho.",
+      "Subí enrollando la espalda, primero la cabeza y los hombros, hasta quedar sentado con el tronco casi vertical.",
+      "Arriba, el pecho va hacia las rodillas y los pies siguen en el piso.",
+      "Bajá despacio, vértebra por vértebra, hasta apoyar los hombros.",
+    ],
+    noRevisamos: `${LUMBAR} Si tenés dolor de espalda, preferí el encogimiento.`,
+    consejosFilmacion: [FILMAR_PISO],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, acostado, y que subas hasta quedar sentado.",
+    problemas: abdominales.abdominalCompleto.PROBLEMAS,
+    analizar: abdominales.abdominalCompleto.analizar,
+  },
+  elevacionPiernas: {
+    nombre: "Elevación de piernas",
+    grupo: "abdominales",
+    resumen: "Rodillas · recorrido · bajada",
+    color: "#C3B1FF",
+    icono: { caja: "0 0 64 44", trazos: '<circle cx="55" cy="33" r="5"/><path d="M26 37h22M26 37L23 5M4 41h56"/>' },
+    pasoClave: 3,
+    pasos: [
+      "Acostate boca arriba, con las piernas estiradas y los brazos al costado del cuerpo, las palmas en el piso.",
+      "Apretá el abdomen y apoyá bien la zona lumbar contra el piso.",
+      "Subí las piernas juntas y estiradas hasta que queden casi verticales.",
+      "Bajalas despacio, sin dejarlas caer y sin que la zona lumbar se despegue del piso.",
+      "Antes de tocar el piso, volvé a subir.",
+    ],
+    noRevisamos: `${LUMBAR} Si se despega al bajar las piernas, no las bajes tanto.`,
+    consejosFilmacion: [FILMAR_PISO],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, acostado, y que subas las piernas hasta arriba.",
+    problemas: abdominales.elevacionPiernas.PROBLEMAS,
+    analizar: abdominales.elevacionPiernas.analizar,
+  },
+  crunchInverso: {
+    nombre: "Crunch inverso",
+    grupo: "abdominales",
+    resumen: "Recorrido · rodillas · ritmo",
+    color: "#C3B1FF",
+    icono: { caja: "0 0 64 44", trazos: '<circle cx="55" cy="33" r="5"/><path d="M28 37h20M28 37l10-16-14-4M4 41h56"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Acostate boca arriba con los brazos al costado del cuerpo y las palmas en el piso.",
+      "Subí las piernas con las rodillas dobladas a 90°: los muslos verticales y las tibias paralelas al piso.",
+      "Llevá las rodillas hacia el pecho hasta que la cadera se despegue un poco del piso.",
+      "Bajá despacio hasta volver a la posición del principio, con las rodillas siempre dobladas.",
+      "No te ayudes balanceando las piernas ni empujando con los brazos.",
+    ],
+    noRevisamos: LUMBAR,
+    consejosFilmacion: [FILMAR_PISO],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, acostado, y que lleves las rodillas hacia el pecho.",
+    problemas: abdominales.crunchInverso.PROBLEMAS,
+    analizar: abdominales.crunchInverso.analizar,
+  },
+  plancha: {
+    nombre: "Plancha",
+    grupo: "abdominales",
+    resumen: "Cadera · cabeza · tiempo",
+    color: "#C3B1FF",
+    icono: { caja: "0 0 64 44", trazos: '<circle cx="54" cy="18" r="5"/><path d="M6 36l42-14M47 23v13h10M4 40h56"/>' },
+    // Se queda quieta: no hay repeticiones, se mide cuánto aguantás.
+    isometrico: true,
+    pasoClave: 2,
+    pasos: [
+      "Apoyá los antebrazos en el piso, con los codos justo debajo de los hombros.",
+      "Estirá las piernas hacia atrás y apoyá las puntas de los pies.",
+      "Apretá el abdomen y los glúteos: el cuerpo en línea recta de la cabeza a los talones.",
+      "Mirá al piso entre las manos, con el cuello en línea con la espalda.",
+      "Aguantá respirando normal. Mejor menos tiempo y bien hecha que mucho y con la cadera caída.",
+    ],
+    noRevisamos: "Si la zona lumbar se arquea: el modelo no tiene puntos en la columna. Sí revisamos si la cadera cae o sube, que es lo que más se nota.",
+    consejosFilmacion: [FILMAR_PISO, "Grabá la plancha entera, desde que te ponés en posición hasta que bajás."],
+    sinRepeticiones: "No encontramos una plancha de más de 3 segundos. Revisá que se vea todo el cuerpo de costado, apoyado en los antebrazos y con las piernas estiradas.",
+    problemas: abdominales.plancha.PROBLEMAS,
+    analizar: abdominales.plancha.analizar,
+  },
+};
+
+// Grupos de ejercicios con variantes: en el inicio se ven como una sola
+// tarjeta y al tocarla se elige la variante. `detectar` dice qué variante
+// parece el video, para avisar si no es la elegida.
+export const GRUPOS = {
+  abdominales: {
+    nombre: "Abdominales",
+    resumen: "5 variantes",
+    color: "#C3B1FF",
+    icono: { caja: "0 0 64 44", trazos: '<circle cx="51" cy="14" r="6"/><path d="M30 38l14-16M30 38L18 22 8 38M44 22l-14 2M4 38h56"/>' },
+    intro: "Elegí la variante. Si el video parece de otra, te avisamos.",
+    noSeRevisan: "Las de giro (bicicleta, oblicuos, russian twist) no se ven de costado: por ahora no las revisamos.",
+    detectar: abdominales.detectarVariante,
   },
 };

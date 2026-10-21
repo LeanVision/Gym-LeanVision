@@ -91,6 +91,10 @@ body[data-pantalla="tutorial"] .volver { color: var(--ejercicio); }
 }
 .privado { display: flex; align-items: center; gap: 8px; font-weight: 600; }
 
+/* Variantes: misma tarjeta, apenas más bajas */
+#tarjetas-variantes .tarjeta { min-height: 80px; }
+#variantes-nota { margin-top: 16px; }
+
 /* Tutorial */
 .hoja {
   margin: 18px -18px -24px; padding: 22px 18px 28px;
@@ -160,6 +164,12 @@ body[data-pantalla="tutorial"] .volver { color: var(--ejercicio); }
 .progreso-barra { height: 100%; width: 0; background: var(--mandarina); border-radius: 999px; transition: width .2s; }
 
 /* Resultado */
+.otra-variante {
+  margin-top: 14px; padding: 16px; border-radius: 22px;
+  background: var(--ejercicio); color: var(--tinta); font-weight: 600;
+}
+.otra-variante p { margin: 0 0 12px; }
+.otra-variante .boton { width: 100%; min-height: 48px; font-size: 15px; }
 .resumen { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: 4px; }
 .puntaje { font-size: 104px; line-height: .82; }
 .puntaje-texto { margin-top: 8px; font-size: 14px; font-weight: 600; }
