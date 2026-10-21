@@ -49,11 +49,14 @@ try {
 
   await pagina.goto(url);
   await pagina.click(`.tarjeta-titulo:text-is("${process.env.EJERCICIO ?? "Sentadilla"}")`);
+  // Los grupos (Abdominales) llevan a elegir la variante: VARIANTE=Plancha, etc.
+  if (process.env.VARIANTE) await pagina.click(`#tarjetas-variantes .tarjeta-titulo:text-is("${process.env.VARIANTE}")`);
   await pagina.setInputFiles("#elegir", VIDEO);
   await pagina.waitForSelector("#resultado:not([hidden])", { timeout: 5 * 60_000 });
   const analisis = await pagina.evaluate(() => window.ultimoAnalisis);
   console.log(JSON.stringify({
     toma: analisis.toma,
+    otraVariante: analisis.otraVariante,
     puntaje: analisis.analisis.puntaje,
     repeticiones: analisis.analisis.repeticiones.map((r) => ({
       numero: r.numero, tFondo: +r.tFondo.toFixed(1), puntaje: r.puntaje,

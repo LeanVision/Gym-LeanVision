@@ -2,19 +2,20 @@
 
 import { prepararCuadros } from "./geometria.js";
 import { revisarToma } from "./calidad.js";
-import { EJERCICIOS } from "./ejercicios.js";
+import { EJERCICIOS, GRUPOS } from "./ejercicios.js";
 import { estimarPoses } from "./pose.js";
 import { dibujar } from "./dibujo.js";
 import { animar } from "./animacion.js";
 import { VERSION } from "./version.js";
 
 const $ = (id) => document.getElementById(id);
-const PANTALLAS = ["inicio", "tutorial", "analizando", "resultado"];
+const PANTALLAS = ["inicio", "variantes", "tutorial", "analizando", "resultado"];
 const COLOR_ESQUELETO = { fuera: "#FFB5C8", bien: "#7CF2C0", conErrores: "#FF9F1C" };
 let historial = ["inicio"];
 let ejercicio = EJERCICIOS.sentadilla;
 let idEjercicio = "sentadilla";
 let pararAnimacion = () => {};
+let ultimo = null; // el último video analizado, para analizarlo como otra variante
 
 document.querySelectorAll("[data-version]").forEach((e) => { e.textContent = `v${VERSION}`; });
 
@@ -53,20 +54,46 @@ $("volver").addEventListener("click", () => {
 });
 document.querySelectorAll("[data-ir]").forEach((b) => b.addEventListener("click", () => mostrar(b.dataset.ir)));
 
-// Inicio: un bloque de color por ejercicio.
-$("tarjetas").innerHTML = Object.entries(EJERCICIOS).map(([id, e]) => `
-  <button class="tarjeta" data-ejercicio="${id}" style="background: ${e.color}">
+// Inicio: un bloque de color por ejercicio; los que tienen variantes
+// (abdominales) van en un solo bloque que lleva a elegir la variante.
+const tarjeta = (dato, valor, e) => `
+  <button class="tarjeta" data-${dato}="${valor}" style="background: ${e.color}">
     <span>
       <span class="tarjeta-titulo">${e.nombre}</span>
       <span class="tarjeta-texto">${e.resumen}</span>
     </span>
     <svg width="58" height="58" viewBox="${e.icono.caja}" fill="none" stroke="currentColor" stroke-width="5"
       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${e.icono.trazos}</svg>
-  </button>`).join("");
-$("tarjetas").querySelectorAll("[data-ejercicio]").forEach((b) => b.addEventListener("click", () => {
-  elegirEjercicio(b.dataset.ejercicio);
-  mostrar("tutorial");
-}));
+  </button>`;
+const gruposPuestos = new Set();
+$("tarjetas").innerHTML = Object.entries(EJERCICIOS).map(([id, e]) => {
+  if (!e.grupo) return tarjeta("ejercicio", id, e);
+  if (gruposPuestos.has(e.grupo)) return "";
+  gruposPuestos.add(e.grupo);
+  return tarjeta("grupo", e.grupo, GRUPOS[e.grupo]);
+}).join("");
+
+function elegirGrupo(idGrupo) {
+  const g = GRUPOS[idGrupo];
+  document.body.style.setProperty("--ejercicio", g.color);
+  $("variantes-titulo").textContent = g.nombre;
+  $("variantes-intro").textContent = g.intro;
+  $("variantes-nota").textContent = g.noSeRevisan;
+  $("tarjetas-variantes").innerHTML = Object.entries(EJERCICIOS)
+    .filter(([, e]) => e.grupo === idGrupo).map(([id, e]) => tarjeta("ejercicio", id, e)).join("");
+}
+
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest(".tarjeta");
+  if (!b) return;
+  if (b.dataset.grupo) {
+    elegirGrupo(b.dataset.grupo);
+    mostrar("variantes");
+  } else {
+    elegirEjercicio(b.dataset.ejercicio);
+    mostrar("tutorial");
+  }
+});
 
 // Tutorial: pestañas.
 const PESTANAS = ["pasos", "errores", "filmar"];
@@ -120,10 +147,8 @@ async function analizar(archivo) {
       $("estado").textContent = "Revisando tu movimiento cuadro por cuadro…";
     });
     const { cuadros, lado } = prepararCuadros(poses, video.videoWidth, video.videoHeight);
-    const toma = revisarToma(cuadros);
-    const analisis = ejercicio.analizar(cuadros);
-    mostrarResultado({ poses, lado, toma, analisis });
-    window.ultimoAnalisis = { ejercicio: ejercicio.nombre, toma, analisis, lado }; // para las pruebas y para depurar
+    ultimo = { poses, lado, cuadros, toma: revisarToma(cuadros) };
+    analizarUltimo();
   } catch (error) {
     console.error(error);
     $("estado").textContent = `No se pudo analizar el video: ${error.message}. Probá con otro archivo.`;
@@ -132,7 +157,23 @@ async function analizar(archivo) {
   }
 }
 
-function mostrarResultado({ poses, lado, toma, analisis }) {
+/** Analiza el último video con el ejercicio elegido (sin volver a buscar las poses). */
+function analizarUltimo() {
+  const { poses, lado, cuadros, toma } = ultimo;
+  const analisis = ejercicio.analizar(cuadros);
+  // Variantes: si el video parece de otra, se avisa y se ofrece analizarlo como esa.
+  const parecida = ejercicio.grupo ? GRUPOS[ejercicio.grupo].detectar(cuadros) : null;
+  const otraVariante = parecida && parecida !== idEjercicio ? parecida : null;
+  mostrarResultado({ poses, lado, toma, analisis, otraVariante });
+  window.ultimoAnalisis = { ejercicio: ejercicio.nombre, toma, analisis, lado, otraVariante }; // para las pruebas y para depurar
+}
+
+$("analizar-como").addEventListener("click", (ev) => {
+  elegirEjercicio(ev.currentTarget.dataset.ejercicio);
+  analizarUltimo();
+});
+
+function mostrarResultado({ poses, lado, toma, analisis, otraVariante }) {
   const { repeticiones, principales, puntaje } = analisis;
   const PROBLEMAS = ejercicio.problemas;
   const video = $("video");
@@ -141,16 +182,26 @@ function mostrarResultado({ poses, lado, toma, analisis }) {
   $("resultado-ejercicio").textContent = ejercicio.nombre;
   $("puntaje").textContent = puntaje ?? "–";
   const conErrores = repeticiones.filter((r) => r.problemas.length).length;
-  $("chip-reps").textContent = `${repeticiones.length} ${repeticiones.length === 1 ? "rep" : "reps"}`;
+  $("chip-reps").textContent = ejercicio.isometrico
+    ? `${analisis.segundos} s`
+    : `${repeticiones.length} ${repeticiones.length === 1 ? "rep" : "reps"}`;
+  $("titulo-reps").textContent = ejercicio.isometrico ? "Tu plancha" : "Repetición por repetición";
   $("chip-corregir").hidden = !conErrores;
   $("chip-corregir").textContent = `${conErrores} a corregir`;
   $("resumen-texto").textContent = !repeticiones.length
-    ? `No encontramos repeticiones. ${ejercicio.sinRepeticiones}`
+    ? (ejercicio.isometrico ? ejercicio.sinRepeticiones : `No encontramos repeticiones. ${ejercicio.sinRepeticiones}`)
     : conErrores ? "" : "¡Muy bien! No encontramos errores.";
 
   $("avisos").hidden = toma.ok && !analisis.avisos.length;
   $("avisos").innerHTML = [...toma.avisos, ...analisis.avisos].map((a) => `<p>${a}</p>`).join("")
     + (toma.ok ? "" : "<p><strong>Los resultados pueden no ser exactos.</strong></p>");
+
+  $("otra-variante").hidden = !otraVariante;
+  if (otraVariante) {
+    $("otra-variante-texto").textContent = `Parece que hiciste ${EJERCICIOS[otraVariante].nombre.toLowerCase()}, no ${ejercicio.nombre.toLowerCase()}.`;
+    $("analizar-como").textContent = `Analizar como ${EJERCICIOS[otraVariante].nombre.toLowerCase()}`;
+    $("analizar-como").dataset.ejercicio = otraVariante;
+  }
 
   $("consejos-principales").innerHTML = principales.slice(0, 2).map(({ tipo, veces }) => `
     <div class="consejo-principal">
@@ -162,13 +213,13 @@ function mostrarResultado({ poses, lado, toma, analisis }) {
   detalle.hidden = true;
   $("repeticiones").innerHTML = repeticiones.map((r, i) => `
     <button class="repeticion ${r.problemas.length ? "con-errores" : ""}" data-i="${i}" aria-pressed="false">
-      Rep ${r.numero}<strong>${r.puntaje}</strong>
+      ${ejercicio.isometrico ? `${analisis.segundos} s` : `Rep ${r.numero}`}<strong>${r.puntaje}</strong>
     </button>`).join("");
   $("repeticiones").querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
     const r = repeticiones[Number(b.dataset.i)];
     $("repeticiones").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
     detalle.hidden = false;
-    detalle.innerHTML = `<h3>Repetición ${r.numero}</h3>` + (r.problemas.length
+    detalle.innerHTML = `<h3>${ejercicio.isometrico ? ejercicio.nombre : `Repetición ${r.numero}`}</h3>` + (r.problemas.length
       ? `<ul>${r.problemas.map((p) => `<li><strong>${PROBLEMAS[p.tipo].titulo}.</strong> ${p.detalle}</li>`).join("")}</ul>`
       : "Bien hecha.");
     video.pause();

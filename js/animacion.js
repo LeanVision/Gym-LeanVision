@@ -116,7 +116,7 @@ const FIGURAS = {
       };
     },
   },
-  abdominales: {
+  encogimiento: {
     // Acostado boca arriba: la cadera y los pies quedan en el piso.
     arriba: { tronco: 38, cuello: 30 },
     abajo: { tronco: 4, cuello: 8 },
@@ -131,11 +131,75 @@ const FIGURAS = {
       };
     },
   },
+  abdominalCompleto: {
+    // Como el encogimiento, pero sube hasta quedar sentado; brazos cruzados.
+    arriba: { tronco: 78, cuello: 15 },
+    abajo: { tronco: 4, cuello: 6 },
+    figura: (p) => {
+      const cadera = [56, PISO - 4];
+      const tobillo = [30, PISO - 3];
+      const rodilla = articulacion(cadera, tobillo, L.muslo, L.tibia, [0, -1]);
+      const t = torso(cadera, p.tronco, p.tronco + p.cuello);
+      // Brazos cruzados sobre el pecho: del hombro hacia la mitad del tronco.
+      const codo = polar(t.hombro, L.brazo * 0.8, p.tronco + 150);
+      return {
+        lineas: [[cadera, rodilla, tobillo, [tobillo[0] - 8, PISO]], t.hueso, [t.hombro, codo, polar(codo, 9, p.tronco + 10)]],
+        cabeza: t.cabeza,
+      };
+    },
+  },
+  elevacionPiernas: {
+    // Acostado con la cabeza a la derecha: las piernas estiradas suben hasta la vertical.
+    arriba: { piernas: 92 },
+    abajo: { piernas: 174 },
+    figura: (p) => {
+      const cadera = [50, PISO - 4];
+      const rodilla = polar(cadera, L.muslo, p.piernas);
+      const tobillo = polar(rodilla, L.tibia, p.piernas);
+      const t = torso(cadera, 0, 0);
+      return {
+        lineas: [[cadera, rodilla, tobillo, polar(tobillo, 7, p.piernas - 90)], t.hueso, brazoRecto(t.hombro, 182)],
+        cabeza: t.cabeza,
+      };
+    },
+  },
+  crunchInverso: {
+    // Rodillas dobladas a 90°: de los muslos verticales a las rodillas al pecho.
+    arriba: { muslo: 88, cy: PISO - 4, tronco: 0 },
+    abajo: { muslo: 38, cy: PISO - 9, tronco: -9 },
+    figura: (p) => {
+      const cadera = [46, p.cy];
+      const rodilla = polar(cadera, L.muslo, p.muslo);
+      const tobillo = polar(rodilla, L.tibia, p.muslo + 90);
+      const t = torso(cadera, p.tronco, 0);
+      return {
+        lineas: [[cadera, rodilla, tobillo, polar(tobillo, 7, p.muslo + 180)], t.hueso, brazoRecto(t.hombro, 180)],
+        cabeza: t.cabeza,
+      };
+    },
+  },
+  plancha: {
+    // Quieta, apoyada en los antebrazos; sólo respira (la cabeza apenas se mueve).
+    arriba: { cuerpo: 10.1, cuello: 9 },
+    abajo: { cuerpo: 10.3, cuello: 6 },
+    figura: (p) => {
+      const tobillo = [14, PISO - 4];
+      const rodilla = polar(tobillo, L.tibia, p.cuerpo);
+      const cadera = polar(rodilla, L.muslo, p.cuerpo);
+      const t = torso(cadera, p.cuerpo, p.cuello);
+      const codo = [t.hombro[0], PISO - 1];
+      return {
+        lineas: [[[tobillo[0] - 4, PISO], tobillo, rodilla, cadera], t.hueso, [t.hombro, codo, [codo[0] + L.antebrazo, PISO - 1]]],
+        cabeza: t.cabeza,
+      };
+    },
+  },
 };
 
-// La animación arranca en la primera postura: de pie en todos, menos en los
-// abdominales, que empiezan acostados.
-const ORDEN = { abdominales: ["abajo", "arriba"] };
+// La animación arranca en la primera postura: de pie (o arriba) en casi
+// todos; el encogimiento, el abdominal completo y la elevación de piernas
+// empiezan acostados.
+const ORDEN = { encogimiento: ["abajo", "arriba"], abdominalCompleto: ["abajo", "arriba"], elevacionPiernas: ["abajo", "arriba"] };
 
 function interpolar(a, b, f) {
   const r = {};

@@ -168,6 +168,13 @@ export function angulos(p, lado) {
   // cadera, en largos de tibia: crece si los pies se despegan del piso.
   a.elevacionTronco = grados(Math.atan2(cadera.y - hombro.y, Math.abs(hombro.x - cadera.x)));
   a.tobilloSobreCadera = (cadera.y - tobillo.y) / largoPierna;
+  // Piernas respecto del piso, con el muslo (así doblar las rodillas no
+  // cambia la medida): 0 = en el piso, 90 = verticales.
+  a.elevacionPiernas = grados(Math.atan2(cadera.y - rodilla.y, Math.abs(rodilla.x - cadera.x)));
+  // Plancha: el cuerpo (hombro-tobillo) respecto del piso, y los hombros por
+  // encima de los tobillos en largos de tronco (acostado boca arriba dan ~0).
+  a.inclinacionCuerpo = grados(Math.atan2(Math.abs(tobillo.y - hombro.y), Math.abs(hombro.x - tobillo.x)));
+  a.alturaHombros = largoTronco > 0 ? (tobillo.y - hombro.y) / largoTronco : null;
   // Cadera respecto de la línea hombro-tobillo: positivo = caída (panza abajo).
   a.lineaCadera = desvioDeLinea(sin("hombro"), sin("cadera"), sin("tobillo"));
   // Cabeza respecto de la prolongación cadera-hombro: positivo = colgando.
