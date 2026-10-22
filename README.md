@@ -236,6 +236,21 @@ el mismo motor) hay que cuidar dos cosas:
   resultados; `SIN_SALTOS=1 npm run test:e2e` lo prueba simulando un
   navegador que nunca avisa al saltar.
 
+## Suavizado y modo preciso
+
+Antes de calcular ángulos, `js/suavizado.js` limpia los puntos del modelo:
+rellena los huecos de hasta 0,3 s (cuando el modelo pierde a la persona unos
+cuadros) interpolando entre el cuadro anterior y el siguiente, y suaviza el
+temblor con un promedio triangular de ±0,07 s (±1 cuadro a 15 cuadros/s).
+Como se analiza el video entero, no atrasa nada.
+
+En el tutorial se elige el modo de análisis (se recuerda en el celular):
+
+| Modo | Modelo | Cuadros por segundo | Tiempo |
+|---|---|---|---|
+| Rápido (por defecto) | `pose_landmarker_full` (~9 MB) | 15 | 1× |
+| Preciso | `pose_landmarker_heavy` (~30 MB) | 30 | ~4× |
+
 ## Cámara de costado o en diagonal
 
 La cámara no tiene que estar justo de costado. Además de los puntos en la
@@ -312,6 +327,7 @@ o si falta un módulo en el import map.
 | 1.14.2 | En iPhone, los .mp4 de Archivos se pueden elegir |
 | 1.15 | Cámara en diagonal: los ángulos salen del 3D si no está de costado; se saca la vista 3D aparte |
 | 1.16 | Hip thrust |
+| 1.17 | Suavizado de los puntos y modo de análisis preciso |
 
 ## Probarla en la computadora
 

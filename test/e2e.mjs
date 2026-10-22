@@ -6,6 +6,7 @@
 //   EJERCICIO="Peso muerto" MODELO_POSE=... VIDEO=peso-muerto.webm npm run test:e2e
 //
 // Opcional: CHROMIUM=/ruta/a/chrome si playwright no encuentra uno instalado.
+// MODO=preciso elige el análisis preciso (pasar el modelo heavy en MODELO_POSE).
 // VISTA=2d o VISTA=3d fuerza de dónde salen los ángulos (si no, la app lo
 // elige según el ángulo de la cámara).
 // SIN_SALTOS=1 simula un iPhone que no avisa al saltar de cuadro ("seeked"):
@@ -64,6 +65,7 @@ try {
   await pagina.click(`.tarjeta-titulo:text-is("${process.env.EJERCICIO ?? "Sentadilla"}")`);
   // Los grupos (Abdominales) llevan a elegir la variante: VARIANTE=Plancha, etc.
   if (process.env.VARIANTE) await pagina.click(`#tarjetas-variantes .tarjeta-titulo:text-is("${process.env.VARIANTE}")`);
+  if (process.env.MODO) await pagina.click(`[data-modo="${process.env.MODO}"]`);
   const inicio = Date.now();
   await pagina.setInputFiles("#elegir", VIDEO);
   await pagina.waitForSelector("#resultado:not([hidden])", { timeout: 5 * 60_000 });
@@ -73,6 +75,7 @@ try {
     otraVariante: analisis.otraVariante,
     cuadros3d: analisis.cuadros3d,
     vista: analisis.vista,
+    cuadros: analisis.cuadros,
     segundos: +((Date.now() - inicio) / 1000).toFixed(1),
     puntaje: analisis.analisis.puntaje,
     repeticiones: analisis.analisis.repeticiones.map((r) => ({

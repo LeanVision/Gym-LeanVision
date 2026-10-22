@@ -4,6 +4,7 @@ import { prepararCuadros } from "./geometria.js";
 import { revisarToma } from "./calidad.js";
 import { EJERCICIOS, GRUPOS } from "./ejercicios.js";
 import { estimarPoses } from "./pose.js";
+import { suavizarPoses } from "./suavizado.js";
 import { dibujar } from "./dibujo.js";
 import { animar } from "./animacion.js";
 import { VERSION } from "./version.js";
@@ -131,6 +132,22 @@ function elegirEjercicio(id) {
 }
 elegirEjercicio("sentadilla");
 
+// Modo de análisis: rápido (por defecto) o preciso. Se recuerda en el celular.
+const NOTAS_MODO = {
+  rapido: "Rápido: tarda poco y alcanza para la mayoría de los videos.",
+  preciso: "Preciso: modelo más grande y el doble de cuadros. Más exacto en movimientos rápidos; tarda unas 4 veces más.",
+};
+let modo = "rapido";
+try { modo = localStorage.getItem("modoAnalisis") === "preciso" ? "preciso" : "rapido"; } catch { /* sin almacenamiento */ }
+function elegirModo(m) {
+  modo = m;
+  document.querySelectorAll("[data-modo]").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.modo === m)));
+  $("modo-nota").textContent = NOTAS_MODO[m];
+  try { localStorage.setItem("modoAnalisis", m); } catch { /* sin almacenamiento */ }
+}
+document.querySelectorAll("[data-modo]").forEach((b) => b.addEventListener("click", () => elegirModo(b.dataset.modo)));
+elegirModo(modo);
+
 for (const id of ["grabar", "elegir"]) {
   $(id).addEventListener("change", (e) => {
     const archivo = e.target.files?.[0];
@@ -145,7 +162,7 @@ async function analizar(archivo) {
   pararAnimacion = animar($("animacion"), idEjercicio);
   $("progreso").style.width = "0%";
   $("porcentaje").hidden = true;
-  $("estado").textContent = "Cargando el modelo…";
+  $("estado").textContent = modo === "preciso" ? "Cargando el modelo preciso (unos 30 MB la primera vez)…" : "Cargando el modelo…";
   const video = $("video");
   if (video.src) URL.revokeObjectURL(video.src);
   video.src = URL.createObjectURL(archivo);
@@ -156,12 +173,14 @@ async function analizar(archivo) {
   document.body.append(video);
   video.classList.add("analizandose");
   try {
-    const poses = await estimarPoses(video, (f) => {
+    const crudas = await estimarPoses(video, (f) => {
       $("progreso").style.width = `${Math.round(f * 100)}%`;
       $("porcentaje").hidden = false;
       $("porcentaje").textContent = `${Math.round(f * 100)} %`;
       $("estado").textContent = "Revisando tu movimiento cuadro por cuadro…";
-    });
+    }, modo);
+    // Huecos cortos rellenados y temblor del modelo suavizado (ver suavizado.js).
+    const poses = suavizarPoses(crudas);
     if (!poses.some((p) => p.landmarks)) {
       throw new Error("no encontramos a nadie en el video");
     }
@@ -188,7 +207,7 @@ function analizarUltimo() {
   const parecida = ejercicio.grupo ? GRUPOS[ejercicio.grupo].detectar(cuadros) : null;
   const otraVariante = parecida && parecida !== idEjercicio ? parecida : null;
   mostrarResultado({ poses, lado, toma, analisis, otraVariante });
-  window.ultimoAnalisis = { ejercicio: ejercicio.nombre, toma, analisis, lado, otraVariante, vista, cuadros3d: poses.filter((p) => p.mundo).length }; // para las pruebas y para depurar
+  window.ultimoAnalisis = { ejercicio: ejercicio.nombre, toma, analisis, lado, otraVariante, vista, cuadros: poses.length, cuadros3d: poses.filter((p) => p.mundo).length }; // para las pruebas y para depurar
 }
 
 $("analizar-como").addEventListener("click", (ev) => {
