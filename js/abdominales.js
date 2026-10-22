@@ -65,23 +65,15 @@ function subidaPies(tramo) {
 export const encogimiento = {
   UMBRALES: {
     // Repetición: el tronco se despega del piso al menos esto (ver repeticiones.js).
-    inicioRep: 15,
+    // En videos reales, un encogimiento bien hecho sube entre 9° y 13°.
+    inicioRep: 8,
     duracionMinimaRep: 0.5, // s
-    // Cuello: la cabeza doblada hacia el pecho, respecto de la línea del tronco.
-    // Un poco es normal (un puño entre el mentón y el pecho); más es tirar del cuello.
-    cuelloMaximo: 35,
     // Pies: cuánto suben los tobillos respecto del principio, en largos de tibia.
     piesMaximo: 0.3,
     // Ritmo: una repetición entera (subir y bajar) en menos de esto es impulso.
     duracionControlada: 1, // s
   },
   PROBLEMAS: {
-    cuello: {
-      titulo: "Tirás del cuello",
-      partes: ["cuello"],
-      consejo: "Mirá hacia el techo, con un puño de espacio entre el mentón y el pecho. Las manos apenas tocan la cabeza: subí con el abdomen, no tirando de la nuca.",
-      peso: 25,
-    },
     pies: {
       titulo: "Despegás los pies",
       partes: ["tibia", "pie"],
@@ -97,19 +89,12 @@ export const encogimiento = {
   },
   revisarRepeticion(cuadros, rep, u = encogimiento.UMBRALES) {
     const tramo = cuadros.slice(rep.inicio, rep.fin + 1);
-    // `cabeza` es positiva cuando cuelga: doblarla hacia el pecho da negativo.
-    const cuellos = valores(tramo, "cabeza").map((c) => -c);
     const medidas = {
       elevacion: cuadros[rep.fondo].a.elevacionTronco,
-      // Lo que pasa buena parte de la repetición, no un cuadro suelto.
-      cuello: cuellos.length ? percentil(cuellos, 75) : null,
       pies: subidaPies(tramo),
       duracion: cuadros[rep.fin].t - cuadros[rep.inicio].t,
     };
     const problemas = [];
-    if (medidas.cuello != null && medidas.cuello > u.cuelloMaximo) {
-      problemas.push({ tipo: "cuello", detalle: `La cabeza se dobló ${medidas.cuello.toFixed(0)}° hacia el pecho (conviene menos de ${u.cuelloMaximo}°).` });
-    }
     if (medidas.pies != null && medidas.pies > u.piesMaximo) {
       problemas.push({ tipo: "pies", detalle: "Los pies se despegaron del piso." });
     }
@@ -119,12 +104,12 @@ export const encogimiento = {
     return { problemas, medidas };
   },
   analizar(cuadros, u = encogimiento.UMBRALES) {
+    // El tronco por debajo del piso (la cadera levantada, al cambiar de
+    // ejercicio) cuenta como apoyado: si no, de -20° a 4° parece una
+    // repetición, y la que arranca en -20° no se cierra nunca.
+    cuadros = cuadros.map((c) => (c.a?.elevacionTronco < 0 ? { ...c, a: { ...c.a, elevacionTronco: 0 } } : c));
     const reps = analizarSerie(cuadros, "elevacionTronco", u, encogimiento.revisarRepeticion, puntajeCon(encogimiento.PROBLEMAS));
-    const avisos = avisoParado(cuadros);
-    if (cuadros.some((c) => c.a) && !cuadros.some((c) => c.a?.cabeza != null)) {
-      avisos.push("No vimos bien tu cabeza, así que no revisamos el cuello. Revisá que entre en el cuadro.");
-    }
-    return resumir(reps, avisos);
+    return resumir(reps, avisoParado(cuadros));
   },
 };
 

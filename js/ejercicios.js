@@ -255,7 +255,7 @@ export const EJERCICIOS = {
   encogimiento: {
     nombre: "Encogimiento",
     grupo: "abdominales",
-    resumen: "Cuello · pies · ritmo",
+    resumen: "Pies · ritmo",
     color: "#C3B1FF",
     icono: { caja: "0 0 64 44", trazos: '<circle cx="51" cy="14" r="6"/><path d="M30 38l14-16M30 38L18 22 8 38M44 22l-14 2M4 38h56"/>' },
     pasoClave: 2,
@@ -266,7 +266,7 @@ export const EJERCICIOS = {
       "Arriba, la zona lumbar sigue apoyada y los pies también. Soltá el aire al subir.",
       "Bajá despacio, sin dejarte caer, y volvé a empezar.",
     ],
-    noRevisamos: LUMBAR,
+    noRevisamos: `${LUMBAR} Tampoco si tirás del cuello: con la persona acostada, el modelo no ubica la cabeza con la precisión necesaria (en videos de prueba marcaba el error aun haciéndolo bien). Mirá al techo, con un puño de espacio entre el mentón y el pecho.`,
     consejosFilmacion: [FILMAR_PISO],
     sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, acostado, y que despegues los hombros del piso en cada repetición.",
     problemas: abdominales.encogimiento.PROBLEMAS,

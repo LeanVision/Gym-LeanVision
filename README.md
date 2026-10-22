@@ -199,8 +199,7 @@ estiradas, crunch inverso si van dobladas) o nada (plancha).
 
 | Variante | Error | Cómo se mide | Umbral |
 |---|---|---|---|
-| Encogimiento | Tirás del cuello | Cabeza doblada hacia el pecho respecto del tronco | más de 35° |
-| | Despegás los pies | Cuánto suben los tobillos respecto de la cadera | más de 0,3 largos de tibia |
+| Encogimiento | Despegás los pies | Cuánto suben los tobillos respecto de la cadera | más de 0,3 largos de tibia |
 | | Muy rápido, con impulso | Duración de la repetición | menos de 1 s |
 | Abdominal completo | No llegás arriba | Tronco respecto del piso arriba de todo | menos de 60° |
 | | Despegás los pies | Igual que en el encogimiento | más de 0,3 largos de tibia |
@@ -220,6 +219,17 @@ se despega del piso (el modelo no tiene puntos en la columna); las de giro
 (bicicleta, oblicuos, russian twist) no se ven de costado y no se revisan.
 Los umbrales son un punto de partida y los está revisando un kinesiólogo; la
 app lo avisa en cada tutorial.
+
+Calibración del encogimiento con tres videos reales (1.18.1):
+
+- Bien hecho, el tronco sube entre 9° y 13° respecto del piso: una
+  repetición cuenta desde 8° (antes pedía 15° y no contaba ninguna).
+- El cuello no se revisa: acostado, el ángulo de la cabeza daba 55–75° tanto
+  haciéndolo bien como mal, así que el error salía siempre. El consejo queda
+  en el tutorial.
+- El tronco por debajo del piso (al levantar la cadera para cambiar de
+  ejercicio) cuenta como apoyado: si no, aparecían repeticiones falsas de -20°
+  a 4° y se perdían las siguientes.
 
 ## Cómo se recorre el video
 
@@ -268,6 +278,11 @@ En el tutorial se elige el modo de análisis (se recuerda en el celular):
 |---|---|---|---|
 | Rápido (por defecto) | `pose_landmarker_full` (~9 MB) | 15 | 1× |
 | Preciso | `pose_landmarker_heavy` (~30 MB) | 30 | ~4× |
+
+El modelo heavy informa visibilidades más bajas que el full para los mismos
+puntos (la rodilla, por ejemplo, mediana 0,58 contra 0,97 en el mismo video),
+así que en modo preciso se multiplican por 1,7 antes de usarlas; si no, la app
+avisaba que no se veía el cuerpo entero aunque se viera.
 
 ## Cámara de costado o en diagonal
 
@@ -347,6 +362,7 @@ o si falta un módulo en el import map.
 | 1.16 | Hip thrust |
 | 1.17 | Suavizado de los puntos y modo de análisis preciso |
 | 1.18 | Errores marcados en el video, ritmo por repetición e historial de sesiones |
+| 1.18.1 | Calibración de abdominales con videos reales: el encogimiento ya no revisa el cuello y cuenta repeticiones más cortas; arreglo del aviso de cuerpo entero en modo preciso |
 
 ## Probarla en la computadora
 
