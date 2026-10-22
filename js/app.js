@@ -4,6 +4,9 @@ import { prepararCuadros } from "./geometria.js";
 import { revisarToma } from "./calidad.js";
 import { EJERCICIOS, GRUPOS } from "./ejercicios.js";
 import { estimarPoses } from "./pose.js";
+import { suavizarPoses } from "./suavizado.js";
+import { resumirSerie, ritmo } from "./serie.js";
+import { guardar as guardarSesion, sesiones as leerSesiones, comparar as compararSesion, borrar as borrarHistorial } from "./historial.js";
 import { dibujar } from "./dibujo.js";
 import { animar } from "./animacion.js";
 import { VERSION } from "./version.js";
@@ -25,9 +28,29 @@ function mostrar(id, { volviendo = false } = {}) {
   document.body.dataset.pantalla = id;
   $("volver").hidden = id === "inicio" || id === "analizando";
   if (id !== "analizando") pararAnimacion();
+  if (id === "inicio") mostrarUltimas();
   ajustarTitulos();
   window.scrollTo(0, 0);
 }
+
+// Inicio: las últimas sesiones guardadas en el celular.
+const segundos = (s) => `${s.toFixed(1).replace(".", ",")} s`;
+function mostrarUltimas() {
+  const lista = leerSesiones().slice(0, 5);
+  $("ultimas").hidden = !lista.length;
+  $("lista-sesiones").innerHTML = lista.map((s) => `
+    <li>
+      <span><strong>${EJERCICIOS[s.ejercicio]?.nombre ?? s.nombre}</strong><br>
+        <span class="sesion-fecha">${new Date(s.fecha).toLocaleDateString("es-AR", { day: "numeric", month: "short" })} · ${s.reps} ${s.reps === 1 ? "rep" : "reps"}${s.errores?.length ? ` · ${s.errores[0]}` : ""}</span></span>
+      <span class="sesion-puntaje">${s.puntaje ?? "–"}</span>
+    </li>`).join("");
+}
+$("borrar-historial").addEventListener("click", () => {
+  if (!confirm("¿Borrar todas las sesiones guardadas en este celular?")) return;
+  borrarHistorial();
+  mostrarUltimas();
+});
+mostrarUltimas();
 
 // Los títulos no cortan palabras: si una no entra en el ancho, se achica el
 // título hasta que entre (los grandes de cada pantalla y los de los recuadros).
@@ -131,6 +154,22 @@ function elegirEjercicio(id) {
 }
 elegirEjercicio("sentadilla");
 
+// Modo de análisis: rápido (por defecto) o preciso. Se recuerda en el celular.
+const NOTAS_MODO = {
+  rapido: "Rápido: tarda poco y alcanza para la mayoría de los videos.",
+  preciso: "Preciso: modelo más grande y el doble de cuadros. Más exacto en movimientos rápidos; tarda unas 4 veces más.",
+};
+let modo = "rapido";
+try { modo = localStorage.getItem("modoAnalisis") === "preciso" ? "preciso" : "rapido"; } catch { /* sin almacenamiento */ }
+function elegirModo(m) {
+  modo = m;
+  document.querySelectorAll("[data-modo]").forEach((b) => b.setAttribute("aria-checked", String(b.dataset.modo === m)));
+  $("modo-nota").textContent = NOTAS_MODO[m];
+  try { localStorage.setItem("modoAnalisis", m); } catch { /* sin almacenamiento */ }
+}
+document.querySelectorAll("[data-modo]").forEach((b) => b.addEventListener("click", () => elegirModo(b.dataset.modo)));
+elegirModo(modo);
+
 for (const id of ["grabar", "elegir"]) {
   $(id).addEventListener("change", (e) => {
     const archivo = e.target.files?.[0];
@@ -145,7 +184,7 @@ async function analizar(archivo) {
   pararAnimacion = animar($("animacion"), idEjercicio);
   $("progreso").style.width = "0%";
   $("porcentaje").hidden = true;
-  $("estado").textContent = "Cargando el modelo…";
+  $("estado").textContent = modo === "preciso" ? "Cargando el modelo preciso (unos 30 MB la primera vez)…" : "Cargando el modelo…";
   const video = $("video");
   if (video.src) URL.revokeObjectURL(video.src);
   video.src = URL.createObjectURL(archivo);
@@ -156,18 +195,20 @@ async function analizar(archivo) {
   document.body.append(video);
   video.classList.add("analizandose");
   try {
-    const poses = await estimarPoses(video, (f) => {
+    const crudas = await estimarPoses(video, (f) => {
       $("progreso").style.width = `${Math.round(f * 100)}%`;
       $("porcentaje").hidden = false;
       $("porcentaje").textContent = `${Math.round(f * 100)} %`;
       $("estado").textContent = "Revisando tu movimiento cuadro por cuadro…";
-    });
+    }, modo);
+    // Huecos cortos rellenados y temblor del modelo suavizado (ver suavizado.js).
+    const poses = suavizarPoses(crudas);
     if (!poses.some((p) => p.landmarks)) {
       throw new Error("no encontramos a nadie en el video");
     }
     // window.forzarVista ("2d" o "3d") es solo para las pruebas.
     const { cuadros, lado, vista } = prepararCuadros(poses, video.videoWidth, video.videoHeight, { forzar: window.forzarVista });
-    ultimo = { poses, lado, cuadros, vista, toma: revisarToma(cuadros, vista) };
+    ultimo = { poses, lado, cuadros, vista, toma: revisarToma(cuadros, vista), idSesion: null };
     analizarUltimo();
   } catch (error) {
     console.error(error);
@@ -187,8 +228,17 @@ function analizarUltimo() {
   // Variantes: si el video parece de otra, se avisa y se ofrece analizarlo como esa.
   const parecida = ejercicio.grupo ? GRUPOS[ejercicio.grupo].detectar(cuadros) : null;
   const otraVariante = parecida && parecida !== idEjercicio ? parecida : null;
-  mostrarResultado({ poses, lado, toma, analisis, otraVariante });
-  window.ultimoAnalisis = { ejercicio: ejercicio.nombre, toma, analisis, lado, otraVariante, vista, cuadros3d: poses.filter((p) => p.mundo).length }; // para las pruebas y para depurar
+  // Historial: una sesión por video (si se reanaliza como otra variante, se reemplaza).
+  const anterior = compararSesion(idEjercicio, ultimo.idSesion);
+  ultimo.idSesion = guardarSesion({
+    ejercicio: idEjercicio,
+    nombre: ejercicio.nombre,
+    puntaje: analisis.puntaje,
+    reps: analisis.repeticiones.length,
+    errores: analisis.principales.slice(0, 2).map(({ tipo }) => ejercicio.problemas[tipo].titulo),
+  }, ultimo.idSesion);
+  mostrarResultado({ poses, lado, toma, analisis, otraVariante, anterior });
+  window.ultimoAnalisis = { ejercicio: ejercicio.nombre, toma, analisis, lado, otraVariante, vista, cuadros: poses.length, cuadros3d: poses.filter((p) => p.mundo).length }; // para las pruebas y para depurar
 }
 
 $("analizar-como").addEventListener("click", (ev) => {
@@ -196,7 +246,7 @@ $("analizar-como").addEventListener("click", (ev) => {
   analizarUltimo();
 });
 
-function mostrarResultado({ poses, lado, toma, analisis, otraVariante }) {
+function mostrarResultado({ poses, lado, toma, analisis, otraVariante, anterior }) {
   const { repeticiones, principales, puntaje } = analisis;
   const PROBLEMAS = ejercicio.problemas;
   const video = $("video");
@@ -215,6 +265,13 @@ function mostrarResultado({ poses, lado, toma, analisis, otraVariante }) {
     ? (ejercicio.isometrico ? ejercicio.sinRepeticiones : `No encontramos repeticiones. ${ejercicio.sinRepeticiones}`)
     : conErrores ? "" : "¡Muy bien! No encontramos errores.";
 
+  // Contra las sesiones anteriores del mismo ejercicio (guardadas en el celular).
+  $("comparacion").hidden = !anterior || puntaje == null;
+  if (anterior) {
+    $("comparacion").textContent = `La vez anterior: ${anterior.anterior.puntaje} · Tu mejor: ${anterior.mejor}`
+      + (puntaje > anterior.mejor ? " · ¡Nuevo récord!" : "");
+  }
+
   $("avisos").hidden = toma.ok && !analisis.avisos.length;
   $("avisos").innerHTML = [...toma.avisos, ...analisis.avisos].map((a) => `<p>${a}</p>`).join("")
     + (toma.ok ? "" : "<p><strong>Los resultados pueden no ser exactos.</strong></p>");
@@ -232,6 +289,13 @@ function mostrarResultado({ poses, lado, toma, analisis, otraVariante }) {
       ${PROBLEMAS[tipo].consejo} <strong>(${veces} de ${repeticiones.length})</strong>
     </div>`).join("");
 
+  // La serie entera: ritmo promedio y si las últimas repeticiones empeoran.
+  const serie = resumirSerie(repeticiones);
+  $("datos-serie").hidden = ejercicio.isometrico || !repeticiones.length;
+  $("datos-serie").innerHTML = serie.ida == null ? "" :
+    `<p><strong>Ritmo promedio:</strong> ida ${segundos(serie.ida)} · vuelta ${segundos(serie.vuelta)}</p>`
+    + serie.avisos.map((a) => `<p>${a}</p>`).join("");
+
   const detalle = $("detalle-rep");
   detalle.hidden = true;
   $("repeticiones").innerHTML = repeticiones.map((r, i) => `
@@ -242,11 +306,17 @@ function mostrarResultado({ poses, lado, toma, analisis, otraVariante }) {
     const r = repeticiones[Number(b.dataset.i)];
     $("repeticiones").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
     detalle.hidden = false;
-    detalle.innerHTML = `<h3>${ejercicio.isometrico ? ejercicio.nombre : `Repetición ${r.numero}`}</h3>` + (r.problemas.length
-      ? `<ul>${r.problemas.map((p) => `<li><strong>${PROBLEMAS[p.tipo].titulo}.</strong> ${p.detalle}</li>`).join("")}</ul>`
-      : "Bien hecha.");
+    const { ida, vuelta } = ritmo(r);
+    detalle.innerHTML = `<h3>${ejercicio.isometrico ? ejercicio.nombre : `Repetición ${r.numero}`}</h3>`
+      + (ejercicio.isometrico ? "" : `<p class="ritmo">Ida ${segundos(ida)} · vuelta ${segundos(vuelta)}</p>`)
+      + (r.problemas.length
+        ? `<ul>${r.problemas.map((p) => `<li><strong>${PROBLEMAS[p.tipo].titulo}.</strong> ${p.detalle}</li>`).join("")}</ul>
+           <p class="nota-video">En el video, la parte a corregir se marca en rojo.</p>`
+        : "Bien hecha.");
     video.pause();
-    video.currentTime = r.tFondo;
+    // Al momento del error: el punto más bajo, o el final si todos sus errores se miden al terminar.
+    const alFinal = r.problemas.length && r.problemas.every((p) => PROBLEMAS[p.tipo].momento === "fin");
+    video.currentTime = alFinal ? r.tFin : r.tFondo;
     video.scrollIntoView({ behavior: "smooth", block: "center" });
   }));
 
@@ -257,7 +327,16 @@ function mostrarResultado({ poses, lado, toma, analisis, otraVariante }) {
     return r.problemas.length ? COLOR_ESQUELETO.conErrores : COLOR_ESQUELETO.bien;
   };
   const canvas = $("esqueleto");
-  const redibujar = () => dibujar(canvas, video, poses, lado, colorDe);
+  // Errores marcados en rojo sobre el cuerpo, durante su repetición (los que
+  // se miden al terminar, desde el punto más bajo hasta el final).
+  const marcasEn = (t) => {
+    const r = repeticiones.find((x) => t >= x.tInicio && t <= x.tFin);
+    if (!r) return [];
+    return r.problemas
+      .filter((p) => PROBLEMAS[p.tipo].partes && (PROBLEMAS[p.tipo].momento !== "fin" || t >= r.tFondo))
+      .map((p) => ({ partes: PROBLEMAS[p.tipo].partes, texto: PROBLEMAS[p.tipo].titulo }));
+  };
+  const redibujar = () => dibujar(canvas, video, poses, lado, colorDe, marcasEn);
   const bucle = () => {
     redibujar();
     if (!video.paused && !video.ended) {

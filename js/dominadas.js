@@ -33,21 +33,26 @@ export const UMBRALES = {
 export const PROBLEMAS = {
   recorrido: {
     titulo: "No pasás la barbilla",
+    partes: ["brazo", "antebrazo", "cuello"],
     consejo: "Subí hasta que el mentón pase por encima de la barra, llevando el pecho hacia ella. Si no llegás, ayudate con una banda elástica.",
     peso: 25,
   },
   sinExtender: {
     titulo: "No estirás los brazos abajo",
+    partes: ["brazo", "antebrazo"],
+    momento: "fin",
     consejo: "Bajá hasta estirar los brazos por completo antes de volver a subir: las medias dominadas trabajan la mitad.",
     peso: 20,
   },
   balanceo: {
     titulo: "Te balanceás",
+    partes: ["tronco", "muslo"],
     consejo: "Subí con el cuerpo firme, sin patear ni balancearte: apretá el abdomen y los glúteos, con las piernas juntas.",
     peso: 20,
   },
   bajada: {
     titulo: "Te dejás caer",
+    partes: ["brazo", "antebrazo"],
     consejo: "Bajá despacio, controlando, hasta estirar los brazos. La bajada también trabaja la espalda y cuida los hombros.",
     peso: 15,
   },

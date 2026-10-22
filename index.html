@@ -8,31 +8,34 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100,400;100,500;100,600;100,700;100,800;100,900;125,800;125,900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/estilos.css?v=1.16.0">
+  <link rel="stylesheet" href="css/estilos.css?v=1.18.0">
   <!-- Cada módulo con la versión: así el navegador no usa archivos viejos guardados. -->
   <script type="importmap">
   {
     "imports": {
-      "./js/abdominales.js": "./js/abdominales.js?v=1.16.0",
-      "./js/animacion.js": "./js/animacion.js?v=1.16.0",
-      "./js/app.js": "./js/app.js?v=1.16.0",
-      "./js/calidad.js": "./js/calidad.js?v=1.16.0",
-      "./js/curl.js": "./js/curl.js?v=1.16.0",
-      "./js/dibujo.js": "./js/dibujo.js?v=1.16.0",
-      "./js/estocadas.js": "./js/estocadas.js?v=1.16.0",
-      "./js/dominadas.js": "./js/dominadas.js?v=1.16.0",
-      "./js/ejercicios.js": "./js/ejercicios.js?v=1.16.0",
-      "./js/flexiones.js": "./js/flexiones.js?v=1.16.0",
-      "./js/geometria.js": "./js/geometria.js?v=1.16.0",
-      "./js/peso-muerto.js": "./js/peso-muerto.js?v=1.16.0",
-      "./js/hip-thrust.js": "./js/hip-thrust.js?v=1.16.0",
-      "./js/pose.js": "./js/pose.js?v=1.16.0",
-      "./js/press-banca.js": "./js/press-banca.js?v=1.16.0",
-      "./js/press-militar.js": "./js/press-militar.js?v=1.16.0",
-      "./js/remo.js": "./js/remo.js?v=1.16.0",
-      "./js/repeticiones.js": "./js/repeticiones.js?v=1.16.0",
-      "./js/sentadilla.js": "./js/sentadilla.js?v=1.16.0",
-      "./js/version.js": "./js/version.js?v=1.16.0"
+      "./js/abdominales.js": "./js/abdominales.js?v=1.18.0",
+      "./js/animacion.js": "./js/animacion.js?v=1.18.0",
+      "./js/app.js": "./js/app.js?v=1.18.0",
+      "./js/calidad.js": "./js/calidad.js?v=1.18.0",
+      "./js/curl.js": "./js/curl.js?v=1.18.0",
+      "./js/dibujo.js": "./js/dibujo.js?v=1.18.0",
+      "./js/estocadas.js": "./js/estocadas.js?v=1.18.0",
+      "./js/dominadas.js": "./js/dominadas.js?v=1.18.0",
+      "./js/ejercicios.js": "./js/ejercicios.js?v=1.18.0",
+      "./js/flexiones.js": "./js/flexiones.js?v=1.18.0",
+      "./js/geometria.js": "./js/geometria.js?v=1.18.0",
+      "./js/historial.js": "./js/historial.js?v=1.18.0",
+      "./js/peso-muerto.js": "./js/peso-muerto.js?v=1.18.0",
+      "./js/hip-thrust.js": "./js/hip-thrust.js?v=1.18.0",
+      "./js/pose.js": "./js/pose.js?v=1.18.0",
+      "./js/press-banca.js": "./js/press-banca.js?v=1.18.0",
+      "./js/press-militar.js": "./js/press-militar.js?v=1.18.0",
+      "./js/remo.js": "./js/remo.js?v=1.18.0",
+      "./js/serie.js": "./js/serie.js?v=1.18.0",
+      "./js/repeticiones.js": "./js/repeticiones.js?v=1.18.0",
+      "./js/suavizado.js": "./js/suavizado.js?v=1.18.0",
+      "./js/sentadilla.js": "./js/sentadilla.js?v=1.18.0",
+      "./js/version.js": "./js/version.js?v=1.18.0"
     }
   }
   </script>
@@ -53,6 +56,11 @@
         <h1 class="titulo-grande">Movete<br>mejor.</h1>
         <p class="intro">Grabate de costado o en diagonal. Te decimos qué corregir, repetición por repetición.</p>
         <div class="tarjetas" id="tarjetas"></div>
+        <section class="ultimas" id="ultimas" hidden>
+          <h2 class="subtitulo">Tus últimas sesiones</h2>
+          <ul class="lista-sesiones" id="lista-sesiones"></ul>
+          <button class="boton-texto" id="borrar-historial">Borrar historial</button>
+        </section>
         <footer class="pie">
           <span class="privado">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="3"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
@@ -114,6 +122,11 @@
           </div>
 
           <div class="acciones">
+            <div class="modo" role="radiogroup" aria-label="Tipo de análisis">
+              <button role="radio" data-modo="rapido" aria-checked="true">Rápido</button>
+              <button role="radio" data-modo="preciso" aria-checked="false">Preciso</button>
+            </div>
+            <p class="nota centrada" id="modo-nota"></p>
             <label class="boton principal">
               <span class="punto-rec" aria-hidden="true"></span>
               Grabar serie
@@ -155,6 +168,7 @@
           </div>
         </div>
         <p class="resumen-texto" id="resumen-texto"></p>
+        <p class="comparacion" id="comparacion" hidden></p>
         <div class="avisos" id="avisos" hidden></div>
         <div class="otra-variante" id="otra-variante" hidden>
           <p id="otra-variante-texto"></p>
@@ -167,6 +181,7 @@
         </div>
 
         <div id="consejos-principales"></div>
+        <div class="datos-serie" id="datos-serie" hidden></div>
 
         <h2 class="subtitulo" id="titulo-reps">Repetición por repetición</h2>
         <div class="repeticiones" id="repeticiones"></div>
@@ -180,6 +195,6 @@
     </main>
   </div>
 
-  <script type="module" src="./js/app.js?v=1.16.0"></script>
+  <script type="module" src="./js/app.js?v=1.18.0"></script>
 </body>
 </html>

@@ -4,17 +4,30 @@
 // Se puede cambiar desde la página (por ejemplo, para las pruebas).
 export const CONFIG = {
   mediapipe: "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@1.1.1",
-  modelo: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task",
-  cuadrosPorSegundo: 15,
 };
 
-let detector = null;
+// Dos modos de análisis. "Preciso" usa el modelo más grande (heavy, ~30 MB
+// contra ~9 MB) y el doble de cuadros por segundo, para movimientos rápidos:
+// tarda unas 4 veces más.
+export const MODOS = {
+  rapido: {
+    modelo: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_full/float16/latest/pose_landmarker_full.task",
+    cuadrosPorSegundo: 15,
+  },
+  preciso: {
+    modelo: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/latest/pose_landmarker_heavy.task",
+    cuadrosPorSegundo: 30,
+  },
+};
 
-async function crearDetector() {
+// Un detector por modo: el primero que se usa queda cargado.
+const detectores = {};
+
+async function crearDetector(modelo) {
   const { FilesetResolver, PoseLandmarker } = await import(`${CONFIG.mediapipe}/vision_bundle.mjs`);
   const archivos = await FilesetResolver.forVisionTasks(`${CONFIG.mediapipe}/wasm`);
   const opciones = (delegate) => ({
-    baseOptions: { modelAssetPath: CONFIG.modelo, delegate },
+    baseOptions: { modelAssetPath: modelo, delegate },
     runningMode: "VIDEO",
     numPoses: 1,
   });
@@ -72,9 +85,8 @@ async function prepararVideo(video) {
  * al saltar. En cada cuadro a analizar pausa, analiza y sigue: así no se
  * saltea cuadros aunque el modelo sea lento. Sigue desde `desde` segundos.
  */
-function recorrerReproduciendo(video, resultado, desde, analizarCuadro, alAvanzar) {
+function recorrerReproduciendo(video, resultado, desde, paso, analizarCuadro, alAvanzar) {
   return new Promise((resolver, rechazar) => {
-    const paso = 1 / CONFIG.cuadrosPorSegundo;
     let ultimo = desde - paso;
     let terminado = false;
     const seguir = () => video.play().catch((e) => rechazar(new Error(`No se pudo reproducir el video (${e.message})`)));
@@ -110,13 +122,15 @@ function recorrerReproduciendo(video, resultado, desde, analizarCuadro, alAvanza
  * Recorre el video cuadro a cuadro y devuelve [{t, landmarks, mundo}]
  * (landmarks = los 33 puntos normalizados, mundo = los mismos en 3D, en
  * metros; null si no se vio a nadie).
- * `alAvanzar(fraccion)` informa el progreso.
+ * `alAvanzar(fraccion)` informa el progreso; `modo`: "rapido" o "preciso" (ver MODOS).
  */
-export async function estimarPoses(video, alAvanzar = () => {}) {
-  detector ??= await crearDetector();
+export async function estimarPoses(video, alAvanzar = () => {}, modo = "rapido") {
+  const { modelo, cuadrosPorSegundo } = MODOS[modo] ?? MODOS.rapido;
+  detectores[modo] ??= await crearDetector(modelo);
+  const detector = detectores[modo];
   await prepararVideo(video);
   const duracion = video.duration;
-  const paso = 1 / CONFIG.cuadrosPorSegundo;
+  const paso = 1 / cuadrosPorSegundo;
   const resultado = [];
   // Cada análisis arranca con timestamps nuevos: MediaPipe exige que crezcan.
   const base = performance.now();
@@ -132,7 +146,7 @@ export async function estimarPoses(video, alAvanzar = () => {}) {
     video.currentTime = t;
     if (!(await esperar(video, "seeked", ESPERA_SALTO))) {
       // Este navegador no avisa al saltar: se sigue reproduciendo el video.
-      await recorrerReproduciendo(video, resultado, t, analizarCuadro, alAvanzar);
+      await recorrerReproduciendo(video, resultado, t, paso, analizarCuadro, alAvanzar);
       break;
     }
     analizarCuadro(t);

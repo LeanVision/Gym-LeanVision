@@ -31,11 +31,14 @@ const COMUNES = {
 const PROBLEMAS_COMUNES = {
   recorrido: {
     titulo: "Poco recorrido",
+    partes: ["brazo", "antebrazo"],
     consejo: "Tirá hasta que las manos lleguen al abdomen, llevando los codos hacia atrás y juntando los omóplatos.",
     peso: 20,
   },
   sinExtender: {
     titulo: "No estirás los brazos",
+    partes: ["brazo", "antebrazo"],
+    momento: "fin",
     consejo: "Al volver, estirá los brazos por completo antes de tirar de nuevo: así trabaja todo el recorrido.",
     peso: 15,
   },
@@ -92,11 +95,13 @@ export const conBarra = {
   PROBLEMAS: {
     erguido: {
       titulo: "Torso muy erguido",
+      partes: ["tronco"],
       consejo: "Inclinate hacia adelante desde la cadera, con la espalda recta, hasta que el torso quede a unos 45° o más: si estás muy derecho, tirás con los hombros y no con la espalda.",
       peso: 20,
     },
     impulso: {
       titulo: "Usás impulso con el torso",
+      partes: ["tronco"],
       consejo: "Mantené el torso quieto y que se muevan solo los brazos. Si tenés que enderezarte para subir la barra, bajá el peso.",
       peso: 25,
     },
@@ -131,11 +136,13 @@ export const polea = {
   PROBLEMAS: {
     atras: {
       titulo: "Te tirás hacia atrás",
+      partes: ["tronco"],
       consejo: "Al tirar, quedate con el torso derecho (o apenas atrás): si te acostás hacia atrás, el peso lo mueve el cuerpo y no la espalda.",
       peso: 20,
     },
     impulso: {
       titulo: "Te balanceás",
+      partes: ["tronco"],
       consejo: "Mantené el torso firme: no te inclines hacia adelante para tomar envión ni hacia atrás para tirar. Si no podés, bajá el peso.",
       peso: 20,
     },
@@ -170,11 +177,13 @@ export const maquina = {
   PROBLEMAS: {
     pecho: {
       titulo: "Despegás el pecho del apoyo",
+      partes: ["tronco"],
       consejo: "Dejá el pecho apoyado todo el tiempo y que se muevan solo los brazos y los omóplatos.",
       peso: 20,
     },
     vuelta: {
       titulo: "Soltás el peso de golpe",
+      partes: ["brazo", "antebrazo"],
       consejo: "Volvé despacio, en uno o dos segundos, sin que las placas choquen.",
       peso: 15,
     },

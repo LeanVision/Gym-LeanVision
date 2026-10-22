@@ -6,6 +6,7 @@
 //   EJERCICIO="Peso muerto" MODELO_POSE=... VIDEO=peso-muerto.webm npm run test:e2e
 //
 // Opcional: CHROMIUM=/ruta/a/chrome si playwright no encuentra uno instalado.
+// MODO=preciso elige el análisis preciso (pasar el modelo heavy en MODELO_POSE).
 // VISTA=2d o VISTA=3d fuerza de dónde salen los ángulos (si no, la app lo
 // elige según el ángulo de la cámara).
 // SIN_SALTOS=1 simula un iPhone que no avisa al saltar de cuadro ("seeked"):
@@ -64,15 +65,18 @@ try {
   await pagina.click(`.tarjeta-titulo:text-is("${process.env.EJERCICIO ?? "Sentadilla"}")`);
   // Los grupos (Abdominales) llevan a elegir la variante: VARIANTE=Plancha, etc.
   if (process.env.VARIANTE) await pagina.click(`#tarjetas-variantes .tarjeta-titulo:text-is("${process.env.VARIANTE}")`);
+  if (process.env.MODO) await pagina.click(`[data-modo="${process.env.MODO}"]`);
   const inicio = Date.now();
   await pagina.setInputFiles("#elegir", VIDEO);
-  await pagina.waitForSelector("#resultado:not([hidden])", { timeout: 5 * 60_000 });
+  // ESPERA_MINUTOS: cuánto esperar el resultado (sin placa gráfica, el modo preciso tarda).
+  await pagina.waitForSelector("#resultado:not([hidden])", { timeout: Number(process.env.ESPERA_MINUTOS ?? 5) * 60_000 });
   const analisis = await pagina.evaluate(() => window.ultimoAnalisis);
   console.log(JSON.stringify({
     toma: analisis.toma,
     otraVariante: analisis.otraVariante,
     cuadros3d: analisis.cuadros3d,
     vista: analisis.vista,
+    cuadros: analisis.cuadros,
     segundos: +((Date.now() - inicio) / 1000).toFixed(1),
     puntaje: analisis.analisis.puntaje,
     repeticiones: analisis.analisis.repeticiones.map((r) => ({
@@ -84,6 +88,14 @@ try {
   if (process.env.CAPTURA) {
     await pagina.setViewportSize({ width: 412, height: 915 });
     await pagina.screenshot({ path: process.env.CAPTURA, fullPage: true });
+    // La primera repetición con errores, tocada: el video en ese momento con la parte marcada.
+    const conErrores = await pagina.$(".repeticion.con-errores");
+    if (conErrores) {
+      await conErrores.click();
+      await pagina.waitForTimeout(800);
+      await pagina.locator(".reproductor").screenshot({ path: process.env.CAPTURA.replace(/\.png$/, "-error.png") });
+      await pagina.locator("#detalle-rep").screenshot({ path: process.env.CAPTURA.replace(/\.png$/, "-detalle.png") });
+    }
   }
   if (!analisis.analisis.repeticiones.length) throw new Error("No se encontraron repeticiones");
 } finally {

@@ -27,21 +27,26 @@ export const UMBRALES = {
 export const PROBLEMAS = {
   cola: {
     titulo: "Despegás la cola del banco",
+    partes: ["tronco", "muslo"],
     consejo: "Dejá los glúteos apoyados en el banco todo el tiempo y empujá el piso con los pies: el arco es de la espalda alta, no de la cadera.",
     peso: 25,
   },
   profundidad: {
     titulo: "No llegás al pecho",
+    partes: ["brazo", "antebrazo"],
     consejo: "Bajá la barra hasta tocar suavemente el pecho, a la altura de la parte baja del esternón. Si no llegás, bajá el peso.",
     peso: 20,
   },
   sinBloqueo: {
     titulo: "No estirás arriba",
+    partes: ["brazo", "antebrazo"],
+    momento: "fin",
     consejo: "Empujá hasta estirar los brazos por completo, con la barra arriba de los hombros, antes de bajar otra vez.",
     peso: 10,
   },
   rapida: {
     titulo: "Bajás de golpe",
+    partes: ["brazo", "antebrazo"],
     consejo: "Bajá la barra en uno o dos segundos, controlando, sin rebotarla contra el pecho.",
     peso: 20,
   },
