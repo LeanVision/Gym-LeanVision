@@ -29,26 +29,31 @@ export const UMBRALES = {
 export const PROBLEMAS = {
   recorrido: {
     titulo: "No extendés la cadera",
+    partes: ["tronco", "muslo"],
     consejo: "Subí hasta que los hombros, la cadera y las rodillas queden en línea, apretando los glúteos arriba.",
     peso: 25,
   },
   arqueo: {
     titulo: "Subís la cadera de más",
+    partes: ["tronco", "muslo"],
     consejo: "Arriba, el cuerpo en línea recta: si la cadera sube más que eso, arqueás la zona lumbar. Mirá hacia adelante, con el mentón apenas hacia el pecho.",
     peso: 20,
   },
   piesCerca: {
     titulo: "Pies muy cerca",
+    partes: ["tibia"],
     consejo: "Alejá un poco los pies: arriba, las tibias tienen que quedar verticales, con las rodillas sobre los tobillos.",
     peso: 15,
   },
   piesLejos: {
     titulo: "Pies muy lejos",
+    partes: ["tibia"],
     consejo: "Acercá un poco los pies: con las tibias inclinadas hacia atrás trabajan más los isquiotibiales que los glúteos.",
     peso: 15,
   },
   bajada: {
     titulo: "Bajás de golpe",
+    partes: ["tronco", "muslo"],
     consejo: "Bajá la cadera despacio, en uno o dos segundos, sin dejarla caer.",
     peso: 15,
   },

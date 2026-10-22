@@ -26,16 +26,19 @@ export const UMBRALES = {
 export const PROBLEMAS = {
   profundidad: {
     titulo: "Poca profundidad",
+    partes: ["muslo", "tibia"],
     consejo: "Bajá la cadera recto hacia abajo hasta que las dos rodillas queden a unos 90°, con la de atrás cerca del piso.",
     peso: 25,
   },
   rodillaAdelante: {
     titulo: "Rodilla muy adelante",
+    partes: ["tibia"],
     consejo: "Dá un paso más largo y bajá la cadera hacia abajo, no hacia adelante: el peso en el talón de la pierna de adelante.",
     peso: 25,
   },
   tronco: {
     titulo: "Torso inclinado",
+    partes: ["tronco"],
     consejo: "Mantené el pecho arriba y el torso derecho, con el abdomen firme: la estocada baja la cadera, no inclina la espalda.",
     peso: 20,
   },

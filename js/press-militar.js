@@ -29,26 +29,32 @@ export const UMBRALES = {
 export const PROBLEMAS = {
   atras: {
     titulo: "Te tirás hacia atrás",
+    partes: ["tronco"],
     consejo: "Apretá el abdomen y los glúteos para que el torso quede derecho: arquear la espalda para subir la barra carga la zona lumbar.",
     peso: 25,
   },
   piernas: {
     titulo: "Usás las piernas",
+    partes: ["muslo", "tibia"],
     consejo: "Dejá las rodillas firmes: si las doblás para impulsar la barra, el trabajo deja de ser de los hombros. Si no sube, bajá el peso.",
     peso: 20,
   },
   sinBloqueo: {
     titulo: "No estirás arriba",
+    partes: ["brazo", "antebrazo"],
     consejo: "Empujá hasta estirar los brazos por completo, con la barra arriba de la cabeza.",
     peso: 15,
   },
   recorrido: {
     titulo: "No bajás hasta los hombros",
+    partes: ["brazo", "antebrazo"],
+    momento: "fin",
     consejo: "Bajá la barra hasta la altura del mentón o la parte alta del pecho antes de volver a subir.",
     peso: 15,
   },
   barraAdelante: {
     titulo: "La barra termina adelante",
+    partes: ["brazo", "antebrazo"],
     consejo: "Arriba, la barra tiene que quedar sobre la mitad del pie, con la cabeza pasando un poco adelante entre los brazos.",
     peso: 15,
   },

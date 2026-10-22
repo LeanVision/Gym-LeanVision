@@ -19,8 +19,21 @@ export function cuadroEn(poses, t) {
   return lo;
 }
 
-/** `colorDe(t)` devuelve el color del esqueleto en ese momento (por ejemplo, rojo en una repetición con errores). */
-export function dibujar(canvas, video, poses, lado, colorDe = () => "#22d3ee") {
+// Las partes del cuerpo que puede marcar un error (las `partes` de cada
+// error en PROBLEMAS), con los puntos que las forman.
+export const SEGMENTOS = {
+  tronco: ["hombro", "cadera"], muslo: ["cadera", "rodilla"], tibia: ["rodilla", "tobillo"],
+  pie: ["tobillo", "punta"], brazo: ["hombro", "codo"], antebrazo: ["codo", "muneca"], cuello: ["hombro", "oreja"],
+};
+const COLOR_MARCA = "#FF3B30";
+
+/**
+ * `colorDe(t)` devuelve el color del esqueleto en ese momento (por ejemplo,
+ * mandarina en una repetición con errores). `marcasEn(t)` devuelve los errores
+ * a marcar en ese momento: [{partes: ["muslo", …], texto}]; esas partes se
+ * pintan en rojo y el texto va en una etiqueta al lado.
+ */
+export function dibujar(canvas, video, poses, lado, colorDe = () => "#22d3ee", marcasEn = () => []) {
   const ctx = canvas.getContext("2d");
   const ancho = (canvas.width = video.videoWidth);
   const alto = (canvas.height = video.videoHeight);
@@ -39,5 +52,48 @@ export function dibujar(canvas, video, poses, lado, colorDe = () => "#22d3ee") {
     ctx.moveTo(pa.x * ancho, pa.y * alto);
     ctx.lineTo(pb.x * ancho, pb.y * alto);
     ctx.stroke();
+  }
+
+  // Errores: la parte del cuerpo en rojo, más gruesa, y una etiqueta.
+  const grosor = ctx.lineWidth;
+  const etiquetas = [];
+  for (const { partes, texto } of marcasEn(video.currentTime)) {
+    let marcada = false;
+    for (const parte of partes) {
+      const [a, b] = SEGMENTOS[parte] ?? [];
+      const pa = a && punto(a), pb = b && punto(b);
+      if (!pa || !pb) continue;
+      ctx.strokeStyle = "#FFFFFF";
+      ctx.lineWidth = grosor * 3.4;
+      ctx.beginPath(); ctx.moveTo(pa.x * ancho, pa.y * alto); ctx.lineTo(pb.x * ancho, pb.y * alto); ctx.stroke();
+      ctx.strokeStyle = COLOR_MARCA;
+      ctx.lineWidth = grosor * 2.2;
+      ctx.beginPath(); ctx.moveTo(pa.x * ancho, pa.y * alto); ctx.lineTo(pb.x * ancho, pb.y * alto); ctx.stroke();
+      marcada = true;
+    }
+    if (marcada && texto) etiquetas.push({ texto });
+  }
+  // Las etiquetas arriba del video, una debajo de otra, para no tapar la
+  // parte marcada; si una no entra a lo ancho, se achica la letra.
+  ctx.textBaseline = "middle";
+  let y = 8;
+  for (const e of etiquetas) {
+    let tamano = Math.max(12, Math.round(alto / 48));
+    ctx.font = `700 ${tamano}px Archivo, system-ui, sans-serif`;
+    const maximo = ancho - 16;
+    if (ctx.measureText(e.texto).width + tamano > maximo) {
+      tamano = Math.max(8, Math.floor(tamano * maximo / (ctx.measureText(e.texto).width + tamano)));
+      ctx.font = `700 ${tamano}px Archivo, system-ui, sans-serif`;
+    }
+    const w = ctx.measureText(e.texto).width + tamano;
+    const h = tamano * 1.7;
+    const x = 8;
+    ctx.fillStyle = COLOR_MARCA;
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(x, y, w, h, h / 2) : ctx.rect(x, y, w, h);
+    ctx.fill();
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillText(e.texto, x + tamano / 2, y + h / 2);
+    y += h + 6;
   }
 }

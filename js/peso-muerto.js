@@ -35,31 +35,39 @@ export const UMBRALES = {
 export const PROBLEMAS = {
   caderaPrimero: {
     titulo: "La cadera sube antes que el pecho",
+    partes: ["tronco", "muslo"],
     consejo: "Al despegar la barra, empujá el piso con las piernas y subí cadera y hombros juntos. Si la cadera se adelanta, la espalda hace todo el trabajo.",
     peso: 25,
   },
   barraLejos: {
     titulo: "La barra se aleja del cuerpo",
+    partes: ["brazo", "antebrazo"],
     consejo: "Llevá la barra pegada a las piernas, casi rozándolas, siempre arriba de la mitad del pie. Apretá los dorsales como si quisieras doblar la barra.",
     peso: 25,
   },
   caderaBaja: {
     titulo: "Cadera muy baja (como una sentadilla)",
+    partes: ["muslo", "tibia"],
     consejo: "En el peso muerto la cadera arranca más alta que en la sentadilla: los hombros apenas adelante de la barra y las tibias casi verticales.",
     peso: 15,
   },
   piernasRectas: {
     titulo: "Piernas demasiado rectas",
+    partes: ["muslo", "tibia"],
     consejo: "Flexioná un poco las rodillas para llegar a la barra. Con las piernas rectas toda la carga va a la espalda baja.",
     peso: 15,
   },
   sinBloqueo: {
     titulo: "No terminás derecho",
+    partes: ["tronco", "muslo"],
+    momento: "fin",
     consejo: "Arriba de todo, extendé la cadera por completo: apretá los glúteos hasta quedar parado derecho.",
     peso: 10,
   },
   haciaAtras: {
     titulo: "Te tirás hacia atrás arriba",
+    partes: ["tronco"],
+    momento: "fin",
     consejo: "Al terminar quedate derecho, sin arquear la espalda hacia atrás: los glúteos terminan el movimiento, no la cintura.",
     peso: 10,
   },

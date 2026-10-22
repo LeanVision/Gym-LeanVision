@@ -181,6 +181,18 @@ body[data-pantalla="tutorial"] .volver { color: var(--ejercicio); }
 /* El video mientras se analiza: visible para el navegador, invisible para la persona. */
 video.analizandose { position: fixed; left: 0; top: 0; width: 160px; height: 90px; opacity: 0; pointer-events: none; z-index: -1; }
 
+/* Inicio: últimas sesiones (guardadas en el celular) */
+.ultimas { margin-top: 26px; }
+.lista-sesiones { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.lista-sesiones li {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 14px; border-radius: 18px; background: rgba(255, 248, 238, 0.08);
+  font-size: 14px;
+}
+.lista-sesiones .sesion-fecha { opacity: .75; font-size: 12px; }
+.lista-sesiones .sesion-puntaje { font: 900 18px Archivo, sans-serif; font-stretch: 125%; }
+.boton-texto { margin-top: 8px; padding: 6px 0; border: 0; background: none; color: var(--crema); opacity: .75; font: 600 13px Archivo, sans-serif; text-decoration: underline; cursor: pointer; }
+
 /* Resultado */
 .otra-variante {
   margin-top: 14px; padding: 16px; border-radius: 22px;
@@ -196,6 +208,10 @@ video.analizandose { position: fixed; left: 0; top: 0; width: 160px; height: 90p
 .chip { background: var(--crema); color: var(--tinta); border-radius: 999px; padding: 6px 12px; font-size: 13px; font-weight: 700; }
 .chip-alerta { background: var(--mandarina); }
 .resumen-texto { margin: 14px 0 0; font-size: 15px; }
+.comparacion { margin: 6px 0 0; font-size: 14px; font-weight: 600; opacity: .9; }
+.datos-serie { margin-top: 12px; padding: 14px 16px; border-radius: 22px; border: 2px solid var(--crema); font-size: 14px; }
+.datos-serie p { margin: 0 0 6px; }
+.datos-serie p:last-child { margin: 0; }
 
 .avisos { margin-top: 14px; padding: 14px 16px; border-radius: 22px; background: var(--crema); color: var(--tinta); font-size: 14px; }
 .avisos p { margin: 0 0 6px; }
@@ -227,6 +243,8 @@ video.analizandose { position: fixed; left: 0; top: 0; width: 160px; height: 90p
 .detalle-rep h3 { margin: 0 0 6px; font: 900 15px Archivo, sans-serif; font-stretch: 125%; text-transform: uppercase; }
 .detalle-rep ul { margin: 0; padding-left: 1.2em; }
 .detalle-rep li { margin-bottom: 4px; }
+.detalle-rep .ritmo { margin: 0 0 8px; font-weight: 600; }
+.detalle-rep .nota-video { margin: 8px 0 0; font-size: 12px; opacity: .8; }
 
 :focus-visible { outline: 3px solid var(--rosa); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }

@@ -28,26 +28,32 @@ export const UMBRALES = {
 export const PROBLEMAS = {
   balanceo: {
     titulo: "Te balanceás",
+    partes: ["tronco"],
     consejo: "Mantené el torso quieto, con el abdomen firme: si tenés que tirarte hacia atrás para subir, el peso es mucho.",
     peso: 25,
   },
   codoAdelante: {
     titulo: "Llevás el codo adelante",
+    partes: ["brazo"],
     consejo: "Dejá los codos pegados al costado del cuerpo: que se mueva solo el antebrazo. Si el codo se va adelante, trabaja el hombro.",
     peso: 20,
   },
   recorrido: {
     titulo: "No subís del todo",
+    partes: ["antebrazo"],
     consejo: "Subí hasta que el antebrazo quede casi vertical, apretando el bíceps arriba.",
     peso: 15,
   },
   sinExtender: {
     titulo: "No estirás los brazos abajo",
+    partes: ["antebrazo"],
+    momento: "fin",
     consejo: "Bajá hasta estirar los brazos por completo antes de volver a subir: las medias repeticiones trabajan la mitad.",
     peso: 15,
   },
   bajada: {
     titulo: "Bajás de golpe",
+    partes: ["antebrazo"],
     consejo: "Bajá despacio, en uno o dos segundos: la bajada controlada también trabaja el bíceps.",
     peso: 15,
   },

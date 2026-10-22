@@ -236,6 +236,24 @@ el mismo motor) hay que cuidar dos cosas:
   resultados; `SIN_SALTOS=1 npm run test:e2e` lo prueba simulando un
   navegador que nunca avisa al saltar.
 
+## El resultado en detalle
+
+- **Errores marcados en el video:** cada error de cada ejercicio dice qué
+  partes del cuerpo marca (`partes` en `PROBLEMAS`: tronco, muslo, tibia,
+  pie, brazo, antebrazo, cuello) y, si se mide al terminar la repetición,
+  `momento: "fin"`. Durante la repetición esas partes se pintan en rojo sobre
+  el esqueleto, con el nombre del error arriba del video (`js/dibujo.js`).
+  Al tocar una repetición, el video salta al momento del error.
+- **Ritmo:** cada repetición muestra la ida (del principio al punto más bajo
+  o más alto) y la vuelta, y la serie el ritmo promedio. Con 4 o más
+  repeticiones avisa si la segunda mitad sale 15 puntos peor (cansancio) o
+  un 25 % más rápida (`js/serie.js`).
+- **Historial:** cada análisis se guarda solo en el celular (localStorage,
+  hasta 200 sesiones; `js/historial.js`). El inicio muestra las últimas 5 y
+  el resultado compara con la vez anterior y el mejor puntaje del mismo
+  ejercicio. Si se reanaliza el video como otra variante, se reemplaza la
+  sesión en vez de sumar otra.
+
 ## Suavizado y modo preciso
 
 Antes de calcular ángulos, `js/suavizado.js` limpia los puntos del modelo:
@@ -328,6 +346,7 @@ o si falta un módulo en el import map.
 | 1.15 | Cámara en diagonal: los ángulos salen del 3D si no está de costado; se saca la vista 3D aparte |
 | 1.16 | Hip thrust |
 | 1.17 | Suavizado de los puntos y modo de análisis preciso |
+| 1.18 | Errores marcados en el video, ritmo por repetición e historial de sesiones |
 
 ## Probarla en la computadora
 

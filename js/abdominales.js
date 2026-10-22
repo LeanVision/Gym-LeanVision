@@ -78,16 +78,19 @@ export const encogimiento = {
   PROBLEMAS: {
     cuello: {
       titulo: "Tirás del cuello",
+      partes: ["cuello"],
       consejo: "Mirá hacia el techo, con un puño de espacio entre el mentón y el pecho. Las manos apenas tocan la cabeza: subí con el abdomen, no tirando de la nuca.",
       peso: 25,
     },
     pies: {
       titulo: "Despegás los pies",
+      partes: ["tibia", "pie"],
       consejo: "Dejá los pies apoyados en el piso todo el tiempo. Si se levantan, estás subiendo con las piernas y no con el abdomen.",
       peso: 20,
     },
     impulso: {
       titulo: "Muy rápido, con impulso",
+      partes: ["tronco"],
       consejo: "Subí en un segundo y bajá en otro, despacio y sin rebotar contra el piso: el trabajo está en controlar el movimiento.",
       peso: 20,
     },
@@ -139,16 +142,19 @@ export const abdominalCompleto = {
   PROBLEMAS: {
     recorrido: {
       titulo: "No llegás arriba",
+      partes: ["tronco"],
       consejo: "Subí hasta quedar sentado, con el tronco casi vertical. Si no llegás, podés hacer encogimientos, que suben menos.",
       peso: 20,
     },
     pies: {
       titulo: "Despegás los pies",
+      partes: ["tibia", "pie"],
       consejo: "Dejá los pies apoyados (o sujetos debajo de algo). Si se levantan, estás tirando con las piernas en vez de subir con el abdomen.",
       peso: 20,
     },
     impulso: {
       titulo: "Muy rápido, con impulso",
+      partes: ["tronco"],
       consejo: "No te tires hacia arriba con los brazos ni rebotes en el piso: subí y bajá despacio, enrollando la espalda.",
       peso: 20,
     },
@@ -195,16 +201,19 @@ export const elevacionPiernas = {
   PROBLEMAS: {
     rodillas: {
       titulo: "Doblás las rodillas",
+      partes: ["muslo", "tibia"],
       consejo: "Mantené las piernas estiradas, con una flexión mínima. Si te cuesta, empezá con el crunch inverso (rodillas dobladas).",
       peso: 20,
     },
     recorrido: {
       titulo: "Poco recorrido",
+      partes: ["muslo", "tibia"],
       consejo: "Subí las piernas hasta que queden casi verticales, apuntando al techo.",
       peso: 20,
     },
     bajada: {
       titulo: "Bajás de golpe",
+      partes: ["muslo", "tibia"],
       consejo: "Bajá las piernas despacio, controlando, sin dejarlas caer. Si la zona lumbar se despega del piso, no bajes tanto.",
       peso: 25,
     },
@@ -250,16 +259,19 @@ export const crunchInverso = {
   PROBLEMAS: {
     recorrido: {
       titulo: "La cadera no se despega",
+      partes: ["muslo"],
       consejo: "Llevá las rodillas hacia el pecho hasta que la cadera se despegue un poco del piso: ahí trabaja la parte baja del abdomen.",
       peso: 20,
     },
     rodillas: {
       titulo: "Estirás las piernas",
+      partes: ["tibia"],
       consejo: "Mantené las rodillas dobladas a unos 90° todo el movimiento, sin patear hacia adelante.",
       peso: 20,
     },
     impulso: {
       titulo: "Muy rápido, con impulso",
+      partes: ["muslo", "tibia"],
       consejo: "Subí y bajá despacio, sin balancear las piernas: el movimiento lo hace el abdomen.",
       peso: 20,
     },
@@ -308,16 +320,19 @@ export const plancha = {
   PROBLEMAS: {
     caderaCaida: {
       titulo: "Cadera caída",
+      partes: ["tronco", "muslo"],
       consejo: "Apretá el abdomen y los glúteos para que el cuerpo quede en línea recta de la cabeza a los talones, sin que la panza se hunda.",
       peso: 30,
     },
     caderaArriba: {
       titulo: "Cadera muy arriba",
+      partes: ["tronco", "muslo"],
       consejo: "Bajá la cola hasta que el cuerpo quede en línea recta: con la cadera arriba el abdomen descansa.",
       peso: 20,
     },
     cabeza: {
       titulo: "Cabeza colgando",
+      partes: ["cuello"],
       consejo: "Mantené el cuello en línea con la espalda, mirando al piso entre las manos.",
       peso: 10,
     },

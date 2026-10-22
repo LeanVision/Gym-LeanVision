@@ -27,26 +27,32 @@ export const UMBRALES = {
 export const PROBLEMAS = {
   caderaCaida: {
     titulo: "Cadera caída",
+    partes: ["tronco", "muslo"],
     consejo: "Apretá el abdomen y los glúteos para que el cuerpo quede en línea recta de la cabeza a los talones, sin que la panza se hunda.",
     peso: 25,
   },
   caderaArriba: {
     titulo: "Cadera muy arriba",
+    partes: ["tronco", "muslo"],
     consejo: "Bajá la cola hasta que el cuerpo quede en línea recta: con la cadera arriba el ejercicio pierde trabajo de pecho y abdomen.",
     peso: 20,
   },
   profundidad: {
     titulo: "Poca profundidad",
+    partes: ["brazo", "antebrazo"],
     consejo: "Bajá hasta que los codos queden a unos 90° y el pecho cerca del piso. Si no llegás, hacé menos repeticiones pero completas.",
     peso: 25,
   },
   sinExtender: {
     titulo: "No estirás los brazos arriba",
+    partes: ["brazo", "antebrazo"],
+    momento: "fin",
     consejo: "Subí hasta estirar los brazos por completo antes de bajar de nuevo.",
     peso: 10,
   },
   cabeza: {
     titulo: "Cabeza colgando",
+    partes: ["cuello"],
     consejo: "Mantené el cuello en línea con la espalda: mirá al piso un poco adelante de las manos, sin dejar caer la cabeza.",
     peso: 10,
   },

@@ -68,7 +68,8 @@ try {
   if (process.env.MODO) await pagina.click(`[data-modo="${process.env.MODO}"]`);
   const inicio = Date.now();
   await pagina.setInputFiles("#elegir", VIDEO);
-  await pagina.waitForSelector("#resultado:not([hidden])", { timeout: 5 * 60_000 });
+  // ESPERA_MINUTOS: cuánto esperar el resultado (sin placa gráfica, el modo preciso tarda).
+  await pagina.waitForSelector("#resultado:not([hidden])", { timeout: Number(process.env.ESPERA_MINUTOS ?? 5) * 60_000 });
   const analisis = await pagina.evaluate(() => window.ultimoAnalisis);
   console.log(JSON.stringify({
     toma: analisis.toma,
@@ -87,6 +88,14 @@ try {
   if (process.env.CAPTURA) {
     await pagina.setViewportSize({ width: 412, height: 915 });
     await pagina.screenshot({ path: process.env.CAPTURA, fullPage: true });
+    // La primera repetición con errores, tocada: el video en ese momento con la parte marcada.
+    const conErrores = await pagina.$(".repeticion.con-errores");
+    if (conErrores) {
+      await conErrores.click();
+      await pagina.waitForTimeout(800);
+      await pagina.locator(".reproductor").screenshot({ path: process.env.CAPTURA.replace(/\.png$/, "-error.png") });
+      await pagina.locator("#detalle-rep").screenshot({ path: process.env.CAPTURA.replace(/\.png$/, "-detalle.png") });
+    }
   }
   if (!analisis.analisis.repeticiones.length) throw new Error("No se encontraron repeticiones");
 } finally {

@@ -31,21 +31,25 @@ export const UMBRALES = {
 export const PROBLEMAS = {
   profundidad: {
     titulo: "Poca profundidad",
+    partes: ["muslo"],
     consejo: "Bajá hasta que el muslo quede paralelo al piso (la cadera a la altura de la rodilla), si tu movilidad te lo permite sin dolor.",
     peso: 25,
   },
   tronco: {
     titulo: "Tronco muy inclinado",
+    partes: ["tronco"],
     consejo: "Mantené el pecho arriba y el peso en el medio del pie. Pensá en sentarte entre los talones, no en llevar la cola muy atrás.",
     peso: 25,
   },
   talones: {
     titulo: "Se levantan los talones",
+    partes: ["tibia", "pie"],
     consejo: "Apoyá todo el pie y empujá el piso con los talones. Si no podés, abrí un poco más los pies o trabajá la movilidad de tobillo.",
     peso: 20,
   },
   rapida: {
     titulo: "Bajada muy rápida",
+    partes: ["muslo", "tibia"],
     consejo: "Controlá la bajada: unos 2 segundos para bajar y subí con fuerza.",
     peso: 10,
   },
