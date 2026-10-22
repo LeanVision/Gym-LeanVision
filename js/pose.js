@@ -17,6 +17,11 @@ export const MODOS = {
   preciso: {
     modelo: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_heavy/float16/latest/pose_landmarker_heavy.task",
     cuadrosPorSegundo: 30,
+    // El heavy informa visibilidades más bajas que el full para los mismos
+    // puntos (en el video real de sentadilla, la rodilla: mediana 0,58 contra
+    // 0,97), y con el umbral de 0,5 se descartaban cuadros buenos. Se
+    // reescalan para que los umbrales signifiquen lo mismo en los dos modos.
+    escalaVisibilidad: 1.7,
   },
 };
 
@@ -125,7 +130,7 @@ function recorrerReproduciendo(video, resultado, desde, paso, analizarCuadro, al
  * `alAvanzar(fraccion)` informa el progreso; `modo`: "rapido" o "preciso" (ver MODOS).
  */
 export async function estimarPoses(video, alAvanzar = () => {}, modo = "rapido") {
-  const { modelo, cuadrosPorSegundo } = MODOS[modo] ?? MODOS.rapido;
+  const { modelo, cuadrosPorSegundo, escalaVisibilidad = 1 } = MODOS[modo] ?? MODOS.rapido;
   detectores[modo] ??= await crearDetector(modelo);
   const detector = detectores[modo];
   await prepararVideo(video);
@@ -140,7 +145,10 @@ export async function estimarPoses(video, alAvanzar = () => {}, modo = "rapido")
     const r = detector.detectForVideo(video, ultimaMarca);
     // landmarks: en la imagen (2D, lo que usa el análisis); mundo: los mismos
     // puntos en 3D, en metros (para la vista 3D).
-    resultado.push({ t, landmarks: r.landmarks?.[0] ?? null, mundo: r.worldLandmarks?.[0] ?? null });
+    const escalar = (puntos) => (puntos && escalaVisibilidad !== 1
+      ? puntos.map((p) => ({ ...p, visibility: Math.min(1, (p.visibility ?? 1) * escalaVisibilidad) }))
+      : puntos);
+    resultado.push({ t, landmarks: escalar(r.landmarks?.[0] ?? null), mundo: escalar(r.worldLandmarks?.[0] ?? null) });
   };
   for (let t = 0; t < duracion; t += paso) {
     video.currentTime = t;

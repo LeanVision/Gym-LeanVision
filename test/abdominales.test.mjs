@@ -53,11 +53,26 @@ test("encogimiento: bien hecho no tiene errores y detecta cada error", () => {
   assert.deepEqual(bien.avisos, []);
   const r = encogimiento.analizar(serie(ACOSTADO,
     [ARRIBA],
-    [{ ...ARRIBA, cuello: 55 }],   // tira del cuello
+    [{ ...ARRIBA, cuello: 55 }],   // el cuello no se revisa (ver ejercicios.js)
     [{ ...ARRIBA, pies: 0.6 }],    // despega los pies
     [ARRIBA, 0.35, 0.35],          // con impulso
   ));
-  assert.deepEqual(tipos(r), [[], ["cuello"], ["pies"], ["impulso"]]);
+  assert.deepEqual(tipos(r), [[], [], ["pies"], ["impulso"]]);
+});
+
+test("encogimiento: cuenta los cortos de verdad, no moverse sin despegar del piso", () => {
+  // En videos reales el tronco sube entre 9° y 13°.
+  assert.equal(encogimiento.analizar(serie(ACOSTADO, [{ ...ARRIBA, elevacion: 12 }], [{ ...ARRIBA, elevacion: 12 }])).repeticiones.length, 2);
+  // Cambiando de ejercicio: el tronco va de -20° a 4° y vuelve, sin despegarse.
+  const cambiando = encogimiento.analizar(serie({ ...ACOSTADO, elevacion: -20 }, [{ ...ARRIBA, elevacion: 4 }], [{ ...ARRIBA, elevacion: 4 }]));
+  assert.equal(cambiando.repeticiones.length, 0);
+  // ...y después de eso, los encogimientos se siguen contando.
+  const ABAJO = { ...ACOSTADO, elevacion: -20 };
+  const despues = encogimiento.analizar(cuadrosDe(serieAbdominales([
+    [ABAJO, 1], [{ ...ARRIBA, elevacion: 4 }, 1], [ABAJO, 1], [ACOSTADO, 1],
+    [ARRIBA, 1], [ACOSTADO, 1], [ACOSTADO, 0.5], [ARRIBA, 1], [ACOSTADO, 1], [ACOSTADO, 0.5],
+  ])));
+  assert.equal(despues.repeticiones.length, 2);
 });
 
 test("abdominal completo: bien hecho y cada error", () => {
