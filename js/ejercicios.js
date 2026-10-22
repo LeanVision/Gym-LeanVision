@@ -8,6 +8,7 @@ import * as estocadas from "./estocadas.js";
 import * as dominadas from "./dominadas.js";
 import * as pressBanca from "./press-banca.js";
 import * as curl from "./curl.js";
+import * as hipThrust from "./hip-thrust.js";
 import * as pressMilitar from "./press-militar.js";
 import * as remo from "./remo.js";
 import * as abdominales from "./abdominales.js";
@@ -169,6 +170,25 @@ export const EJERCICIOS = {
     sinRepeticiones: "Revisá que se vea todo el cuerpo de costado, con el brazo del lado de la cámara a la vista, y que subas doblando los codos.",
     problemas: curl.PROBLEMAS,
     analizar: curl.analizarCurl,
+  },
+  hipThrust: {
+    nombre: "Hip thrust",
+    resumen: "Cadera · pies · bajada",
+    color: "#B8C0FF",
+    icono: { caja: "0 0 64 44", trazos: '<circle cx="9" cy="20" r="5"/><path d="M14 24l20-2 12 0 4 18M4 30h14v10M34 22v-6"/><circle cx="34" cy="14" r="4"/>' },
+    pasoClave: 2,
+    pasos: [
+      "Sentate en el piso con la parte de abajo de los omóplatos contra el borde de un banco y la barra (con protector) sobre la cadera.",
+      "Pies apoyados al ancho de la cadera, a una distancia que arriba deje las tibias verticales.",
+      "Empujá con los talones y apretá los glúteos hasta que hombros, cadera y rodillas queden en línea, sin subir de más.",
+      "Mirá hacia adelante con el mentón apenas hacia el pecho, sin tirar la cabeza para atrás.",
+      "Bajá la cadera despacio, controlando, y volvé a subir.",
+    ],
+    noRevisamos: "Si la zona lumbar se arquea por su cuenta (el modelo no tiene puntos en la columna; sí vemos si la cadera sube de más) ni si las rodillas se van hacia adentro (se ve de frente).",
+    consejosFilmacion: ["Para el hip thrust, el celular a la altura del banco, de costado o en diagonal: que se vean los hombros, la cadera y los pies."],
+    sinRepeticiones: "Revisá que se vea todo el cuerpo, con la espalda en el banco, y que subas la cadera en cada repetición.",
+    problemas: hipThrust.PROBLEMAS,
+    analizar: hipThrust.analizarHipThrust,
   },
   // Remo: un grupo con varias formas (ver GRUPOS más abajo).
   remoBarra: {

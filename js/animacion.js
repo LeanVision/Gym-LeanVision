@@ -178,6 +178,25 @@ const FIGURAS = {
       };
     },
   },
+  hipThrust: {
+    // Los hombros en el banco y los pies en el piso: sube y baja la cadera con la barra.
+    arriba: { cy: 63 },
+    abajo: { cy: 85 },
+    figura: (p) => {
+      const banco = PISO - 28;
+      const hombro = [30, banco - 3];
+      const cadera = [56, p.cy];
+      const tobillo = [86, PISO - 3];
+      const rodilla = articulacion(cadera, tobillo, L.muslo, L.tibia, [0.2, -1]);
+      const cabeza = polar(hombro, L.cuello, 160);
+      return {
+        muebles: [[[4, banco], [32, banco]], [[10, banco], [10, PISO]]],
+        lineas: [[hombro, cadera, rodilla, tobillo, [tobillo[0] + 7, PISO]]],
+        cabeza,
+        discos: [{ x: cadera[0], y: cadera[1] - 8, r: 7 }],
+      };
+    },
+  },
   curl: {
     // Parado: el codo queda quieto al costado y el antebrazo sube con la mancuerna.
     arriba: { antebrazo: -78 },
@@ -329,7 +348,7 @@ const FIGURAS = {
 // La animación arranca en la primera postura: de pie (o arriba) en casi
 // todos; el encogimiento, el abdominal completo y la elevación de piernas
 // empiezan acostados.
-const ORDEN = { dominadas: ["abajo", "arriba"], encogimiento: ["abajo", "arriba"], abdominalCompleto: ["abajo", "arriba"], elevacionPiernas: ["abajo", "arriba"] };
+const ORDEN = { dominadas: ["abajo", "arriba"], hipThrust: ["abajo", "arriba"], encogimiento: ["abajo", "arriba"], abdominalCompleto: ["abajo", "arriba"], elevacionPiernas: ["abajo", "arriba"] };
 
 function interpolar(a, b, f) {
   const r = {};
