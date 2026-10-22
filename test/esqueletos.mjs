@@ -483,3 +483,48 @@ export function seriePressMilitar(claves, fps = 15) {
   }
   return posturas.map((postura, i) => ({ t: i / fps, p: pressMilitar(postura) }));
 }
+
+/**
+ * Esqueleto haciendo hip thrust, de perfil (adelante = +x, hacia los pies):
+ * los hombros apoyados en el banco y los pies en el piso. cadera: desvío de
+ * la cadera respecto de la línea hombro-rodilla (+ = abajo, − = arriba de
+ * más); tibia: inclinación de la tibia (+ = rodilla adelante del tobillo).
+ */
+export function hipThrust({ cadera = 0, tibia = 0, miraDerecha = true, visibilidad = 0.9 } = {}) {
+  const hombro = { x: 300, y: 500 };
+  const rodilla = { x: 750, y: 480 };
+  const d = { x: rodilla.x - hombro.x, y: rodilla.y - hombro.y };
+  const largo = Math.hypot(d.x, d.y);
+  let n = { x: -d.y / largo, y: d.x / largo };
+  if (n.y < 0) n = { x: -n.x, y: -n.y };
+  const cad = mas({ x: (hombro.x + rodilla.x) / 2, y: (hombro.y + rodilla.y) / 2 }, n, (largo / 2) * Math.tan(rad(cadera / 2)));
+  const tobillo = { x: rodilla.x - 200 * Math.sin(rad(tibia)), y: rodilla.y + 200 * Math.cos(rad(tibia)) };
+  const puntos = {
+    hombro_der: hombro, cadera_der: cad, rodilla_der: rodilla, tobillo_der: tobillo,
+    talon_der: { x: tobillo.x - 20, y: tobillo.y + 30 }, punta_der: { x: tobillo.x + 60, y: tobillo.y + 30 },
+    oreja_der: { x: hombro.x - 60, y: hombro.y - 20 },
+  };
+  const p = {};
+  for (const [nombre, q] of Object.entries(puntos)) {
+    p[nombre] = { x: miraDerecha ? q.x : 1000 - q.x, y: q.y, v: visibilidad };
+    p[nombre.replace("_der", "_izq")] = { ...p[nombre], v: 0.3 };
+  }
+  return p;
+}
+
+/** Serie de hip thrust: [[postura, segundos]], interpolando entre posturas. */
+export function serieHipThrust(claves, fps = 15) {
+  const campos = ["cadera", "tibia"];
+  const posturas = [];
+  let anterior = claves[0][0];
+  for (const [postura, segundos] of claves) {
+    const n = Math.round(segundos * fps);
+    for (let i = 1; i <= n; i++) {
+      const r = { ...postura };
+      for (const k of campos) r[k] = (anterior[k] ?? 0) + ((postura[k] ?? 0) - (anterior[k] ?? 0)) * (i / n);
+      posturas.push(r);
+    }
+    anterior = postura;
+  }
+  return posturas.map((postura, i) => ({ t: i / fps, p: hipThrust(postura) }));
+}

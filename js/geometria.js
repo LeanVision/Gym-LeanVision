@@ -200,6 +200,9 @@ export function angulos(p, lado) {
   a.alturaHombros = largoTronco > 0 ? (tobillo.y - hombro.y) / largoTronco : null;
   // Cadera respecto de la línea hombro-tobillo: positivo = caída (panza abajo).
   a.lineaCadera = desvioDeLinea(sin("hombro"), sin("cadera"), sin("tobillo"));
+  // Hip thrust: cadera respecto de la línea hombro-rodilla: positivo = abajo
+  // (sin extender), negativo = por encima (espalda arqueada de más).
+  a.caderaHombroRodilla = desvioDeLinea(sin("hombro"), sin("cadera"), sin("rodilla"));
   // Cabeza respecto de la prolongación cadera-hombro: positivo = colgando.
   a.cabeza = visto("oreja") ? anguloBajoLinea(sin("cadera"), sin("hombro"), sin("oreja")) : null;
   const hi = p.hombro_izq, hd = p.hombro_der;

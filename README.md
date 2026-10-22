@@ -129,6 +129,24 @@ vista; las repeticiones se cuentan con la extensión del codo (sube al empujar).
 Los umbrales están en `js/press-militar.js` (`UMBRALES`). No revisa los codos
 abiertos ni la barra torcida (se ven de frente).
 
+## Qué revisa en el hip thrust
+
+Con la espalda apoyada en un banco, la barra sobre la cadera y los pies en el
+piso; las repeticiones se cuentan con cuánto sube la cadera (90° menos su
+desvío de la línea hombro-rodilla, que sigue subiendo aunque pase la línea).
+Todo se mide arriba de todo, salvo la bajada.
+
+| Error | Cómo se mide | Umbral |
+|---|---|---|
+| No extendés la cadera | Cadera respecto de la línea hombro-rodilla | más de 15° por debajo |
+| Subís la cadera de más | Ídem | más de 15° por encima |
+| Pies muy cerca / muy lejos | Tibia respecto de la vertical | más de 20° adelante / atrás |
+| Bajás de golpe | Tiempo de bajada | menos de 0,6 s |
+
+Los umbrales están en `js/hip-thrust.js` (`UMBRALES`). No revisa la zona
+lumbar arqueada por su cuenta (sí la cadera que sube de más) ni las rodillas
+hacia adentro.
+
 ## Qué revisa en el curl de bíceps
 
 Parado, con mancuernas o barra, filmado de costado; las repeticiones se
@@ -293,6 +311,7 @@ o si falta un módulo en el import map.
 | 1.14.1 | Arreglo para iPhone: el análisis se quedaba en 0 % |
 | 1.14.2 | En iPhone, los .mp4 de Archivos se pueden elegir |
 | 1.15 | Cámara en diagonal: los ángulos salen del 3D si no está de costado; se saca la vista 3D aparte |
+| 1.16 | Hip thrust |
 
 ## Probarla en la computadora
 
